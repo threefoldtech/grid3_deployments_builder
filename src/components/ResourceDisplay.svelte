@@ -1,29 +1,41 @@
 <script lang="ts">
   import type { Resource } from "../store/code.store";
   import codeStore from "../store/code.store";
+  import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";
 
   export let resource: Resource;
+
+  let collapse = false;
 </script>
 
 <div class="resource">
+  <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
     <img src="/assets/deployment.svg" alt="deployment icon" width="40" />
     <span class="keyword">resource</span>
-    <Editable
-      value={resource.name}
-      style="margin: 0 1.5rem;"
-      on:input={codeStore.updateResource("name")}
-    />
-    <Editable
-      value={resource.title}
-      on:input={codeStore.updateResource("title")}
-    />
+    {#if collapse}
+      <p>...</p>
+    {:else}
+      <Editable
+        value={resource.name}
+        style="margin: 0 1.5rem;"
+        on:input={codeStore.updateResource("name")}
+      />
+      <Editable
+        value={resource.title}
+        on:input={codeStore.updateResource("title")}
+      />
+    {/if}
   </div>
-  <Editable
-    label="node"
-    value={resource.node}
-    type="number"
-    on:input={codeStore.updateResource("node")}
-  />
+  {#if collapse}
+    <br />
+  {:else}
+    <Editable
+      label="node"
+      value={resource.node}
+      type="number"
+      on:input={codeStore.updateResource("node")}
+    />
+  {/if}
 </div>

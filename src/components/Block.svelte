@@ -18,6 +18,7 @@
 <style lang="scss" scoped>
   .block {
     padding: 2rem;
+    padding-left: 4rem;
     border-left: 0.5rem solid transparent;
     margin-bottom: 1rem;
     position: relative;
