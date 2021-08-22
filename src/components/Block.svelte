@@ -12,9 +12,8 @@
 
 <style lang="scss" scoped>
   .block {
-    background-color: var(--white);
     padding: 1.5rem;
-    border-left: 0.5rem solid red;
+    border-left: 0.5rem solid transparent;
     margin-bottom: 1rem;
   }
 </style>

@@ -16,8 +16,7 @@
     height: 100%;
 
     .content {
-      padding: 3rem;
-      height: 100%;
+      background-color: var(--ground-bg);
     }
   }
 </style>

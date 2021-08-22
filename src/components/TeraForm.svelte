@@ -30,7 +30,7 @@
       {/each}
 
       {#each vm.env_vars as env (env.id)}
-        <Block color="--mounts">
+        <Block color="--env_vars">
           <EnvDisplay {env} />
         </Block>
       {/each}

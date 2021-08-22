@@ -31,41 +31,42 @@
 
 <style lang="scss" scoped>
   .droppable {
+    padding: 3rem;
     height: 100%;
     width: 100%;
-    background-color: var(--ground-bg);
     position: relative;
 
-    &::after,
-    &::before {
-      --offset: 4rem;
-      content: "";
-      height: calc(100% - calc(2 * var(--offset)));
-      width: calc(100% - calc(2 * var(--offset)));
-      position: absolute;
-      top: var(--offset);
-      left: var(--offset);
-      border: 0.5rem solid var(--white);
-      display: none;
-    }
+    // &::after,
+    // &::before {
+    //   --offset: 4rem;
+    //   content: "";
+    //   height: calc(100% - calc(2 * var(--offset)));
+    //   width: calc(100% - calc(2 * var(--offset)));
+    //   position: absolute;
+    //   top: var(--offset);
+    //   left: var(--offset);
+    //   border: 0.5rem solid var(--white);
+    //   display: none;
+    // }
 
-    &::after {
-      content: "+";
-      height: auto;
-      width: auto;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: none;
-      color: var(--white);
-      font-size: 5rem;
-    }
+    // &::after {
+    //   content: "+";
+    //   height: auto;
+    //   width: auto;
+    //   top: 50%;
+    //   left: 50%;
+    //   transform: translate(-50%, -50%);
+    //   border: none;
+    //   color: var(--white);
+    //   font-size: 5rem;
+    // }
 
     &.active {
-      &::after,
-      &::before {
-        display: block;
-      }
+      color: green;
+      // &::after,
+      // &::before {
+      //   display: block;
+      // }
     }
   }
 </style>
