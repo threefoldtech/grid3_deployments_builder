@@ -9,7 +9,10 @@
 </script>
 
 <div>
-  <span class="keyword">mounts</span>
+  <div class="header">
+    <img src="/assets/mount.svg" alt="deployment icon" width="40" />
+    <span class="keyword">mounts</span>
+  </div>
 
   <Editable
     label="disk_name"

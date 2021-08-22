@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import { v4 } from "uuid";
 
-export type Add_Types = "disks" | "vms" | "mounts" | "env_vars";
+export type Add_Types = "resource" | "disks" | "vms" | "mounts" | "env_vars";
 
 export class Disk {
   constructor(
@@ -52,12 +52,17 @@ export class Resource {
 }
 
 function createCodeStore() {
-  const { subscribe, update } = writable(new Resource());
+  const { subscribe, update, set } = writable<Resource | null>(null);
 
   return {
     subscribe,
+    set,
     add(type: Add_Types, idx?: number) {
       return update((resource) => {
+        if (type === "resource") {
+          resource = new Resource();
+        }
+
         if (type === "disks") {
           resource.disks.push(new Disk());
         }

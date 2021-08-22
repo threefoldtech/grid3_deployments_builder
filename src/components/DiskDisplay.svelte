@@ -8,7 +8,10 @@
 </script>
 
 <div>
-  <span class="keyword">disks</span>
+  <div class="header">
+    <img src="/assets/disk.svg" alt="deployment icon" width="40" />
+    <span class="keyword">disks</span>
+  </div>
 
   <Editable
     label="name"

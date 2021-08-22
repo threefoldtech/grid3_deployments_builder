@@ -7,6 +7,7 @@
   draggable="true"
   style={"background-color: var(--" + label + ");"}
   on:dragstart={(e) => e.dataTransfer.setData("data", label)}
+  on:click
 >
   <p>{label}</p>
 </div>
@@ -18,6 +19,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 
     p {
       text-transform: uppercase;

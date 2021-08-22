@@ -7,7 +7,8 @@
 </script>
 
 <div class="resource">
-  <div class="resource__head">
+  <div class="header">
+    <img src="/assets/deployment.svg" alt="deployment icon" width="40" />
     <span class="keyword">resource</span>
     <Editable
       value={resource.name}
@@ -26,12 +27,3 @@
     on:input={codeStore.updateResource("node")}
   />
 </div>
-
-<style lang="scss" scoped>
-  .resource {
-    &__head {
-      display: flex;
-      align-items: center;
-    }
-  }
-</style>

@@ -1,16 +1,28 @@
 <script lang="ts">
   import codeStore from "../store/code.store";
+  import type { Add_Types } from "../store/code.store";
   import SidebarBlock from "./SidebarBlock.svelte";
 
   $: code = $codeStore;
+
+  function add(key: Add_Types) {
+    return () => {
+      codeStore.add(key);
+    };
+  }
 </script>
 
 <aside class="sidenav">
-  <SidebarBlock label="disks" />
-  <SidebarBlock label="vms" />
-  {#if code.vms.length > 0}
-    <SidebarBlock label="mounts" />
-    <SidebarBlock label="env_vars" />
+  {#if !code}
+    <SidebarBlock label="resource" on:click={add("resource")} />
+  {/if}
+  {#if code}
+    <SidebarBlock label="disks" on:click={add("disks")} />
+    <SidebarBlock label="vms" on:click={add("vms")} />
+    {#if code.vms.length > 0}
+      <SidebarBlock label="mounts" on:click={add("mounts")} />
+      <SidebarBlock label="env_vars" on:click={add("env_vars")} />
+    {/if}
   {/if}
 </aside>
 

@@ -8,7 +8,10 @@
 </script>
 
 <div>
-  <span class="keyword">vms</span>
+  <div class="header">
+    <img src="/assets/vm.svg" alt="deployment icon" width="40" />
+    <span class="keyword">vms</span>
+  </div>
 
   <Editable
     label="name"

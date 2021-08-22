@@ -50,10 +50,6 @@
       text-transform: capitalize;
     }
 
-    .keyword {
-      margin: 0 1rem;
-    }
-
     &__fake {
       font-size: 1.8rem;
       visibility: hidden;

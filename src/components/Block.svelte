@@ -1,6 +1,5 @@
 <script lang="ts">
   export let color: string;
-  export let removable: boolean = true;
 
   $: style = `
     border-left-color: var(${color});
@@ -9,12 +8,10 @@
 </script>
 
 <div class="block" {style}>
-  {#if removable}
-    <button class="block__remove" on:click>
-      <span />
-      <span />
-    </button>
-  {/if}
+  <button class="block__remove" on:click>
+    <span />
+    <span />
+  </button>
   <slot />
 </div>
 
@@ -24,6 +21,8 @@
     border-left: 0.5rem solid transparent;
     margin-bottom: 1rem;
     position: relative;
+    transform-origin: top left;
+    animation: slide-in 0.3s ease forwards;
 
     &__remove {
       position: absolute;
@@ -31,6 +30,8 @@
       right: 0;
       cursor: pointer;
       outline: none !important;
+      background: none;
+      border: none;
 
       > span {
         transition: transform 0.3s ease;
@@ -56,6 +57,14 @@
           }
         }
       }
+    }
+  }
+
+  @keyframes slide-in {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+      visibility: hidden;
     }
   }
 </style>

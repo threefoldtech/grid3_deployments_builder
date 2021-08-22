@@ -9,7 +9,10 @@
 </script>
 
 <div>
-  <span class="keyword">env_vars</span>
+  <div class="header">
+    <img src="/assets/key.svg" alt="deployment icon" width="40" />
+    <span class="keyword">env_vars</span>
+  </div>
 
   <Editable
     label="key"
