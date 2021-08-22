@@ -12,5 +12,6 @@
   main {
     padding-left: var(--sidenav-width);
     height: 100%;
+    background-color: var(--ground-bg);
   }
 </style>

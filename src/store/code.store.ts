@@ -66,6 +66,10 @@ function createCodeStore() {
           resource.vms.push(new VM());
         }
 
+        if (idx === undefined && resource.vms.length === 1) {
+          idx = 0;
+        }
+
         if (idx !== undefined) {
           if (type === "mounts") {
             resource.vms[idx].mounts.push(new Mount());
@@ -136,6 +140,24 @@ function createCodeStore() {
 
           resource.vms[vm_index].env_vars[index][key] =
             type === "number" ? +value : value;
+          return resource;
+        });
+      };
+    },
+
+    removeFromResource(key: "disks" | "vms", idx: number) {
+      return () => {
+        return update((resource) => {
+          resource[key].splice(idx, 1);
+          return resource;
+        });
+      };
+    },
+
+    removeFromVm(vm_idx: number, key: "mounts" | "env_vars", idx: number) {
+      return () => {
+        return update((resource) => {
+          resource.vms[vm_idx][key].splice(idx, 1);
           return resource;
         });
       };

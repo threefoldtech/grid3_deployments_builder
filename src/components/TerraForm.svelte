@@ -13,28 +13,40 @@
 
 <div>
   <Droppable>
-    <Block color="--resource">
+    <Block color="--resource" removable={false}>
       <ResourceDisplay {resource} />
 
       {#each resource.disks as disk, idx (disk.id)}
-        <Block color="--disks">
+        <Block
+          color="--disks"
+          on:click={codeStore.removeFromResource("disks", idx)}
+        >
           <DiskDisplay {idx} {disk} />
         </Block>
       {/each}
 
       {#each resource.vms as vm, idx (vm.id)}
         <Droppable {idx}>
-          <Block color="--vms">
+          <Block
+            color="--vms"
+            on:click={codeStore.removeFromResource("vms", idx)}
+          >
             <VMDisplay {vm} {idx} />
 
             {#each vm.mounts as mount, mIdx (mount.id)}
-              <Block color="--mounts">
+              <Block
+                color="--mounts"
+                on:click={codeStore.removeFromVm(idx, "mounts", mIdx)}
+              >
                 <MountDisplay {mount} vmIdx={idx} idx={mIdx} />
               </Block>
             {/each}
 
             {#each vm.env_vars as env, eIdx (env.id)}
-              <Block color="--env_vars">
+              <Block
+                color="--env_vars"
+                on:click={codeStore.removeFromVm(idx, "env_vars", eIdx)}
+              >
                 <EnvDisplay {env} vmIdx={idx} idx={eIdx} />
               </Block>
             {/each}
@@ -47,7 +59,6 @@
 
 <style lang="scss" scoped>
   div {
-    padding: 3rem;
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
