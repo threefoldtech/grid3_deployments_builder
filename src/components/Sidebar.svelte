@@ -10,7 +10,7 @@
       class="block"
       draggable="true"
       style={"background-color:" + color}
-      on:drag={(e) => e.dataTransfer.setData("data", key)}
+      on:dragstart={(e) => e.dataTransfer.setData("data", key)}
     >
       <p>{key}</p>
     </div>
@@ -24,7 +24,7 @@
     left: 0;
     width: var(--sidenav-width);
     height: 100%;
-    border-right: 0.1rem solid #ccc;
+    border-right: 0.1rem solid var(--sidenav-border);
     padding: 1.5rem;
 
     .block {
@@ -39,7 +39,7 @@
 
       p {
         text-transform: uppercase;
-        color: white;
+        color: var(--white);
         font-size: 2.5rem;
       }
     }
