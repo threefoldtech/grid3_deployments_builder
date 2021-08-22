@@ -3,14 +3,19 @@
   --black: #333;
   --sidenav-width: 26rem;
   --sidenav-border: #cccccc;
-  --ground-bg: #f9f9f9;
+  --ground-bg: #f1f1f1;
   --keyword: #ec44ff;
 
   --resource: #4caf50;
+  --resource-bg: #dff5df;
   --disks: #2196f3;
+  --disks-bg: #d8eeff;
   --vms: #009688;
-  --mounts: #ff9800;
+  --vms-bg: #c5f1ed;
+  --mounts: #e91e63;
+  --mounts-bg: #ffdfea;
   --env_vars: #673ab7;
+  --env_vars-bg: #ddcdf9;
 }
 
 * {

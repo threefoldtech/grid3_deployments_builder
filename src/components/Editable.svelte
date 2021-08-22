@@ -10,7 +10,7 @@
     <span>{label}</span>
     <span>&nbsp; := &nbsp;</span>
   {/if}
-  <input {type} {value} />
+  <input {type} {value} on:input />
 </div>
 
 <style lang="scss" scoped>

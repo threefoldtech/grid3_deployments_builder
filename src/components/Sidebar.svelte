@@ -1,20 +1,17 @@
 <script lang="ts">
-  import colorStore from "../store/color.store";
+  import codeStore from "../store/code.store";
+  import SidebarBlock from "./SidebarBlock.svelte";
 
-  $: keys = $colorStore;
+  $: code = $codeStore;
 </script>
 
 <aside class="sidenav">
-  {#each Object.entries(keys) as [key, color] (key)}
-    <div
-      class="block"
-      draggable="true"
-      style={"background-color:" + color}
-      on:dragstart={(e) => e.dataTransfer.setData("data", key)}
-    >
-      <p>{key}</p>
-    </div>
-  {/each}
+  <SidebarBlock label="disks" />
+  <SidebarBlock label="vms" />
+  {#if code.vms.length > 0}
+    <SidebarBlock label="mounts" />
+    <SidebarBlock label="env_vars" />
+  {/if}
 </aside>
 
 <style lang="scss" scoped>
@@ -26,22 +23,5 @@
     height: 100%;
     border-right: 0.1rem solid var(--sidenav-border);
     padding: 1.5rem;
-
-    .block {
-      margin-bottom: 1.5rem;
-      padding: 2rem 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      // :TODO Add the right cursor
-      cursor: pointer;
-
-      p {
-        text-transform: uppercase;
-        color: var(--white);
-        font-size: 2.5rem;
-      }
-    }
   }
 </style>

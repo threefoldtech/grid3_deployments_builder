@@ -3,6 +3,7 @@
 
   $: style = `
     border-left-color: var(${color});
+    background-color: var(${color}-bg);
   `;
 </script>
 
@@ -12,7 +13,7 @@
 
 <style lang="scss" scoped>
   .block {
-    padding: 1.5rem;
+    padding: 2rem;
     border-left: 0.5rem solid transparent;
     margin-bottom: 1rem;
   }

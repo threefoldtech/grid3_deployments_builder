@@ -1,21 +1,27 @@
 <script lang="ts">
-  import TeraForm from "./TeraForm.svelte";
+  import codeStore from "../store/code.store";
+  import type { Add_Types } from "../store/code.store";
 
+  export let idx: number = undefined;
   let active = false;
 
   const drop = {
     over(e: DragEvent) {
       e.preventDefault();
+      e.stopPropagation();
       active = true;
     },
     leave(e: DragEvent) {
       e.preventDefault();
+      e.stopPropagation();
       active = false;
     },
     drop(e: DragEvent) {
       e.preventDefault();
+      e.stopPropagation();
       active = false;
-      console.log(e.dataTransfer.getData("data"));
+      const item = e.dataTransfer.getData("data") as Add_Types;
+      codeStore.add(item, idx);
     },
   };
 </script>
@@ -26,12 +32,11 @@
   on:drop={drop.drop}
   on:dragleave={drop.leave}
 >
-  <TeraForm />
+  <slot />
 </div>
 
 <style lang="scss" scoped>
   .droppable {
-    padding: 3rem;
     height: 100%;
     width: 100%;
     position: relative;

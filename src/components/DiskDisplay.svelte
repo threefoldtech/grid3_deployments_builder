@@ -1,14 +1,29 @@
 <script lang="ts">
   import type { Disk } from "../store/code.store";
+  import codeStore from "../store/code.store";
   import Editable from "./Editable.svelte";
 
+  export let idx: number;
   export let disk: Disk;
 </script>
 
 <div>
   <span class="keyword">disks</span>
 
-  <Editable label="name" value={disk.name} />
-  <Editable label="size" value={disk.size} type="number" />
-  <Editable label="description" value={disk.description} />
+  <Editable
+    label="name"
+    value={disk.name}
+    on:input={codeStore.updateDisk(idx, "name")}
+  />
+  <Editable
+    label="size"
+    value={disk.size}
+    type="number"
+    on:input={codeStore.updateDisk(idx, "size")}
+  />
+  <Editable
+    label="description"
+    value={disk.description}
+    on:input={codeStore.updateDisk(idx, "description")}
+  />
 </div>
