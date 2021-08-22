@@ -16,6 +16,24 @@
     const json = JSON.stringify(value);
     return `data:image/png;base64,${btoa(json)}`;
   }
+
+  function importFromJson(e: Event) {
+    const inp = e.target as HTMLInputElement;
+    if (inp.files.length === 0) return;
+
+    const file = inp.files.item(0);
+    if (file.type.indexOf("json") === -1) return;
+
+    const reader = new FileReader();
+    reader.readAsText(file, "utf-8");
+
+    reader.onload = (e) => {
+      reader.onload = null;
+      try {
+        codeStore.set(JSON.parse(e.target.result as string));
+      } catch {}
+    };
+  }
 </script>
 
 <aside class="sidenav">
@@ -34,7 +52,14 @@
   </div>
   <div class="sidenav__actions">
     <button>
-      <a> import json </a>
+      <input
+        id="f"
+        type="file"
+        hidden
+        accept="application/JSON"
+        on:change={importFromJson}
+      />
+      <label for="f"> import json </label>
     </button>
     <button disabled={!code}>
       <a download={`${code?.name}.json`} href={exportAsJson(code)}>
@@ -79,7 +104,8 @@
           pointer-events: none !important;
         }
 
-        a {
+        a,
+        label {
           display: block;
           height: 100%;
           width: 100%;
