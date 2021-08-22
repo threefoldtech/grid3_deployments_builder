@@ -41,6 +41,11 @@ body {
   font-size: 1.6rem;
 }
 
+a {
+  color: inherit !important;
+  text-decoration: none;
+}
+
 .keyword {
   background-color: var(--ground-bg);
   padding: 0.5rem;
