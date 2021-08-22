@@ -33,7 +33,7 @@
   .droppable {
     height: 100%;
     width: 100%;
-    background-color: var(--sidenav-border);
+    background-color: var(--ground-bg);
     position: relative;
 
     &::after,

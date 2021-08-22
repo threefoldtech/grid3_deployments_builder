@@ -4,6 +4,13 @@
   --sidenav-width: 26rem;
   --sidenav-border: #ccc;
   --ground-bg: #f1f1f1;
+  --keyword: #ec44ff;
+
+  --resource: #4caf50;
+  --disks: #2196f3;
+  --vms: #009688;
+  --mounts: #ff9800;
+  --env_vars: #673ab7;
 }
 
 * {
@@ -27,4 +34,11 @@ body {
   color: var(--black);
   box-sizing: border-box;
   font-size: 1.6rem;
+}
+
+.keyword {
+  background-color: var(--ground-bg);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: var(--keyword);
 }
