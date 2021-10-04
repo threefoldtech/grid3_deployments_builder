@@ -22,9 +22,6 @@
     border-left: 0.5rem solid transparent;
     margin-bottom: 1rem;
     position: relative;
-    transform-origin: top left;
-    animation: slide-in 0.3s ease forwards;
-
     &__remove {
       position: absolute;
       top: 0;
@@ -58,14 +55,6 @@
           }
         }
       }
-    }
-  }
-
-  @keyframes slide-in {
-    0% {
-      transform: scale(0);
-      opacity: 0;
-      visibility: hidden;
     }
   }
 </style>

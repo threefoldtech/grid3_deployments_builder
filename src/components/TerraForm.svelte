@@ -8,13 +8,18 @@
   import EnvDisplay from "./EnvDisplay.svelte";
   import Droppable from "./Droppable.svelte";
 
-  $: resource = $codeStore;
+  $: store = $codeStore;
+  $: idx = store.active;
+  $: resource = idx > -1 ? store.resources[idx] : null;
 </script>
 
 <div>
   <Droppable>
     {#if resource}
-      <Block color="--resource" on:click={() => codeStore.set(null)}>
+      <Block
+        color="--resource"
+        on:click={codeStore.removeResource.bind(codeStore)}
+      >
         <ResourceDisplay {resource} />
 
         {#each resource.disks as disk, idx (disk.id)}
@@ -55,6 +60,10 @@
           </Droppable>
         {/each}
       </Block>
+    {:else}
+      <p style="text-align: center; padding-top: 10rem; font-size: 2rem;">
+        Please create or select a resource.
+      </p>
     {/if}
   </Droppable>
 </div>

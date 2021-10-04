@@ -1,9 +1,12 @@
 <script lang="ts">
+  import codeStore from "./store/code.store";
   import Builder from "./components/Builder.svelte";
   import TerraForm from "./components/TerraForm.svelte";
 
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
+
+  $: store = $codeStore;
 </script>
 
 <aside class="sidenav">
@@ -23,7 +26,21 @@
   </div>
   <div class="sidenav__content">
     {#if explorer === 0}
-      content
+      <button
+        class="sidenav__content__create"
+        on:click={codeStore.addNewResource.bind(codeStore)}
+      >
+        Add New Resource</button
+      >
+      {#each store.resources as resource, i}
+        <button
+          class={"sidenav__content__project " +
+            (store.active === i ? "active" : "")}
+          on:click={codeStore.setActiveResource.bind(codeStore, i)}
+        >
+          {resource.name} - {i}
+        </button>
+      {/each}
     {:else if explorer === 1}
       <Builder />
     {/if}
@@ -77,6 +94,26 @@
       height: 100%;
       overflow-x: hidden;
       overflow-y: auto;
+
+      &__create {
+        width: 100%;
+        padding: 2rem;
+        cursor: pointer;
+        margin-bottom: 1rem;
+      }
+
+      &__project {
+        width: 100%;
+        padding: 1.5rem;
+        background: none;
+        border: none;
+        border-bottom: 0.1rem solid var(--sidenav-border);
+        cursor: pointer;
+
+        &.active {
+          background-color: #e9e9e9;
+        }
+      }
     }
   }
 </style>

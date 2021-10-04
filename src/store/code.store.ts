@@ -52,18 +52,32 @@ export class Resource {
   ) {}
 }
 
+export interface IStore {
+  active: number;
+  resources: Resource[];
+}
+
 function createCodeStore() {
-  // TODO: load localstorage
-  const store = writable<Resource | null>(null);
+  let initData: IStore;
+  try {
+    let data = localStorage.getItem("store");
+    if (data) {
+      initData = JSON.parse(data);
+    }
+  } catch {}
+
+  const store = writable<IStore>(
+    initData || {
+      active: -1,
+      resources: [],
+    }
+  );
   const { subscribe, set } = store;
 
-  function update(updater: Updater<Resource>): void {
+  function update(updater: Updater<IStore>): void {
     store.update((value) => {
       const newValue = updater(value);
-
-      // TODO: add storing to localstorage here
-      console.log(value, newValue);
-
+      localStorage.setItem("store", JSON.stringify(newValue));
       return newValue;
     });
   }
@@ -71,67 +85,77 @@ function createCodeStore() {
   return {
     subscribe,
     set,
+    setActiveResource(active: number) {
+      return update((value) => {
+        return { ...value, active };
+      });
+    },
+    addNewResource() {
+      return update((value) => {
+        value.active = value.resources.push(new Resource()) - 1;
+        return value;
+      });
+    },
     add(type: Add_Types, idx?: number) {
-      return update((resource) => {
-        if (type === "resource") {
-          resource = new Resource();
-        }
+      return update((value) => {
+        let resource = value.resources[value.active];
 
+        if (type === "resource") {
+          value.active = value.resources.push(new Resource()) - 1;
+          return value;
+        }
         if (type === "disks") {
           resource.disks.push(new Disk());
         }
-
         if (type === "vms") {
           resource.vms.push(new VM());
         }
-
         if (idx === undefined && resource.vms.length === 1) {
           idx = 0;
         }
-
         if (idx !== undefined) {
           if (type === "mounts") {
             resource.vms[idx].mounts.push(new Mount());
           }
-
           if (type === "env_vars") {
             resource.vms[idx].env_vars.push(new Env());
           }
         }
 
-        return resource;
+        value.resources[value.active] = resource;
+        return value;
       });
     },
 
     updateResource<R extends keyof Resource>(key: R) {
       return (e: any) => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           const { type, value } = e.target;
-
           resource[key] = type === "number" ? +value : value;
-          return resource;
+          return data;
         });
       };
     },
 
     updateDisk<R extends keyof Disk>(index: number, key: R) {
       return (e: any) => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           const { type, value } = e.target;
-
           resource.disks[index][key] = type === "number" ? +value : value;
-          return resource;
+          return data;
         });
       };
     },
 
     updateVm<R extends keyof VM>(index: number, key: R) {
       return (e: any) => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           const { type, value } = e.target;
-
           resource.vms[index][key] = type === "number" ? +value : value;
-          return resource;
+          return data;
         });
       };
     },
@@ -142,44 +166,54 @@ function createCodeStore() {
       key: R
     ) {
       return (e: any) => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           const { type, value } = e.target;
-
           resource.vms[vm_index].mounts[index][key] =
             type === "number" ? +value : value;
-          return resource;
+          return data;
         });
       };
     },
 
     updateEnv<R extends keyof Env>(vm_index: number, index: number, key: R) {
       return (e: any) => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           const { type, value } = e.target;
-
           resource.vms[vm_index].env_vars[index][key] =
             type === "number" ? +value : value;
-          return resource;
+          return data;
         });
       };
     },
 
     removeFromResource(key: "disks" | "vms", idx: number) {
       return () => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           resource[key].splice(idx, 1);
-          return resource;
+          return data;
         });
       };
     },
 
     removeFromVm(vm_idx: number, key: "mounts" | "env_vars", idx: number) {
       return () => {
-        return update((resource) => {
+        return update((data) => {
+          let resource = data.resources[data.active];
           resource.vms[vm_idx][key].splice(idx, 1);
-          return resource;
+          return data;
         });
       };
+    },
+
+    removeResource() {
+      return update((data) => {
+        data.resources.splice(data.active, 1);
+        data.active = -1;
+        return data;
+      });
     },
   };
 }

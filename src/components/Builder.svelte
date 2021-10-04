@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Add_Types, Resource } from "../store/code.store";
+  import type { Add_Types, IStore } from "../store/code.store";
   import codeStore from "../store/code.store";
   import SidebarBlock from "./SidebarBlock.svelte";
-  import toTerraform from "../utils/toTerrfaform";
 
-  $: code = $codeStore;
+  $: store = $codeStore;
+  $: idx = store.active;
+  $: code = idx > -1 ? store.resources[idx] : null;
 
   function add(key: Add_Types) {
     return () => {
@@ -12,7 +13,7 @@
     };
   }
 
-  function exportAsJson(value: Resource) {
+  function exportAsJson(value: IStore) {
     const json = JSON.stringify(value);
     return `data:image/png;base64,${btoa(json)}`;
   }
@@ -62,17 +63,7 @@
       <label for="f"> import json </label>
     </button>
     <button disabled={!code}>
-      <a download={`${code?.name}.json`} href={exportAsJson(code)}>
-        export as json
-      </a>
-    </button>
-    <button disabled={!code}>
-      <a
-        download={`${code?.name}.tf`}
-        href={`data:image/png;base64,${btoa(toTerraform(code))}`}
-      >
-        export as terraform
-      </a>
+      <a download="store.json" href={exportAsJson(store)}> export as json </a>
     </button>
   </div>
 </aside>
