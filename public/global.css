@@ -1,7 +1,7 @@
 :root {
   --white: white;
   --black: #333;
-  --sidenav-width: 26rem;
+  --sidenav-width: 30rem;
   --sidenav-border: #cccccc;
   --ground-bg: rgba(241, 241, 241, 0.5);
   --keyword: #ec44ff;

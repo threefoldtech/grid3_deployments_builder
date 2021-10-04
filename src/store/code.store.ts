@@ -1,3 +1,4 @@
+import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
 import { v4 } from "uuid";
 
@@ -52,7 +53,20 @@ export class Resource {
 }
 
 function createCodeStore() {
-  const { subscribe, update, set } = writable<Resource | null>(null);
+  // TODO: load localstorage
+  const store = writable<Resource | null>(null);
+  const { subscribe, set } = store;
+
+  function update(updater: Updater<Resource>): void {
+    store.update((value) => {
+      const newValue = updater(value);
+
+      // TODO: add storing to localstorage here
+      console.log(value, newValue);
+
+      return newValue;
+    });
+  }
 
   return {
     subscribe,

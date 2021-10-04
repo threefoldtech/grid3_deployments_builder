@@ -79,17 +79,11 @@
 
 <style lang="scss" scoped>
   .sidenav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--sidenav-width);
+    width: 100%;
     height: 100%;
-    border-right: 0.1rem solid var(--sidenav-border);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
 
     &__actions {
       padding-top: 100px;
