@@ -2,6 +2,7 @@
   import codeStore from "./store/code.store";
   import Builder from "./components/Builder.svelte";
   import TerraForm from "./components/TerraForm.svelte";
+  import FloatingActions from "./components/FloatingActions.svelte";
 
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
@@ -30,8 +31,8 @@
         class="sidenav__content__create"
         on:click={codeStore.addNewResource.bind(codeStore)}
       >
-        Add New Resource</button
-      >
+        Add New Project
+      </button>
       {#each store.resources as resource, i}
         <button
           class={"sidenav__content__project " +
@@ -49,6 +50,7 @@
 <main>
   <TerraForm />
 </main>
+<FloatingActions />
 
 <style lang="scss" scoped>
   main {
