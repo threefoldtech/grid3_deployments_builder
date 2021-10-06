@@ -14,47 +14,62 @@
 </script>
 
 {#if project}
-  {#each project.resources as resource, index (resource.id)}
+  {#each project.resources as resource, resourceIdx (resource.id)}
     <div>
-      <Droppable resourceIdx={index}>
+      <Droppable {resourceIdx}>
         <Block
           color="--resource"
           on:click={codeStore.removeResource.bind(codeStore)}
         >
-          <ResourceDisplay {resource} />
+          <ResourceDisplay {resource} idx={resourceIdx} />
 
           {#each resource.disks as disk, idx (disk.id)}
             <Block
               color="--disks"
-              on:click={codeStore.removeFromResource("disks", idx)}
+              on:click={codeStore.removeFromResource(resourceIdx, "disks", idx)}
             >
-              <DiskDisplay {idx} {disk} />
+              <DiskDisplay {resourceIdx} {idx} {disk} />
             </Block>
           {/each}
 
           {#each resource.vms as vm, idx (vm.id)}
-            <Droppable resourceIdx={idx} {idx}>
+            <Droppable {resourceIdx} {idx}>
               <Block
                 color="--vms"
-                on:click={codeStore.removeFromResource("vms", idx)}
+                on:click={codeStore.removeFromResource(resourceIdx, "vms", idx)}
               >
-                <VMDisplay {vm} {idx} />
+                <VMDisplay {resourceIdx} {vm} {idx} />
 
                 {#each vm.mounts as mount, mIdx (mount.id)}
                   <Block
                     color="--mounts"
-                    on:click={codeStore.removeFromVm(idx, "mounts", mIdx)}
+                    on:click={codeStore.removeFromVm(
+                      resourceIdx,
+                      idx,
+                      "mounts",
+                      mIdx
+                    )}
                   >
-                    <MountDisplay {mount} vmIdx={idx} idx={mIdx} />
+                    <MountDisplay
+                      {resourceIdx}
+                      {mount}
+                      vmIdx={idx}
+                      idx={mIdx}
+                    />
                   </Block>
                 {/each}
 
                 {#each vm.env_vars as env, eIdx (env.id)}
                   <Block
                     color="--env_vars"
-                    on:click={codeStore.removeFromVm(idx, "env_vars", eIdx)}
+                    on:click={codeStore.removeFromVm(
+                      resourceIdx,
+                      idx,
+                      "env_vars",
+                      eIdx
+                    )}
                   >
-                    <EnvDisplay {env} vmIdx={idx} idx={eIdx} />
+                    <EnvDisplay {resourceIdx} {env} vmIdx={idx} idx={eIdx} />
                   </Block>
                 {/each}
               </Block>

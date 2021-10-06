@@ -4,6 +4,7 @@
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";
 
+  export let resourceIdx: number;
   export let vmIdx: number;
   export let idx: number;
   export let mount: Mount;
@@ -25,12 +26,12 @@
     <Editable
       label="disk_name"
       value={mount.disk_name}
-      on:input={codeStore.updateMounts(vmIdx, idx, "disk_name")}
+      on:input={codeStore.updateMounts(resourceIdx, vmIdx, idx, "disk_name")}
     />
     <Editable
       label="mount_point"
       value={mount.mount_point}
-      on:input={codeStore.updateMounts(vmIdx, idx, "mount_point")}
+      on:input={codeStore.updateMounts(resourceIdx, vmIdx, idx, "mount_point")}
     />
   {/if}
 </div>

@@ -4,6 +4,7 @@
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";
 
+  export let resourceIdx: number;
   export let idx: number;
   export let disk: Disk;
 
@@ -24,18 +25,18 @@
     <Editable
       label="name"
       value={disk.name}
-      on:input={codeStore.updateDisk(idx, "name")}
+      on:input={codeStore.updateDisk(resourceIdx, idx, "name")}
     />
     <Editable
       label="size"
       value={disk.size}
       type="number"
-      on:input={codeStore.updateDisk(idx, "size")}
+      on:input={codeStore.updateDisk(resourceIdx, idx, "size")}
     />
     <Editable
       label="description"
       value={disk.description}
-      on:input={codeStore.updateDisk(idx, "description")}
+      on:input={codeStore.updateDisk(resourceIdx, idx, "description")}
     />
   {/if}
 </div>

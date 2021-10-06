@@ -4,6 +4,7 @@
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";
 
+  export let resourceIdx: number;
   export let vmIdx: number;
   export let idx: number;
   export let env: Env;
@@ -25,12 +26,12 @@
     <Editable
       label="key"
       value={env.key}
-      on:input={codeStore.updateEnv(vmIdx, idx, "key")}
+      on:input={codeStore.updateEnv(resourceIdx, vmIdx, idx, "key")}
     />
     <Editable
       label="value"
       value={env.value}
-      on:input={codeStore.updateEnv(vmIdx, idx, "value")}
+      on:input={codeStore.updateEnv(resourceIdx, vmIdx, idx, "value")}
     />
   {/if}
 </div>

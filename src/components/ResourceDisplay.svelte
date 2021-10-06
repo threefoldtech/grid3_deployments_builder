@@ -5,6 +5,7 @@
   import Editable from "./Editable.svelte";
 
   export let resource: Resource;
+  export let idx: number;
 
   let collapse = false;
 </script>
@@ -20,11 +21,11 @@
       <Editable
         value={resource.name}
         style="margin: 0 1.5rem;"
-        on:input={codeStore.updateResource("name")}
+        on:input={codeStore.updateResource("name", idx)}
       />
       <Editable
         value={resource.title}
-        on:input={codeStore.updateResource("title")}
+        on:input={codeStore.updateResource("title", idx)}
       />
     {/if}
   </div>
@@ -35,7 +36,7 @@
       label="node"
       value={resource.node}
       type="number"
-      on:input={codeStore.updateResource("node")}
+      on:input={codeStore.updateResource("node", idx)}
     />
   {/if}
 </div>

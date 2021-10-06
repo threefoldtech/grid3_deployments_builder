@@ -45,6 +45,7 @@
     {:else if code && !code.resources.length}
       <SidebarBlock label="resource" on:click={add("resource")} />
     {:else}
+      <SidebarBlock label="resource" on:click={add("resource")} />
       <SidebarBlock label="disks" on:click={add("disks")} />
       <SidebarBlock label="vms" on:click={add("vms")} />
       {#if hasVms}

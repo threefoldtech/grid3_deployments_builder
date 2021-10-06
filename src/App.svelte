@@ -29,7 +29,7 @@
     {#if explorer === 0}
       <button
         class="sidenav__content__create"
-        on:click={codeStore.addNewResource.bind(codeStore)}
+        on:click={codeStore.add.bind(codeStore, "project")}
       >
         Add New Project
       </button>
@@ -40,6 +40,7 @@
           on:click={codeStore.setActiveProject.bind(codeStore, i)}
         >
           {project.name} - {i}
+          <span on:click={codeStore.removeProject.bind(codeStore, i)}>X</span>
         </button>
       {/each}
     {:else if explorer === 1}
