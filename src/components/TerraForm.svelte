@@ -10,6 +10,7 @@
   import NetworkDisplay from "./NetworkDisplay.svelte";
   import ZdbDisplay from "./ZdbDisplay.svelte";
   import MasterDisplay from "./MasterDisplay.svelte";
+  import WorkerDisplay from "./WorkerDisplay.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -48,11 +49,13 @@
             </Block>
           {/each}
 
-          <hr />
-          {#each resource.workers as worker (worker.id)}
-            <!-- TODO -->
-            {JSON.stringify(worker)}
-            <br />
+          {#each resource.workers as worker, i (worker.id)}
+            <Block
+              color="--disks"
+              on:click={codeStore.removeWorker.bind(codeStore, resourceIdx, i)}
+            >
+              <WorkerDisplay {resourceIdx} idx={i} {worker} />
+            </Block>
           {/each}
 
           {#each resource.disks as disk, idx (disk.id)}

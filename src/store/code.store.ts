@@ -215,6 +215,20 @@ function createCodeStore() {
       };
     },
 
+    updateWorker<R extends keyof Worker>(
+      resourceIdx: number,
+      index: number,
+      key: R
+    ) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          value.projects[value.active].resources[resourceIdx].workers[index][key] = type === "number" ? +val : val; // prettier-ignore
+          return value;
+        });
+      };
+    },
+
     updateNetwork<R extends keyof Network>(key: R) {
       return (e: any) => {
         return update((value) => {
@@ -288,6 +302,13 @@ function createCodeStore() {
     removeMaster(resourceIdx: number, idx: number) {
       return update((value) => {
         value.projects[value.active].resources[resourceIdx].masters.splice(idx, 1); // prettier-ignore
+        return value;
+      });
+    },
+
+    removeWorker(resourceIdx: number, idx: number) {
+      return update((value) => {
+        value.projects[value.active].resources[resourceIdx].workers.splice(idx, 1); // prettier-ignore
         return value;
       });
     },
