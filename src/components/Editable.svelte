@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  export let value: string | number;
+  export let value: string | number | null = null;
   export let type: "number" | "text" = "text";
   export let label: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
@@ -26,17 +26,21 @@
     <span class="editable__label">{label}</span>
     <span>&nbsp; <span class="keyword">=</span> &nbsp;</span>
   {/if}
-  <span class="editable__fake" bind:this={fake_span}>
-    {value}
-  </span>
-  <input
-    {type}
-    {value}
-    style={`width: ${width}px`}
-    on:input
-    on:keydown={updateWidth}
-    on:click={autoSelect}
-  />
+  {#if value}
+    <span class="editable__fake" bind:this={fake_span}>
+      {value}
+    </span>
+    <input
+      {type}
+      {value}
+      style={`width: ${width}px`}
+      on:input
+      on:keydown={updateWidth}
+      on:click={autoSelect}
+    />
+  {:else}
+    <slot />
+  {/if}
 </div>
 
 <style lang="scss" scoped>

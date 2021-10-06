@@ -284,6 +284,13 @@ function createCodeStore() {
         return value;
       });
     },
+
+    removeMaster(resourceIdx: number, idx: number) {
+      return update((value) => {
+        value.projects[value.active].resources[resourceIdx].masters.splice(idx, 1); // prettier-ignore
+        return value;
+      });
+    },
   };
 }
 

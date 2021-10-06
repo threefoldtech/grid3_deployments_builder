@@ -9,6 +9,7 @@
   import Droppable from "./Droppable.svelte";
   import NetworkDisplay from "./NetworkDisplay.svelte";
   import ZdbDisplay from "./ZdbDisplay.svelte";
+  import MasterDisplay from "./MasterDisplay.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -38,10 +39,13 @@
         >
           <ResourceDisplay {resource} idx={resourceIdx} />
 
-          {#each resource.masters as master (master.id)}
-            <!-- TODO -->
-            {JSON.stringify(master)}
-            <br />
+          {#each resource.masters as master, i (master.id)}
+            <Block
+              color="--disks"
+              on:click={codeStore.removeMaster.bind(codeStore, resourceIdx, i)}
+            >
+              <MasterDisplay {resourceIdx} idx={i} {master} />
+            </Block>
           {/each}
 
           <hr />
