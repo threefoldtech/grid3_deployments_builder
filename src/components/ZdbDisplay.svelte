@@ -4,6 +4,7 @@
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";
 
+  export let resourceIdx: number;
   export let idx: number;
   export let zdb: ZDB;
 
@@ -24,28 +25,28 @@
     <Editable
       label="name"
       value={zdb.name}
-      on:input={codeStore.updateZdb(idx, "name")}
+      on:input={codeStore.updateZdb(resourceIdx, idx, "name")}
     />
     <Editable
       label="size"
       value={zdb.size}
       type="number"
-      on:input={codeStore.updateZdb(idx, "size")}
+      on:input={codeStore.updateZdb(resourceIdx, idx, "size")}
     />
     <Editable
       label="description"
       value={zdb.description}
-      on:input={codeStore.updateZdb(idx, "description")}
+      on:input={codeStore.updateZdb(resourceIdx, idx, "description")}
     />
     <Editable
       label="password"
       value={zdb.password}
-      on:input={codeStore.updateZdb(idx, "password")}
+      on:input={codeStore.updateZdb(resourceIdx, idx, "password")}
     />
     <Editable
       label="mode"
       value={zdb.mode}
-      on:input={codeStore.updateZdb(idx, "mode")}
+      on:input={codeStore.updateZdb(resourceIdx, idx, "mode")}
     />
   {/if}
 </div>

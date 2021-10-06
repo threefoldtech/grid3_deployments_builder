@@ -24,7 +24,8 @@ export type Add_Types =
   | "zdbs"
   | "master"
   | "worker"
-  | "network";
+  | "network"
+  | "kubernetes";
 
 export interface IStore {
   active: number;
@@ -67,7 +68,7 @@ function createCodeStore() {
     add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
         // prettier-ignore
-        if (type == "disks" || type == "vms" || type == "master" || type == "worker")
+        if (type == "disks" || type == "vms" || type == "master" || type == "worker" || type == "zdbs")
           if (resourceIdx == undefined && value.projects[value.active].resources.length === 1)
             resourceIdx = 0;
 
@@ -82,7 +83,8 @@ function createCodeStore() {
             break;
 
           case "zdbs":
-            value.projects[value.active].zdbs.push(new ZDB());
+            if (resourceIdx != undefined)
+              value.projects[value.active].resources[resourceIdx].zdbs.push(new ZDB()); // prettier-ignore
             break;
 
           case "master":
@@ -121,6 +123,22 @@ function createCodeStore() {
 
           case "network":
             value.projects[value.active].network = new Network();
+            break;
+
+          case "kubernetes":
+            value.projects[value.active].resources.push(
+              new Resource(
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                [new Master()],
+                [new Worker(), new Worker(), new Worker(), new Worker()]
+              )
+            );
             break;
         }
         return value;
@@ -191,11 +209,11 @@ function createCodeStore() {
       };
     },
 
-    updateZdb<R extends keyof ZDB>(index: number, key: R) {
+    updateZdb<R extends keyof ZDB>(resourceIdx: number, index: number, key: R) {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          value.projects[value.active].zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
+          value.projects[value.active].resources[resourceIdx].zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
           return value;
         });
       };
@@ -292,9 +310,9 @@ function createCodeStore() {
       });
     },
 
-    removeZdb(idx: number) {
+    removeZdb(resourceIdx: number, idx: number) {
       return update((value) => {
-        value.projects[value.active].zdbs.splice(idx, 1);
+        value.projects[value.active].resources[resourceIdx].zdbs.splice(idx, 1);
         return value;
       });
     },

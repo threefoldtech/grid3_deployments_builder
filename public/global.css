@@ -20,6 +20,7 @@
   --network: brown;
   --master: steelblue;
   --worker: lightblue;
+  --kubernetes: purple;
 }
 
 * {

@@ -45,15 +45,16 @@
       <p>Please select project</p>
     {:else if code}
       <SidebarBlock label="resource" on:click={add("resource")} />
-      <SidebarBlock label="zdbs" on:click={add("zdbs")} />
       {#if !hasNetwork}
         <SidebarBlock label="network" on:click={add("network")} />
       {/if}
+      <SidebarBlock label="kubernetes" on:click={add("kubernetes")} />
       {#if code.resources.length}
+        <SidebarBlock label="zdbs" on:click={add("zdbs")} />
         <SidebarBlock label="disks" on:click={add("disks")} />
         <SidebarBlock label="vms" on:click={add("vms")} />
-        <SidebarBlock label="master" on:click={add("master")} />
-        <SidebarBlock label="worker" on:click={add("worker")} />
+        <!-- <SidebarBlock label="master" on:click={add("master")} />
+        <SidebarBlock label="worker" on:click={add("worker")} /> -->
         {#if hasVms}
           <SidebarBlock label="mounts" on:click={add("mounts")} />
           <SidebarBlock label="env_vars" on:click={add("env_vars")} />

@@ -26,11 +26,6 @@
       <NetworkDisplay network={project.network} />
     </Block>
   {/if}
-  {#each project.zdbs as zdb, i (zdb.id)}
-    <Block color="--resource" on:click={codeStore.removeZdb.bind(codeStore, i)}>
-      <ZdbDisplay {zdb} idx={i} />
-    </Block>
-  {/each}
   {#each project.resources as resource, resourceIdx (resource.id)}
     <div>
       <Droppable {resourceIdx}>
@@ -39,6 +34,15 @@
           on:click={codeStore.removeResource.bind(codeStore)}
         >
           <ResourceDisplay {resource} idx={resourceIdx} />
+
+          {#each resource.zdbs as zdb, i (zdb.id)}
+            <Block
+              color="--resource"
+              on:click={codeStore.removeZdb.bind(codeStore, resourceIdx, i)}
+            >
+              <ZdbDisplay {resourceIdx} {zdb} idx={i} />
+            </Block>
+          {/each}
 
           {#each resource.masters as master, i (master.id)}
             <Block
@@ -116,6 +120,6 @@
   {/each}
 {:else}
   <p style="text-align: center; padding-top: 10rem; font-size: 2rem;">
-    Please create or select a resource.
+    Please create or select a project.
   </p>
 {/if}
