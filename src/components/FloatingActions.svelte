@@ -5,30 +5,40 @@
   $: store = $codeStore;
   $: active = store.active > -1;
 
-  let mnemonicsIsNeeded = false;
+  let mnemonicsIsNeeded = true;
 
   const open = () => (mnemonicsIsNeeded = true);
   const close = () => (mnemonicsIsNeeded = false);
 
-  $: mnemonics = $mnemonicsStore;
-  $: disabled = mnemonics.length === 0;
+  $: mnemStore = $mnemonicsStore;
+  $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
 
   function onDeployHandler() {
     close();
 
-    console.log("here?", mnemonics);
+    console.log({ mnemStore });
   }
-
-  const onChange = (e: any) => {
-    mnemonicsStore.set(e.target.value);
-  };
 </script>
 
 {#if mnemonicsIsNeeded}
   <div class="layout">
     <div class="layout__mnemonics">
-      <p>Please Enter Your Mnemonics:</p>
-      <textarea placeholder="mnemonics" value={mnemonics} on:input={onChange} />
+      <div>
+        <p>Please Enter Your TwinID:</p>
+        <input
+          placeholder="twinid"
+          value={mnemStore.twinId}
+          on:input={mnemonicsStore.updateTwinid}
+        />
+      </div>
+      <div>
+        <p>Please Enter Your Mnemonics:</p>
+        <textarea
+          placeholder="mnemonics"
+          value={mnemStore.mnemonics}
+          on:input={mnemonicsStore.updateMnemonics}
+        />
+      </div>
       <div class="layout__mnemonics__actions">
         <button class="btn btn-sm btn-cancel" on:click={close}>Cancel</button>
         <button
@@ -72,7 +82,8 @@
         margin-bottom: 1rem;
       }
 
-      textarea {
+      textarea,
+      input {
         max-width: 100%;
         width: 100%;
         height: 20rem;
@@ -87,6 +98,11 @@
         &:focus {
           border-color: darken(#ccc, 20);
         }
+      }
+
+      input {
+        height: auto;
+        border-width: 1px;
       }
 
       &__actions {
