@@ -8,6 +8,8 @@
   $: code = store.projects[idx];
   $: hasVms = code && code.resources.some((r) => r.vms.length > 0);
   $: hasNetwork = code && code.network;
+  $: hasKubernetes =
+    code && code.resources.some((r) => r.type === "kubernetes");
 
   function add(key: Add_Types) {
     return () => {
@@ -44,7 +46,7 @@
     {#if !code}
       <p>Please select project</p>
     {:else if code}
-      <SidebarBlock label="resource" on:click={add("resource")} />
+      <SidebarBlock label="deployment" on:click={add("deployment")} />
       {#if !hasNetwork}
         <SidebarBlock label="network" on:click={add("network")} />
       {/if}
@@ -53,8 +55,10 @@
         <SidebarBlock label="zdbs" on:click={add("zdbs")} />
         <SidebarBlock label="disks" on:click={add("disks")} />
         <SidebarBlock label="vms" on:click={add("vms")} />
-        <!-- <SidebarBlock label="master" on:click={add("master")} />
-        <SidebarBlock label="worker" on:click={add("worker")} /> -->
+        {#if hasKubernetes}
+          <SidebarBlock label="master" on:click={add("master")} />
+          <SidebarBlock label="worker" on:click={add("worker")} />
+        {/if}
         {#if hasVms}
           <SidebarBlock label="mounts" on:click={add("mounts")} />
           <SidebarBlock label="env_vars" on:click={add("env_vars")} />

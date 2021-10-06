@@ -39,8 +39,14 @@
             (store.active === i ? "active" : "")}
           on:click={codeStore.setActiveProject.bind(codeStore, i)}
         >
-          {project.name} - {i}
-          <span on:click={codeStore.removeProject.bind(codeStore, i)}>X</span>
+          <strong>#{i}</strong>
+          {project.name}
+          <span
+            style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
+            on:click={codeStore.removeProject.bind(codeStore, i)}
+          >
+            X
+          </span>
         </button>
       {/each}
     {:else if explorer === 1}

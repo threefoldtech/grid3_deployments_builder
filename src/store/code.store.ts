@@ -16,7 +16,7 @@ import {
 
 export type Add_Types =
   | "project"
-  | "resource"
+  | "deployment"
   | "disks"
   | "vms"
   | "mounts"
@@ -88,16 +88,18 @@ function createCodeStore() {
             break;
 
           case "master":
-            if (resourceIdx != undefined) 
-              value.projects[value.active].resources[resourceIdx].masters.push(new Master()); // prettier-ignore
+            if (resourceIdx != undefined)
+              if (value.projects[value.active].resources[resourceIdx].type === 'kubernetes')
+                value.projects[value.active].resources[resourceIdx].masters.push(new Master()); // prettier-ignore
             break;
 
           case "worker":
             if (resourceIdx != undefined)
-              value.projects[value.active].resources[resourceIdx].workers.push(new Worker()); // prettier-ignore
+              if (value.projects[value.active].resources[resourceIdx].type === 'kubernetes')
+                value.projects[value.active].resources[resourceIdx].workers.push(new Worker()); // prettier-ignore
             break;
 
-          case "resource":
+          case "deployment":
             value.projects[value.active].resources.push(new Resource());
             break;
 
@@ -108,7 +110,8 @@ function createCodeStore() {
 
           case "vms":
             if (resourceIdx != undefined)
-              value.projects[value.active].resources[resourceIdx].vms.push(new VM()); // prettier-ignore
+              if (value.projects[value.active].resources[resourceIdx].type !== 'kubernetes')
+                value.projects[value.active].resources[resourceIdx].vms.push(new VM()); // prettier-ignore
             break;
 
           case "mounts":
@@ -128,6 +131,7 @@ function createCodeStore() {
           case "kubernetes":
             value.projects[value.active].resources.push(
               new Resource(
+                "kubernetes",
                 undefined,
                 undefined,
                 undefined,

@@ -7,6 +7,7 @@ import type { ZDB } from "./zdb";
 
 export class Resource {
   constructor(
+    public type: "network" | "deployment" | "kubernetes" = "deployment",
     public id = v4(),
     public title: string = "d1",
     public name: string = "grid_deployment",

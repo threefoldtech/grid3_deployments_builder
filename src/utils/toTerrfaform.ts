@@ -1,4 +1,4 @@
-import type { Resource, Disk, VM, Mount, Env } from "../store/code.store";
+import type { Resource, Disk, VM, Mount, Env } from "../models";
 
 export default function toTerraform(value: Resource) {
   if (!value) return;
