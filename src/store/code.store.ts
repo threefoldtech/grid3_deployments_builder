@@ -270,6 +270,20 @@ function createCodeStore() {
         return value;
       });
     },
+
+    removeNetwork() {
+      return update((value) => {
+        value.projects[value.active].network = null;
+        return value;
+      });
+    },
+
+    removeZdb(idx: number) {
+      return update((value) => {
+        value.projects[value.active].zdbs.splice(idx, 1);
+        return value;
+      });
+    },
   };
 }
 

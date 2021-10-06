@@ -8,6 +8,7 @@
   import EnvDisplay from "./EnvDisplay.svelte";
   import Droppable from "./Droppable.svelte";
   import NetworkDisplay from "./NetworkDisplay.svelte";
+  import ZdbDisplay from "./ZdbDisplay.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -18,15 +19,15 @@
   {#if project.network}
     <Block
       color="--resource"
-      on:click={codeStore.removeResource.bind(codeStore)}
+      on:click={codeStore.removeNetwork.bind(codeStore)}
     >
       <NetworkDisplay network={project.network} />
     </Block>
   {/if}
-  {#each project.zdbs as zdb (zdb.id)}
-    <!-- TODO -->
-    {JSON.stringify(zdb)}
-    <br />
+  {#each project.zdbs as zdb, i (zdb.id)}
+    <Block color="--resource" on:click={codeStore.removeZdb.bind(codeStore, i)}>
+      <ZdbDisplay {zdb} idx={i} />
+    </Block>
   {/each}
   {#each project.resources as resource, resourceIdx (resource.id)}
     <div>
