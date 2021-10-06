@@ -1,6 +1,8 @@
 import { v4 } from "uuid";
 import type { Disk } from "./disk";
 import type { VM } from "./vm";
+import type { Master } from "./master";
+import type { Worker } from "./worker";
 
 export class Resource {
   constructor(
@@ -9,6 +11,8 @@ export class Resource {
     public name: string = "grid_deployment",
     public node: number = 2,
     public disks: Disk[] = [],
-    public vms: VM[] = []
+    public vms: VM[] = [],
+    public masters: Master[] = [],
+    public workers: Worker[] = []
   ) {}
 }

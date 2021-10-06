@@ -1,7 +1,18 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
 
-import { Project, Env, Resource, Disk, VM, Mount } from "../models";
+import {
+  Project,
+  Env,
+  Resource,
+  Disk,
+  VM,
+  Mount,
+  ZDB,
+  Network,
+  Master,
+  Worker,
+} from "../models";
 
 export type Add_Types =
   | "project"
@@ -9,7 +20,10 @@ export type Add_Types =
   | "disks"
   | "vms"
   | "mounts"
-  | "env_vars";
+  | "env_vars"
+  | "zdbs"
+  | "master"
+  | "worker";
 
 export interface IStore {
   active: number;
@@ -49,11 +63,31 @@ function createCodeStore() {
         return { ...value, active };
       });
     },
+    setNetwork(network: Network | null) {
+      return update((value) => {
+        value.projects[value.active].network = network;
+        return value;
+      });
+    },
     add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
         switch (type) {
           case "project":
             value.active = value.projects.push(new Project()) - 1;
+            break;
+
+          case "zdbs":
+            value.projects[value.active].zdbs.push(new ZDB());
+            break;
+
+          case "master":
+            if (resourceIdx != undefined) 
+              value.projects[value.active].resources[resourceIdx].masters.push(new Master()); // prettier-ignore
+            break;
+
+          case "worker":
+            if (resourceIdx != undefined)
+              value.projects[value.active].resources[resourceIdx].workers.push(new Worker()); // prettier-ignore
             break;
 
           case "resource":
@@ -143,6 +177,40 @@ function createCodeStore() {
         return update((value) => {
           const { type, value: val } = e.target;
           value.projects[value.active].resources[resourceIdx].vms[vm_index].env_vars[index][key] = type === "number" ? +val : val; // prettier-ignore
+          return value;
+        });
+      };
+    },
+
+    updateZdb<R extends keyof ZDB>(index: number, key: R) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          value.projects[value.active].zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
+          return value;
+        });
+      };
+    },
+
+    updateMaster<R extends keyof Master>(
+      resourceIdx: number,
+      index: number,
+      key: R
+    ) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          value.projects[value.active].resources[resourceIdx].masters[index][key] = type === "number" ? +val : val; // prettier-ignore
+          return value;
+        });
+      };
+    },
+
+    updateNetwork<R extends keyof Network>(key: R) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          value.projects[value.active].network[key] = type === "number" ? +val : val; // prettier-ignore
           return value;
         });
       };

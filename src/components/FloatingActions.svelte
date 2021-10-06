@@ -5,7 +5,7 @@
   $: store = $codeStore;
   $: active = store.active > -1;
 
-  let mnemonicsIsNeeded = true;
+  let mnemonicsIsNeeded = false;
 
   const open = () => (mnemonicsIsNeeded = true);
   const close = () => (mnemonicsIsNeeded = false);
