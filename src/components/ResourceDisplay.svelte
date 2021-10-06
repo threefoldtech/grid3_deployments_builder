@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Resource } from "../store/code.store";
+  import type { Resource } from "../models/resource";
   import codeStore from "../store/code.store";
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";

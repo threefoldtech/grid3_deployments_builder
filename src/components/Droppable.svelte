@@ -2,6 +2,7 @@
   import codeStore from "../store/code.store";
   import type { Add_Types } from "../store/code.store";
 
+  export let resourceIdx: number = undefined;
   export let idx: number = undefined;
   let active = false;
 
@@ -21,7 +22,7 @@
       e.stopPropagation();
       active = false;
       const item = e.dataTransfer.getData("data") as Add_Types;
-      codeStore.add(item, idx);
+      codeStore.add(item, resourceIdx, idx);
     },
   };
 </script>

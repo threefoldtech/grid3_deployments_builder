@@ -5,7 +5,8 @@
 
   $: store = $codeStore;
   $: idx = store.active;
-  $: code = idx > -1 ? store.resources[idx] : null;
+  $: code = store.projects[idx];
+  $: hasVms = code && code.resources.some((r) => r.vms.length > 0);
 
   function add(key: Add_Types) {
     return () => {
@@ -40,12 +41,13 @@
 <aside class="sidenav">
   <div>
     {#if !code}
+      <p>Please select project</p>
+    {:else if code && !code.resources.length}
       <SidebarBlock label="resource" on:click={add("resource")} />
-    {/if}
-    {#if code}
+    {:else}
       <SidebarBlock label="disks" on:click={add("disks")} />
       <SidebarBlock label="vms" on:click={add("vms")} />
-      {#if code.vms.length > 0}
+      {#if hasVms}
         <SidebarBlock label="mounts" on:click={add("mounts")} />
         <SidebarBlock label="env_vars" on:click={add("env_vars")} />
       {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Disk } from "../store/code.store";
+  import type { Disk } from "../models/disk";
   import codeStore from "../store/code.store";
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";

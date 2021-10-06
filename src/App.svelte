@@ -33,13 +33,13 @@
       >
         Add New Project
       </button>
-      {#each store.resources as resource, i}
+      {#each store.projects as project, i}
         <button
           class={"sidenav__content__project " +
             (store.active === i ? "active" : "")}
-          on:click={codeStore.setActiveResource.bind(codeStore, i)}
+          on:click={codeStore.setActiveProject.bind(codeStore, i)}
         >
-          {resource.name} - {i}
+          {project.name} - {i}
         </button>
       {/each}
     {:else if explorer === 1}

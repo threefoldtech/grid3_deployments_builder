@@ -10,68 +10,62 @@
 
   $: store = $codeStore;
   $: idx = store.active;
-  $: resource = idx > -1 ? store.resources[idx] : null;
+  $: project = store.projects[idx];
 </script>
 
-<div>
-  <Droppable>
-    {#if resource}
-      <Block
-        color="--resource"
-        on:click={codeStore.removeResource.bind(codeStore)}
-      >
-        <ResourceDisplay {resource} />
+{#if project}
+  {#each project.resources as resource, index (resource.id)}
+    <div>
+      <Droppable resourceIdx={index}>
+        <Block
+          color="--resource"
+          on:click={codeStore.removeResource.bind(codeStore)}
+        >
+          <ResourceDisplay {resource} />
 
-        {#each resource.disks as disk, idx (disk.id)}
-          <Block
-            color="--disks"
-            on:click={codeStore.removeFromResource("disks", idx)}
-          >
-            <DiskDisplay {idx} {disk} />
-          </Block>
-        {/each}
-
-        {#each resource.vms as vm, idx (vm.id)}
-          <Droppable {idx}>
+          {#each resource.disks as disk, idx (disk.id)}
             <Block
-              color="--vms"
-              on:click={codeStore.removeFromResource("vms", idx)}
+              color="--disks"
+              on:click={codeStore.removeFromResource("disks", idx)}
             >
-              <VMDisplay {vm} {idx} />
-
-              {#each vm.mounts as mount, mIdx (mount.id)}
-                <Block
-                  color="--mounts"
-                  on:click={codeStore.removeFromVm(idx, "mounts", mIdx)}
-                >
-                  <MountDisplay {mount} vmIdx={idx} idx={mIdx} />
-                </Block>
-              {/each}
-
-              {#each vm.env_vars as env, eIdx (env.id)}
-                <Block
-                  color="--env_vars"
-                  on:click={codeStore.removeFromVm(idx, "env_vars", eIdx)}
-                >
-                  <EnvDisplay {env} vmIdx={idx} idx={eIdx} />
-                </Block>
-              {/each}
+              <DiskDisplay {idx} {disk} />
             </Block>
-          </Droppable>
-        {/each}
-      </Block>
-    {:else}
-      <p style="text-align: center; padding-top: 10rem; font-size: 2rem;">
-        Please create or select a resource.
-      </p>
-    {/if}
-  </Droppable>
-</div>
+          {/each}
 
-<style lang="scss" scoped>
-  div {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-</style>
+          {#each resource.vms as vm, idx (vm.id)}
+            <Droppable resourceIdx={idx} {idx}>
+              <Block
+                color="--vms"
+                on:click={codeStore.removeFromResource("vms", idx)}
+              >
+                <VMDisplay {vm} {idx} />
+
+                {#each vm.mounts as mount, mIdx (mount.id)}
+                  <Block
+                    color="--mounts"
+                    on:click={codeStore.removeFromVm(idx, "mounts", mIdx)}
+                  >
+                    <MountDisplay {mount} vmIdx={idx} idx={mIdx} />
+                  </Block>
+                {/each}
+
+                {#each vm.env_vars as env, eIdx (env.id)}
+                  <Block
+                    color="--env_vars"
+                    on:click={codeStore.removeFromVm(idx, "env_vars", eIdx)}
+                  >
+                    <EnvDisplay {env} vmIdx={idx} idx={eIdx} />
+                  </Block>
+                {/each}
+              </Block>
+            </Droppable>
+          {/each}
+        </Block>
+      </Droppable>
+    </div>
+  {/each}
+{:else}
+  <p style="text-align: center; padding-top: 10rem; font-size: 2rem;">
+    Please create or select a resource.
+  </p>
+{/if}

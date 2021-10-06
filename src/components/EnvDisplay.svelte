@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Env } from "../store/code.store";
+  import type { Env } from "../models/env";
   import codeStore from "../store/code.store";
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";

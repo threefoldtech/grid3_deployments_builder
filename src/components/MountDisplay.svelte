@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Mount } from "../store/code.store";
+  import type { Mount } from "../models/mount";
   import codeStore from "../store/code.store";
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";

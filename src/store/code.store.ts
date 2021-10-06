@@ -1,162 +1,184 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
-import { v4 } from "uuid";
 
-export type Add_Types = "resource" | "disks" | "vms" | "mounts" | "env_vars";
+import { Project, Env, Resource, Disk, VM, Mount } from "../models";
 
-export class Disk {
-  constructor(
-    public id: string = v4(),
-    public name: string = "mydisk",
-    public size: number = 2,
-    public description: string = "this is my disk description"
-  ) {}
-}
-
-export class VM {
-  constructor(
-    public id: string = v4(),
-    public name: string = "vm",
-    public flist: string = "https://hub.grid.tf/tf-official-apps/base:latest.flist",
-    public cpu: number = 1,
-    public memory: number = 1024,
-    public entrypoint: string = "/sbin/zinit init",
-    public mounts: Mount[] = [],
-    public env_vars: Env[] = []
-  ) {}
-}
-
-export class Mount {
-  constructor(
-    public id: string = v4(),
-    public disk_name: string = "mydisk1",
-    public mount_point: string = "/opt"
-  ) {}
-}
-
-export class Env {
-  constructor(
-    public id: string = v4(),
-    public key: string = "SSH_KEY",
-    public value: string = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTwULSsUubOq3VPWL6cdrDvexDmjfznGydFPyaNcn7gAL9lRxwFbCDPMj7MbhNSpxxHV2+/iJPQOTVJu4oc1N7bPP3gBCnF51rPrhTpGCt5pBbTzeyNweanhedkKDsCO2mIEh/92Od5Hg512dX4j7Zw6ipRWYSaepapfyoRnNSriW/s3DH/uewezVtL5EuypMdfNngV/u2KZYWoeiwhrY/yEUykQVUwDysW/xUJNP5o+KSTAvNSJatr3FbuCFuCjBSvageOLHePTeUwu6qjqe+Xs4piF1ByO/6cOJ8bt5Vcx0bAtI8/MPApplUU/JWevsPNApvnA/ntffI+u8DCwgP"
-  ) {}
-}
-
-export class Resource {
-  constructor(
-    public title: string = "d1",
-    public name: string = "grid_deployment",
-    public node: number = 2,
-    public disks: Disk[] = [],
-    public vms: VM[] = []
-  ) {}
-}
+export type Add_Types =
+  | "project"
+  | "resource"
+  | "disks"
+  | "vms"
+  | "mounts"
+  | "env_vars";
 
 export interface IStore {
   active: number;
-  resources: Resource[];
+  projects: Project[];
 }
 
 function createCodeStore() {
   let initData: IStore;
-  try {
-    let data = localStorage.getItem("store");
-    if (data) {
-      initData = JSON.parse(data);
-    }
-  } catch {}
+  // try {
+  //   let data = localStorage.getItem("store");
+  //   if (data) {
+  //     initData = JSON.parse(data);
+  //   }
+  // } catch {}
 
   const store = writable<IStore>(
     initData || {
       active: -1,
-      resources: [],
+      projects: [
+        new Project(undefined, "Hello World", [
+          new Resource(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            [new Disk()],
+            [
+              new VM(
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                [new Mount()],
+                [new Env()]
+              ),
+              new VM(
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                [new Mount()],
+                [new Env()]
+              ),
+            ]
+          ),
+          new Resource(),
+        ]),
+      ],
     }
   );
-  const { subscribe, set } = store;
+  const { subscribe, update, set } = store;
 
-  function update(updater: Updater<IStore>): void {
-    store.update((value) => {
-      const newValue = updater(value);
-      localStorage.setItem("store", JSON.stringify(newValue));
-      return newValue;
-    });
-  }
+  // function update(updater: Updater<IStore>): void {
+  //   store.update((value) => {
+  //     const newValue = updater(value);
+  //     localStorage.setItem("store", JSON.stringify(newValue));
+  //     return newValue;
+  //   });
+  // }
 
   return {
     subscribe,
     set,
-    setActiveResource(active: number) {
+    setActiveProject(active: number) {
       return update((value) => {
         return { ...value, active };
       });
     },
     addNewResource() {
-      return update((value) => {
-        value.active = value.resources.push(new Resource()) - 1;
-        return value;
-      });
+      // return update((value) => {
+      //   value.active = value.resources.push(new Resource()) - 1;
+      //   return value;
+      // });
     },
-    add(type: Add_Types, idx?: number) {
+    add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
-        let resource = value.resources[value.active];
+        console.log({ type, projectIdx: value.active, resourceIdx, idx });
+        switch (type) {
+          case "project":
+            value.projects.push(new Project());
+            break;
 
-        if (type === "resource") {
-          value.active = value.resources.push(new Resource()) - 1;
-          return value;
-        }
-        if (type === "disks") {
-          resource.disks.push(new Disk());
-        }
-        if (type === "vms") {
-          resource.vms.push(new VM());
-        }
-        if (idx === undefined && resource.vms.length === 1) {
-          idx = 0;
-        }
-        if (idx !== undefined) {
-          if (type === "mounts") {
-            resource.vms[idx].mounts.push(new Mount());
-          }
-          if (type === "env_vars") {
-            resource.vms[idx].env_vars.push(new Env());
-          }
-        }
+          case "resource":
+            value.projects[value.active].resources.push(new Resource());
+            break;
 
-        value.resources[value.active] = resource;
+          case "disks":
+            if (resourceIdx)
+              value.projects[value.active].resources[resourceIdx].disks.push(new Disk()); // prettier-ignore
+            break;
+
+          case "vms":
+            if (resourceIdx)
+              value.projects[value.active].resources[resourceIdx].vms.push(new VM()); // prettier-ignore
+            break;
+
+          case "mounts":
+            if (resourceIdx && idx)
+              value.projects[value.active].resources[resourceIdx].vms[idx].mounts.push(new Mount()); // prettier-ignore
+
+          case "env_vars":
+            if (resourceIdx && idx)
+              value.projects[value.active].resources[resourceIdx].vms[idx].env_vars.push(new Env()); // prettier-ignore
+        }
         return value;
       });
+
+      // return update((value) => {
+      //   let resource = value.resources[value.active];
+      //   if (type === "resource") {
+      //     value.active = value.resources.push(new Resource()) - 1;
+      //     return value;
+      //   }
+      //   if (type === "disks") {
+      //     resource.disks.push(new Disk());
+      //   }
+      //   if (type === "vms") {
+      //     resource.vms.push(new VM());
+      //   }
+      //   if (idx === undefined && resource.vms.length === 1) {
+      //     idx = 0;
+      //   }
+      //   if (idx !== undefined) {
+      //     if (type === "mounts") {
+      //       resource.vms[idx].mounts.push(new Mount());
+      //     }
+      //     if (type === "env_vars") {
+      //       resource.vms[idx].env_vars.push(new Env());
+      //     }
+      //   }
+      //   value.resources[value.active] = resource;
+      //   return value;
+      // });
     },
 
     updateResource<R extends keyof Resource>(key: R) {
       return (e: any) => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          const { type, value } = e.target;
-          resource[key] = type === "number" ? +value : value;
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   const { type, value } = e.target;
+        //   resource[key] = type === "number" ? +value : value;
+        //   return data;
+        // });
       };
     },
 
     updateDisk<R extends keyof Disk>(index: number, key: R) {
       return (e: any) => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          const { type, value } = e.target;
-          resource.disks[index][key] = type === "number" ? +value : value;
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   const { type, value } = e.target;
+        //   resource.disks[index][key] = type === "number" ? +value : value;
+        //   return data;
+        // });
       };
     },
 
     updateVm<R extends keyof VM>(index: number, key: R) {
       return (e: any) => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          const { type, value } = e.target;
-          resource.vms[index][key] = type === "number" ? +value : value;
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   const { type, value } = e.target;
+        //   resource.vms[index][key] = type === "number" ? +value : value;
+        //   return data;
+        // });
       };
     },
 
@@ -166,54 +188,54 @@ function createCodeStore() {
       key: R
     ) {
       return (e: any) => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          const { type, value } = e.target;
-          resource.vms[vm_index].mounts[index][key] =
-            type === "number" ? +value : value;
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   const { type, value } = e.target;
+        //   resource.vms[vm_index].mounts[index][key] =
+        //     type === "number" ? +value : value;
+        //   return data;
+        // });
       };
     },
 
     updateEnv<R extends keyof Env>(vm_index: number, index: number, key: R) {
       return (e: any) => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          const { type, value } = e.target;
-          resource.vms[vm_index].env_vars[index][key] =
-            type === "number" ? +value : value;
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   const { type, value } = e.target;
+        //   resource.vms[vm_index].env_vars[index][key] =
+        //     type === "number" ? +value : value;
+        //   return data;
+        // });
       };
     },
 
     removeFromResource(key: "disks" | "vms", idx: number) {
       return () => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          resource[key].splice(idx, 1);
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   resource[key].splice(idx, 1);
+        //   return data;
+        // });
       };
     },
 
     removeFromVm(vm_idx: number, key: "mounts" | "env_vars", idx: number) {
       return () => {
-        return update((data) => {
-          let resource = data.resources[data.active];
-          resource.vms[vm_idx][key].splice(idx, 1);
-          return data;
-        });
+        // return update((data) => {
+        //   let resource = data.resources[data.active];
+        //   resource.vms[vm_idx][key].splice(idx, 1);
+        //   return data;
+        // });
       };
     },
 
     removeResource() {
-      return update((data) => {
-        data.resources.splice(data.active, 1);
-        data.active = -1;
-        return data;
-      });
+      // return update((data) => {
+      //   data.resources.splice(data.active, 1);
+      //   data.active = -1;
+      //   return data;
+      // });
     },
   };
 }
