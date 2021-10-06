@@ -219,7 +219,15 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          value.projects[value.active].network[key] = type === "number" ? +val : val; // prettier-ignore
+          if (key === "node") {
+            value.projects[value.active].network.node = val
+              .split(",")
+              .map((v) => v.trim())
+              .map((v) => +v)
+              .filter((v) => !isNaN(v));
+          } else {
+            value.projects[value.active].network[key] = type === "number" ? +val : val; // prettier-ignore
+          }
           return value;
         });
       };

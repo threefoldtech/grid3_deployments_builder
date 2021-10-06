@@ -7,6 +7,7 @@
   import MountDisplay from "./MountDisplay.svelte";
   import EnvDisplay from "./EnvDisplay.svelte";
   import Droppable from "./Droppable.svelte";
+  import NetworkDisplay from "./NetworkDisplay.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -15,10 +16,12 @@
 
 {#if project}
   {#if project.network}
-    <!-- TODO -->
-    {JSON.stringify(project.network)}
-    <br />
-    <hr />
+    <Block
+      color="--resource"
+      on:click={codeStore.removeResource.bind(codeStore)}
+    >
+      <NetworkDisplay network={project.network} />
+    </Block>
   {/if}
   {#each project.zdbs as zdb (zdb.id)}
     <!-- TODO -->
