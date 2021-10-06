@@ -23,7 +23,8 @@ export type Add_Types =
   | "env_vars"
   | "zdbs"
   | "master"
-  | "worker";
+  | "worker"
+  | "network";
 
 export interface IStore {
   active: number;
@@ -63,14 +64,18 @@ function createCodeStore() {
         return { ...value, active };
       });
     },
-    setNetwork(network: Network | null) {
-      return update((value) => {
-        value.projects[value.active].network = network;
-        return value;
-      });
-    },
     add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
+        // prettier-ignore
+        if (type == "disks" || type == "vms" || type == "master" || type == "worker")
+          if (resourceIdx == undefined && value.projects[value.active].resources.length === 1)
+            resourceIdx = 0;
+
+        // prettier-ignore
+        if (type == "mounts" || type == "env_vars")
+          if (resourceIdx != undefined && idx == undefined && value.projects[value.active].resources[resourceIdx].vms.length === 1)
+            idx = 0;
+
         switch (type) {
           case "project":
             value.active = value.projects.push(new Project()) - 1;
@@ -112,6 +117,10 @@ function createCodeStore() {
           case "env_vars":
             if (resourceIdx != undefined && idx != undefined)
               value.projects[value.active].resources[resourceIdx].vms[idx].env_vars.push(new Env()); // prettier-ignore
+            break;
+
+          case "network":
+            value.projects[value.active].network = new Network();
             break;
         }
         return value;

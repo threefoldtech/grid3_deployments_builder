@@ -14,6 +14,17 @@
 </script>
 
 {#if project}
+  {#if project.network}
+    <!-- TODO -->
+    {JSON.stringify(project.network)}
+    <br />
+    <hr />
+  {/if}
+  {#each project.zdbs as zdb (zdb.id)}
+    <!-- TODO -->
+    {JSON.stringify(zdb)}
+    <br />
+  {/each}
   {#each project.resources as resource, resourceIdx (resource.id)}
     <div>
       <Droppable {resourceIdx}>
@@ -22,6 +33,19 @@
           on:click={codeStore.removeResource.bind(codeStore)}
         >
           <ResourceDisplay {resource} idx={resourceIdx} />
+
+          {#each resource.masters as master (master.id)}
+            <!-- TODO -->
+            {JSON.stringify(master)}
+            <br />
+          {/each}
+
+          <hr />
+          {#each resource.workers as worker (worker.id)}
+            <!-- TODO -->
+            {JSON.stringify(worker)}
+            <br />
+          {/each}
 
           {#each resource.disks as disk, idx (disk.id)}
             <Block

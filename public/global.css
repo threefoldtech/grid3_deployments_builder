@@ -16,6 +16,10 @@
   --mounts-bg: #fbebf0;
   --env_vars: #673ab7;
   --env_vars-bg: #ddcdf9;
+  --zdbs: red;
+  --network: brown;
+  --master: steelblue;
+  --worker: lightblue;
 }
 
 * {
