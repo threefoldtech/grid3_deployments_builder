@@ -7,6 +7,7 @@ export class Worker {
     public node = 2,
     public name = "w0",
     public cpu = 2,
-    public memory = 2048
+    public memory = 2048,
+    public publicIp = false
   ) {}
 }

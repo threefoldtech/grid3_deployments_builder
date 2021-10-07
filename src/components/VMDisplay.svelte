@@ -51,5 +51,12 @@
       value={vm.entrypoint}
       on:input={codeStore.updateVm(resourceIdx, idx, "entrypoint")}
     />
+    <Editable label="Public Ip">
+      <input
+        type="checkbox"
+        checked={vm.publicIp}
+        on:change={codeStore.updateVm(resourceIdx, idx, "publicIp")}
+      />
+    </Editable>
   {/if}
 </div>

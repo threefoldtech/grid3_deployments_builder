@@ -4,6 +4,7 @@ interface IState {
   mnemonics: string;
   twinId: string;
   proxyUrl: string;
+  explorerUrl: string;
 }
 
 function createMnemonicsStore() {
@@ -19,6 +20,7 @@ function createMnemonicsStore() {
       mnemonics: "",
       twinId: "",
       proxyUrl: "",
+      explorerUrl: "",
     }
   );
   const { subscribe } = store;
@@ -50,6 +52,13 @@ function createMnemonicsStore() {
     updateProxyUrl(e: any) {
       return update((value) => {
         value.proxyUrl = e.target.value;
+        return value;
+      });
+    },
+
+    updateExplorerUrl(e: any) {
+      return update((value) => {
+        value.explorerUrl = e.target.value;
         return value;
       });
     },

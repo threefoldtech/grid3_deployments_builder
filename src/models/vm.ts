@@ -13,6 +13,7 @@ export class VM {
     public entrypoint: string = "/sbin/zinit init",
     public mounts: Mount[] = [],
     public env_vars: Env[] = [],
-    public disks: Disk[] = []
+    public disks: Disk[] = [],
+    public publicIp: boolean = false
   ) {}
 }

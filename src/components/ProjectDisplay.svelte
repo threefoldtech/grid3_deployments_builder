@@ -68,6 +68,7 @@
                 <VMDisplay {resourceIdx} {vm} {idx} />
 
                 {#each vm.disks as disk, diskIdx (disk.id)}
+                  <!-- Todo update remove disk error! -->
                   <Block
                     color="--disks"
                     on:click={codeStore.removeFromResource(

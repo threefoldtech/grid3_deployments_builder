@@ -50,5 +50,13 @@
       type="number"
       on:input={codeStore.updateWorker(resourceIdx, idx, "memory")}
     />
+
+    <Editable label="publicip">
+      <input
+        type="checkbox"
+        checked={worker.publicIp}
+        on:change={codeStore.updateWorker(resourceIdx, idx, "publicIp")}
+      />
+    </Editable>
   {/if}
 </div>

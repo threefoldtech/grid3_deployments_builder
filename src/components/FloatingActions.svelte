@@ -1,6 +1,13 @@
-<script lang="ts">
+<script>
   import codeStore from "../store/code.store";
   import mnemonicsStore from "../store/mnemonics.store";
+  // import {
+  //   Network,
+  //   TwinDeploymentHandler,
+  //   VirtualMachine,
+  //   VirtualMachineDisk,
+  //   Kubernetes,
+  // } from "grid3_client_ts/dist";
 
   $: store = $codeStore;
   $: active = store.active > -1;
@@ -13,16 +20,149 @@
   $: mnemStore = $mnemonicsStore;
   $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
 
-  function onDeployHandler() {
+  // async function deployVm(
+  //   network,
+  //   twinId,
+  //   explorerUrl,
+  //   mnemonics,
+  //   rmb,
+  //   virtualMachine,
+  //   nodeId
+  // ) {
+  //   const vm = new VirtualMachine(twinId, explorerUrl, mnemonics, rmb);
+  //   // const vms = project.resources.map((r) => r.vms).flat();
+  //   const disks = virtualMachine.disks.map((disk) => {
+  //     const d = new VirtualMachineDisk();
+  //     d.name = disk.name;
+  //     d.size = disk.size;
+  //     return d;
+  //   });
+
+  //   const envs = virtualMachine.env_vars.reduce((res, { key, value }) => {
+  //     res[key] = value;
+  //     return res;
+  //   }, {});
+  //   const [deployments, wgConfig] = await vm.create(
+  //     virtualMachine.name,
+  //     nodeId,
+  //     virtualMachine.flist,
+  //     virtualMachine.cpu,
+  //     virtualMachine.memory,
+  //     disks,
+  //     virtualMachine.publicIp,
+  //     network,
+  //     virtualMachine.entrypoint,
+  //     envs,
+  //     "",
+  //     ""
+  //   );
+
+  //   const twinHandler = new TwinDeploymentHandler(
+  //     rmb,
+  //     twinId,
+  //     explorerUrl,
+  //     mnemonics
+  //   );
+  //   const result = await twinHandler.handle(deployments);
+  //   // it can return contract id or error
+  //   // contract id can be used later to cancel contract
+
+  //   return { result, wgConfig };
+  // }
+
+  // async function deployKubernetes(
+  //   twinId,
+  //   explorerUrl,
+  //   mnemonics,
+  //   rmb,
+  //   network,
+  //   resource
+  // ) {
+  //   const kubernetes = new Kubernetes(twinId, explorerUrl, mnemonics, rmb);
+  //   const addMasters = await Promise.all(
+  //     resource.masters.map((m) =>
+  //       kubernetes.add_master(
+  //         m.name,
+  //         m.node,
+  //         "secret",
+  //         m.cpu,
+  //         m.memory,
+  //         m.diskSize,
+  //         m.publicip,
+  //         network,
+  //         "sshkey",
+  //         "",
+  //         ""
+  //       )
+  //     )
+  //   );
+
+  //   const addWorkers = await Promise.all(
+  //     resource.workers.map((w) =>
+  //       kubernetes.add_worker(
+  //         w.name,
+  //         w.node,
+  //         "secret",
+  //         "masterIp" /* we need to know how to get master ip */,
+  //         w.cpu,
+  //         w.memory,
+  //         w.diskSize,
+  //         false /* should add publicip to worker */,
+  //         network,
+  //         "sshkey",
+  //         "",
+  //         ""
+  //       )
+  //     )
+  //   );
+  // }
+
+  async function onDeployHandler() {
     close();
 
-    console.log({ mnemStore, store });
+    // const rmb = new window.HTTPMessageBusClient(mnemStore.proxyUrl);
+
+    // const project = store.projects[store.active];
+    // const nw = project.network;
+    // const { twinId, explorerUrl, mnemonics } = mnemStore;
+
+    // const network = new Network(nw.name, nw.ipRange, rmb);
+    // const data = await deployVm(
+    //   network,
+    //   twinId,
+    //   explorerUrl,
+    //   mnemonics,
+    //   rmb,
+    //   project.resources[0].vms[0],
+    //   project.resources[0].node
+    // );
+
+    // console.log(data /* { result, wgConfig } */);
+
+    /* Kubernetes */
+    // const data = await deployKubernetes(
+    //   twinId,
+    //   explorerUrl,
+    //   mnemonics,
+    //   rmb,
+    //   network,
+    //   project.resources[0]
+    // );
+    // console.log(data);
   }
 </script>
 
 {#if mnemonicsIsNeeded}
   <div class="layout">
     <div class="layout__mnemonics">
+      <div>
+        <p>Please Enter Your Explorer url:</p>
+        <input
+          placeholder="Explorer url"
+          value={mnemStore.explorerUrl}
+          on:input={mnemonicsStore.updateExplorerUrl}
+        />
+      </div>
       <div>
         <p>Please Enter Your RMB proxy url:</p>
         <input
