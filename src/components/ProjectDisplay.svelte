@@ -19,10 +19,7 @@
 
 {#if project}
   {#if project.network}
-    <Block
-      color="--resource"
-      on:click={codeStore.removeNetwork.bind(codeStore)}
-    >
+    <Block color="--resource" removeable={false}>
       <NetworkDisplay network={project.network} />
     </Block>
   {/if}

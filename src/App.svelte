@@ -1,7 +1,7 @@
 <script lang="ts">
   import codeStore from "./store/code.store";
   import Builder from "./components/Builder.svelte";
-  import TerraForm from "./components/TerraForm.svelte";
+  import ProjectDisplay from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
 
   let explorer = 0;
@@ -55,7 +55,7 @@
   </div>
 </aside>
 <main>
-  <TerraForm />
+  <ProjectDisplay />
 </main>
 <FloatingActions />
 

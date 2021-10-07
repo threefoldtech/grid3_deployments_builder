@@ -1,5 +1,6 @@
 <script lang="ts">
   export let color: string;
+  export let removeable: boolean = true;
 
   $: style = `
     border-left-color: var(${color});
@@ -8,10 +9,12 @@
 </script>
 
 <div class="block" {style}>
-  <button class="block__remove" on:click>
-    <span />
-    <span />
-  </button>
+  {#if removeable}
+    <button class="block__remove" on:click>
+      <span />
+      <span />
+    </button>
+  {/if}
   <slot />
 </div>
 

@@ -16,7 +16,7 @@
   function onDeployHandler() {
     close();
 
-    console.log({ mnemStore });
+    console.log({ mnemStore, store });
   }
 </script>
 
