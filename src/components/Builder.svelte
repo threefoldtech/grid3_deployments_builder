@@ -53,13 +53,13 @@
       <SidebarBlock label="kubernetes" on:click={add("kubernetes")} />
       {#if code.resources.length}
         <SidebarBlock label="zdbs" on:click={add("zdbs")} />
-        <SidebarBlock label="disks" on:click={add("disks")} />
         <SidebarBlock label="vms" on:click={add("vms")} />
         {#if hasKubernetes}
           <SidebarBlock label="master" on:click={add("master")} />
           <SidebarBlock label="worker" on:click={add("worker")} />
         {/if}
         {#if hasVms}
+          <SidebarBlock label="disks" on:click={add("disks")} />
           <SidebarBlock label="mounts" on:click={add("mounts")} />
           <SidebarBlock label="env_vars" on:click={add("env_vars")} />
         {/if}

@@ -24,6 +24,14 @@
   <div class="layout">
     <div class="layout__mnemonics">
       <div>
+        <p>Please Enter Your RMB proxy url:</p>
+        <input
+          placeholder="rmb proxy"
+          value={mnemStore.proxyUrl}
+          on:input={mnemonicsStore.updateProxyUrl}
+        />
+      </div>
+      <div>
         <p>Please Enter Your TwinID:</p>
         <input
           placeholder="twinid"

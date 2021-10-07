@@ -3,6 +3,7 @@ import { Updater, writable } from "svelte/store";
 interface IState {
   mnemonics: string;
   twinId: string;
+  proxyUrl: string;
 }
 
 function createMnemonicsStore() {
@@ -17,6 +18,7 @@ function createMnemonicsStore() {
     initData || {
       mnemonics: "",
       twinId: "",
+      proxyUrl: "",
     }
   );
   const { subscribe } = store;
@@ -41,6 +43,13 @@ function createMnemonicsStore() {
     updateTwinid(e: any) {
       return update((value) => {
         value.twinId = e.target.value;
+        return value;
+      });
+    },
+
+    updateProxyUrl(e: any) {
+      return update((value) => {
+        value.proxyUrl = e.target.value;
         return value;
       });
     },

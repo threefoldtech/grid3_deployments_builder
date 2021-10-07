@@ -5,6 +5,7 @@
   import Editable from "./Editable.svelte";
 
   export let resourceIdx: number;
+  export let vmIdx: number;
   export let idx: number;
   export let disk: Disk;
 
@@ -25,18 +26,18 @@
     <Editable
       label="name"
       value={disk.name}
-      on:input={codeStore.updateDisk(resourceIdx, idx, "name")}
+      on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "name")}
     />
     <Editable
       label="size"
       value={disk.size}
       type="number"
-      on:input={codeStore.updateDisk(resourceIdx, idx, "size")}
+      on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "size")}
     />
     <Editable
       label="description"
       value={disk.description}
-      on:input={codeStore.updateDisk(resourceIdx, idx, "description")}
+      on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "description")}
     />
   {/if}
 </div>

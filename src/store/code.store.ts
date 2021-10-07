@@ -68,7 +68,7 @@ function createCodeStore() {
     add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
         // prettier-ignore
-        if (type == "disks" || type == "vms" || type == "master" || type == "worker" || type == "zdbs")
+        if (type == "vms" || type == "master" || type == "worker" || type == "zdbs")
           if (resourceIdx == undefined && value.projects[value.active].resources.length === 1)
             resourceIdx = 0;
 
@@ -104,8 +104,8 @@ function createCodeStore() {
             break;
 
           case "disks":
-            if (resourceIdx != undefined)
-              value.projects[value.active].resources[resourceIdx].disks.push(new Disk()); // prettier-ignore
+            if (resourceIdx != undefined && idx !=undefined)
+              value.projects[value.active].resources[resourceIdx].vms[idx].disks.push(new Disk()); // prettier-ignore
             break;
 
           case "vms":
@@ -138,7 +138,6 @@ function createCodeStore() {
                 undefined,
                 undefined,
                 undefined,
-                undefined,
                 [new Master()],
                 [new Worker(), new Worker(), new Worker(), new Worker()]
               )
@@ -161,13 +160,14 @@ function createCodeStore() {
 
     updateDisk<R extends keyof Disk>(
       resourceIdx: number,
+      vmIdx: number,
       index: number,
       key: R
     ) {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          value.projects[value.active].resources[resourceIdx].disks[index][key] = type === "number" ? +val : val; // prettier-ignore
+          value.projects[value.active].resources[resourceIdx].vms[vmIdx].disks[index][key] = type === "number" ? +val : val; // prettier-ignore
           return value;
         });
       };

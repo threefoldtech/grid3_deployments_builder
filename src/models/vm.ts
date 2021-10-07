@@ -1,6 +1,7 @@
 import { v4 } from "uuid";
 import type { Mount } from "./mount";
 import type { Env } from "./env";
+import type { Disk } from "./disk";
 
 export class VM {
   constructor(
@@ -11,6 +12,7 @@ export class VM {
     public memory: number = 1024,
     public entrypoint: string = "/sbin/zinit init",
     public mounts: Mount[] = [],
-    public env_vars: Env[] = []
+    public env_vars: Env[] = [],
+    public disks: Disk[] = []
   ) {}
 }

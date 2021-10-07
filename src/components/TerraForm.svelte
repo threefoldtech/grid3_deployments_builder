@@ -62,15 +62,6 @@
             </Block>
           {/each}
 
-          {#each resource.disks as disk, idx (disk.id)}
-            <Block
-              color="--disks"
-              on:click={codeStore.removeFromResource(resourceIdx, "disks", idx)}
-            >
-              <DiskDisplay {resourceIdx} {idx} {disk} />
-            </Block>
-          {/each}
-
           {#each resource.vms as vm, idx (vm.id)}
             <Droppable {resourceIdx} {idx}>
               <Block
@@ -78,6 +69,21 @@
                 on:click={codeStore.removeFromResource(resourceIdx, "vms", idx)}
               >
                 <VMDisplay {resourceIdx} {vm} {idx} />
+
+                {#each vm.disks as disk, diskIdx (disk.id)}
+                  <Block
+                    color="--disks"
+                    on:click={codeStore.removeFromResource(
+                      resourceIdx,
+                      "disks",
+                      idx
+                    )}
+                  >
+                    <DiskDisplay
+                      {...{ resourceIdx, vmIdx: idx, idx: diskIdx, disk }}
+                    />
+                  </Block>
+                {/each}
 
                 {#each vm.mounts as mount, mIdx (mount.id)}
                   <Block
