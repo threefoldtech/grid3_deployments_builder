@@ -18,3 +18,12 @@ export function readFileSync(path) {
 export function writeFileSync(path, content) {
     localStorage.setItem(path, content)
 }
+
+export function existsSync(path){
+    let content = localStorage.getItem(path)
+    return content !== null
+}
+
+export function mkdirSync(path){
+
+}
