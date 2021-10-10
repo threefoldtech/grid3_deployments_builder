@@ -284,7 +284,7 @@ function createCodeStore() {
       };
     },
 
-    removeFromResource(resourceIdx: number, key: "disks" | "vms", idx: number) {
+    removeFromResource(resourceIdx: number, key: "vms", idx: number) {
       return () => {
         return update((value) => {
           value.projects[value.active].resources[resourceIdx][key].splice(idx, 1); // prettier-ignore
@@ -296,7 +296,7 @@ function createCodeStore() {
     removeFromVm(
       resourceIdx: number,
       vm_idx: number,
-      key: "mounts" | "env_vars",
+      key: "disks" | "mounts" | "env_vars",
       idx: number
     ) {
       return () => {

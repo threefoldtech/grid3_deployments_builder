@@ -71,10 +71,11 @@
                   <!-- Todo update remove disk error! -->
                   <Block
                     color="--disks"
-                    on:click={codeStore.removeFromResource(
+                    on:click={codeStore.removeFromVm(
                       resourceIdx,
+                      idx,
                       "disks",
-                      idx
+                      diskIdx
                     )}
                   >
                     <DiskDisplay
