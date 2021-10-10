@@ -14,7 +14,7 @@
 <div>
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/disk.svg" alt="deployment icon" width="40" />
+    <img src="/assets/kubernetes_master.png" alt="deployment icon" width="40" />
     <span class="keyword">master</span>
     {#if collapse}
       <p>...</p>

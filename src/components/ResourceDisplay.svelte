@@ -13,7 +13,7 @@
 <div class="resource">
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/deployment.svg" alt="deployment icon" width="40" />
+    <img src="/assets/deployment.png" alt="deployment icon" width="40" />
     <span class="keyword">{resource.type}</span>
     {#if collapse}
       <p>...</p>

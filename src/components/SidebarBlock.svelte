@@ -34,8 +34,8 @@
     
     img {
       padding: 0.5rem;
-      max-width: 100%;
-      max-height: 100%;
+      width: 60px;
+      height: 60px;
     }
   }
 </style>

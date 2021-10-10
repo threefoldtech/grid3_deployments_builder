@@ -15,7 +15,7 @@
 <div>
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/key.svg" alt="deployment icon" width="40" />
+    <img src="/assets/env.svg" alt="deployment icon" width="40" />
     <span class="keyword">env_vars</span>
     {#if collapse}
       <p>...</p>
