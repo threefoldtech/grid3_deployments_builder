@@ -9,6 +9,7 @@
     VirtualMachineDisk,
     Kubernetes,
   } from "grid3_client_ts";
+  import { Resource, VM } from "src/models";
 
   $: store = $codeStore;
   $: active = store.active > -1;
@@ -22,15 +23,15 @@
   $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
 
   async function deployVm(
-    network,
-    twinId,
-    explorerUrl,
-    mnemonics,
-    rmb,
-    virtualMachine,
-    nodeId
+    network: Network,
+    twinId: string,
+    explorerUrl: string,
+    mnemonics: string,
+    rmb: HTTPMessageBusClient,
+    virtualMachine: VM,
+    nodeId: number
   ) {
-    const vm = new VirtualMachine(twinId, explorerUrl, mnemonics, rmb);
+    const vm = new VirtualMachine(+twinId, explorerUrl, mnemonics, rmb);
     // const vms = project.resources.map((r) => r.vms).flat();
     const disks = virtualMachine.disks.map((disk) => {
       const d = new VirtualMachineDisk();
@@ -60,7 +61,7 @@
 
     const twinHandler = new TwinDeploymentHandler(
       rmb,
-      twinId,
+      +twinId,
       explorerUrl,
       mnemonics
     );
@@ -72,14 +73,14 @@
   }
 
   async function deployKubernetes(
-    twinId,
-    explorerUrl,
-    mnemonics,
-    rmb,
-    network,
-    resource
+    twinId: string,
+    explorerUrl: string,
+    mnemonics: string,
+    rmb: HTTPMessageBusClient,
+    network: Network,
+    resource: Resource
   ) {
-    const kubernetes = new Kubernetes(twinId, explorerUrl, mnemonics, rmb);
+    const kubernetes = new Kubernetes(+twinId, explorerUrl, mnemonics, rmb);
     const addMasters = await Promise.all(
       resource.masters.map((m) =>
         kubernetes.add_master(
