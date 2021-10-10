@@ -6,58 +6,11 @@
 
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
-
+  import { loadFromFile, dumpToFile } from "grid3_client_ts";
+  dumpToFile("/xx", "aa");
+  console.log(loadFromFile("/xx"));
   $: store = $codeStore;
 </script>
-
-<aside class="sidenav">
-  <div class="sidenav__actions">
-    <button
-      on:click={setExplorer(0)}
-      class={"sidenav__actions__item " + (explorer === 0 ? "active" : "")}
-    >
-      <img src="/assets/file.svg" alt="explorer" title="file explorer" />
-    </button>
-    <button
-      on:click={setExplorer(1)}
-      class={"sidenav__actions__item " + (explorer === 1 ? "active" : "")}
-    >
-      <img src="/assets/tools.svg" alt="builder" title="resource builder" />
-    </button>
-  </div>
-  <div class="sidenav__content">
-    {#if explorer === 0}
-      <button
-        class="sidenav__content__create"
-        on:click={codeStore.add.bind(codeStore, "project")}
-      >
-        Add New Project
-      </button>
-      {#each store.projects as project, i}
-        <button
-          class={"sidenav__content__project " +
-            (store.active === i ? "active" : "")}
-          on:click={codeStore.setActiveProject.bind(codeStore, i)}
-        >
-          <strong>#{i}</strong>
-          {project.name}
-          <span
-            style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
-            on:click={codeStore.removeProject.bind(codeStore, i)}
-          >
-            X
-          </span>
-        </button>
-      {/each}
-    {:else if explorer === 1}
-      <Builder />
-    {/if}
-  </div>
-</aside>
-<main>
-  <TerraForm />
-</main>
-<FloatingActions />
 
 <style lang="scss" scoped>
   main {
@@ -126,3 +79,46 @@
     }
   }
 </style>
+
+<aside class="sidenav">
+  <div class="sidenav__actions">
+    <button
+      on:click={setExplorer(0)}
+      class={'sidenav__actions__item ' + (explorer === 0 ? 'active' : '')}>
+      <img src="/assets/file.svg" alt="explorer" title="file explorer" />
+    </button>
+    <button
+      on:click={setExplorer(1)}
+      class={'sidenav__actions__item ' + (explorer === 1 ? 'active' : '')}>
+      <img src="/assets/tools.svg" alt="builder" title="resource builder" />
+    </button>
+  </div>
+  <div class="sidenav__content">
+    {#if explorer === 0}
+      <button
+        class="sidenav__content__create"
+        on:click={codeStore.add.bind(codeStore, 'project')}>
+        Add New Project
+      </button>
+      {#each store.projects as project, i}
+        <button
+          class={'sidenav__content__project ' + (store.active === i ? 'active' : '')}
+          on:click={codeStore.setActiveProject.bind(codeStore, i)}>
+          <strong>#{i}</strong>
+          {project.name}
+          <span
+            style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
+            on:click={codeStore.removeProject.bind(codeStore, i)}>
+            X
+          </span>
+        </button>
+      {/each}
+    {:else if explorer === 1}
+      <Builder />
+    {/if}
+  </div>
+</aside>
+<main>
+  <TerraForm />
+</main>
+<FloatingActions />
