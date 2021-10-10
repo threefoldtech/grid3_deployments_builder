@@ -3,6 +3,8 @@
   import Builder from "./components/Builder.svelte";
   import TerraForm from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
+  import Configurations from "./components/Configurations.svelte";
+
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
   import { loadFromFile, dumpToFile } from "grid3_client_ts";
@@ -17,13 +19,19 @@
       on:click={setExplorer(0)}
       class={"sidenav__actions__item " + (explorer === 0 ? "active" : "")}
     >
-      <img src="/assets/file.svg" alt="explorer" title="file explorer" />
+      <img src="/assets/file.svg" alt="explorer" title="File Explorer" />
     </button>
     <button
       on:click={setExplorer(1)}
       class={"sidenav__actions__item " + (explorer === 1 ? "active" : "")}
     >
-      <img src="/assets/tools.svg" alt="builder" title="resource builder" />
+      <img src="/assets/tools.svg" alt="builder" title="Resource Builder" />
+    </button>
+    <button
+      on:click={setExplorer(2)}
+      class={"sidenav__actions__item " + (explorer === 2 ? "active" : "")}
+    >
+      <img src="/assets/settings.svg" alt="configs" title="Configuration Settings" />
     </button>
   </div>
   <div class="sidenav__content">
@@ -52,6 +60,8 @@
       {/each}
     {:else if explorer === 1}
       <Builder />
+    {:else if explorer === 2}
+      <Configurations />
     {/if}
   </div>
 </aside>

@@ -7,7 +7,6 @@ import {
   Resource,
   Disk,
   VM,
-  Mount,
   ZDB,
   Network,
   Master,
@@ -19,7 +18,6 @@ export type Add_Types =
   | "deployment"
   | "disks"
   | "vms"
-  | "mounts"
   | "env_vars"
   | "zdbs"
   | "master"
@@ -73,7 +71,7 @@ function createCodeStore() {
             resourceIdx = 0;
 
         // prettier-ignore
-        if (type == "mounts" || type == "env_vars")
+        if (type == "env_vars")
           if (resourceIdx != undefined && idx == undefined && value.projects[value.active].resources[resourceIdx].vms.length === 1)
             idx = 0;
 
@@ -112,11 +110,6 @@ function createCodeStore() {
             if (resourceIdx != undefined)
               if (value.projects[value.active].resources[resourceIdx].type !== 'kubernetes')
                 value.projects[value.active].resources[resourceIdx].vms.push(new VM()); // prettier-ignore
-            break;
-
-          case "mounts":
-            if (resourceIdx != undefined && idx != undefined)
-              value.projects[value.active].resources[resourceIdx].vms[idx].mounts.push(new Mount()); // prettier-ignore
             break;
 
           case "env_vars":
@@ -188,20 +181,6 @@ function createCodeStore() {
       };
     },
 
-    updateMounts<R extends keyof Mount>(
-      resourceIdx: number,
-      vm_index: number,
-      index: number,
-      key: R
-    ) {
-      return (e: any) => {
-        return update((value) => {
-          const { type, value: val } = e.target;
-          value.projects[value.active].resources[resourceIdx].vms[vm_index].mounts[index][key] = type === "number" ? +val : val; // prettier-ignore
-          return value;
-        });
-      };
-    },
 
     updateEnv<R extends keyof Env>(
       resourceIdx: number,
@@ -296,7 +275,7 @@ function createCodeStore() {
     removeFromVm(
       resourceIdx: number,
       vm_idx: number,
-      key: "disks" | "mounts" | "env_vars",
+      key: "disks" | "env_vars",
       idx: number
     ) {
       return () => {

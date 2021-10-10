@@ -46,22 +46,21 @@
     {#if !code}
       <p>Please select project</p>
     {:else if code}
-      <SidebarBlock label="deployment" on:click={add("deployment")} />
+      <SidebarBlock label="deployment" img="../assets/deployment.png" on:click={add("deployment")} />
       {#if !hasNetwork}
-        <SidebarBlock label="network" on:click={add("network")} />
+        <SidebarBlock label="network" img="../assets/network.png" on:click={add("network")} />
       {/if}
-      <SidebarBlock label="kubernetes" on:click={add("kubernetes")} />
+      <SidebarBlock label="kubernetes" img="../assets/kubernetes.png" on:click={add("kubernetes")} />
       {#if code.resources.length}
-        <SidebarBlock label="zdbs" on:click={add("zdbs")} />
-        <SidebarBlock label="vms" on:click={add("vms")} />
+        <SidebarBlock label="zdbs" img="../assets/zdbs.png" on:click={add("zdbs")} />
+        <SidebarBlock label="vms" img="../assets/vm.png" on:click={add("vms")} />
         {#if hasKubernetes}
-          <SidebarBlock label="master" on:click={add("master")} />
-          <SidebarBlock label="worker" on:click={add("worker")} />
+          <SidebarBlock label="master" img="../assets/kubernetes_master.png" on:click={add("master")} />
+          <SidebarBlock label="worker" img="../assets/kubernetes.png" on:click={add("worker")} />
         {/if}
         {#if hasVms}
-          <SidebarBlock label="disks" on:click={add("disks")} />
-          <SidebarBlock label="mounts" on:click={add("mounts")} />
-          <SidebarBlock label="env_vars" on:click={add("env_vars")} />
+          <SidebarBlock label="disks" img="../assets/disk.svg" on:click={add("disks")} />
+          <SidebarBlock label="env_vars" img="../assets/env.svg" on:click={add("env_vars")} />
         {/if}
       {/if}
     {/if}
@@ -75,10 +74,10 @@
         accept="application/JSON"
         on:change={importFromJson}
       />
-      <label for="f"> import json </label>
+      <label for="f"> Import JSON </label>
     </button>
     <button disabled={!code}>
-      <a download="store.json" href={exportAsJson(store)}> export as json </a>
+      <a download="store.json" href={exportAsJson(store)}> Export as JSON </a>
     </button>
   </div>
 </aside>

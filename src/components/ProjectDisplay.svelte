@@ -4,7 +4,6 @@
   import DiskDisplay from "./DiskDisplay.svelte";
   import ResourceDisplay from "./ResourceDisplay.svelte";
   import VMDisplay from "./VMDisplay.svelte";
-  import MountDisplay from "./MountDisplay.svelte";
   import EnvDisplay from "./EnvDisplay.svelte";
   import Droppable from "./Droppable.svelte";
   import NetworkDisplay from "./NetworkDisplay.svelte";
@@ -80,25 +79,6 @@
                   >
                     <DiskDisplay
                       {...{ resourceIdx, vmIdx: idx, idx: diskIdx, disk }}
-                    />
-                  </Block>
-                {/each}
-
-                {#each vm.mounts as mount, mIdx (mount.id)}
-                  <Block
-                    color="--mounts"
-                    on:click={codeStore.removeFromVm(
-                      resourceIdx,
-                      idx,
-                      "mounts",
-                      mIdx
-                    )}
-                  >
-                    <MountDisplay
-                      {resourceIdx}
-                      {mount}
-                      vmIdx={idx}
-                      idx={mIdx}
                     />
                   </Block>
                 {/each}

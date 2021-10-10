@@ -5,6 +5,7 @@ export class Disk {
     public id: string = v4(),
     public name: string = "mydisk",
     public size: number = 2,
+    public mount: string = "/opt",
     public description: string = "this is my disk description"
   ) {}
 }

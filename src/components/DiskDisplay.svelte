@@ -35,6 +35,11 @@
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "size")}
     />
     <Editable
+      label="mount"
+      value={disk.mount}
+      on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "mount")}
+    />
+    <Editable
       label="description"
       value={disk.description}
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "description")}
