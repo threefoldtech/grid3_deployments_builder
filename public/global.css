@@ -44,6 +44,7 @@ body {
   color: var(--black);
   box-sizing: border-box;
   font-size: 1.6rem;
+  background-color: var(--ground-bg);
 }
 
 a {

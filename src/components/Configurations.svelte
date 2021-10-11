@@ -1,20 +1,11 @@
 <script lang="ts">
-    import codeStore from "../store/code.store";
-    import mnemonicsStore from "../store/mnemonics.store";
-  
-    $: store = $codeStore;
-    $: active = store.active > -1;
-  
-    let mnemonicsIsNeeded = false;
-  
-    const open = () => (mnemonicsIsNeeded = true);
-    const close = () => (mnemonicsIsNeeded = false);
-  
-    $: mnemStore = $mnemonicsStore;
-    $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
+  import mnemonicsStore from "../store/mnemonics.store";
+  $: mnemStore = $mnemonicsStore;
 </script>
-<div>
-    <p>Please Enter Your Explorer url:</p>
+
+<section class="container">
+  <div>
+    <p>Explorer URL:</p>
     <input
       placeholder="Explorer url"
       value={mnemStore.explorerUrl}
@@ -22,7 +13,7 @@
     />
   </div>
   <div>
-    <p>Please Enter Your RMB proxy url:</p>
+    <p>RMB Proxy URL:</p>
     <input
       placeholder="rmb proxy"
       value={mnemStore.proxyUrl}
@@ -30,7 +21,7 @@
     />
   </div>
   <div>
-    <p>Please Enter Your TwinID:</p>
+    <p>TwinID:</p>
     <input
       placeholder="twinid"
       value={mnemStore.twinId}
@@ -38,10 +29,44 @@
     />
   </div>
   <div>
-    <p>Please Enter Your Mnemonics:</p>
+    <p>Mnemonics:</p>
     <textarea
       placeholder="mnemonics"
       value={mnemStore.mnemonics}
       on:input={mnemonicsStore.updateMnemonics}
     />
   </div>
+</section>
+
+<style lang="scss" scoped>
+  .container {
+    padding: 15px;
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  textarea,
+  input {
+    max-width: 100%;
+    width: 100%;
+    height: 20rem;
+    resize: none;
+    border-radius: 5px;
+    border-color: #ccc;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    outline: none !important;
+
+    &:hover,
+    &:focus {
+      border-color: darken(#ccc, 20);
+    }
+  }
+
+  input {
+    height: auto;
+    border-width: 1px;
+  }
+</style>
