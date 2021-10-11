@@ -19,8 +19,8 @@ function createMnemonicsStore() {
     initData || {
       mnemonics: "",
       twinId: "",
-      proxyUrl: "",
-      explorerUrl: "",
+      proxyUrl: "https://rmbproxy1.devnet.grid.tf",
+      explorerUrl: "wss://tfchain.dev.threefold.io",
     }
   );
   const { subscribe } = store;

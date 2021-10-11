@@ -7,7 +7,9 @@ export class Master {
     public node = 2,
     public name = "mr",
     public cpu = 2,
-    public publicip = true,
-    public memory = 2048
+    public publicIp = true,
+    public memory = 2048,
+    public rootFsSize: number = 1,
+    public planetary: boolean = false
   ) {}
 }

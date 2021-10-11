@@ -23,39 +23,52 @@
 
   {#if !collapse}
     <Editable
-      label="Disk Size"
-      value={worker.diskSize}
-      on:input={codeStore.updateWorker(resourceIdx, idx, "diskSize")}
+      label="Name"
+      value={worker.name}
+      on:input={codeStore.updateWorker(resourceIdx, idx, "name")}
     />
     <Editable
-      label="node"
+      label="Node"
       value={worker.node}
       type="number"
       on:input={codeStore.updateWorker(resourceIdx, idx, "node")}
     />
     <Editable
-      label="name"
-      value={worker.name}
-      on:input={codeStore.updateWorker(resourceIdx, idx, "name")}
-    />
-    <Editable
-      label="cpu"
+      label="CPU"
       value={worker.cpu}
       type="number"
       on:input={codeStore.updateWorker(resourceIdx, idx, "cpu")}
     />
     <Editable
-      label="memory"
+      label="Memory"
       value={worker.memory}
       type="number"
       on:input={codeStore.updateWorker(resourceIdx, idx, "memory")}
     />
-
-    <Editable label="publicip">
+    <Editable
+      label="Root FS Size"
+      value={worker.rootFsSize}
+      type="number"
+      on:input={codeStore.updateWorker(resourceIdx, idx, "rootFsSize")}
+    />
+    <Editable
+      label="Disk Size"
+      type="number"
+      value={worker.diskSize}
+      on:input={codeStore.updateWorker(resourceIdx, idx, "diskSize")}
+    />
+    <Editable label="Public IP">
       <input
         type="checkbox"
         checked={worker.publicIp}
         on:change={codeStore.updateWorker(resourceIdx, idx, "publicIp")}
+      />
+    </Editable>
+    <Editable label="Planetary">
+      <input
+        type="checkbox"
+        checked={worker.planetary}
+        on:change={codeStore.updateWorker(resourceIdx, idx, "planetary")}
       />
     </Editable>
   {/if}

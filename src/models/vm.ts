@@ -9,9 +9,11 @@ export class VM {
     public flist: string = "https://hub.grid.tf/tf-official-apps/base:latest.flist",
     public cpu: number = 1,
     public memory: number = 1024,
+    public rootFsSize: number = 1,
     public entrypoint: string = "/sbin/zinit init",
     public env_vars: Env[] = [],
     public disks: Disk[] = [],
-    public publicIp: boolean = false
+    public publicIp: boolean = false,
+    public planetary: boolean = false
   ) {}
 }

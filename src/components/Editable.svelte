@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   export let value: string | number | null = null;
-  export let type: "number" | "text" = "text";
+  export let type: "number" | "text" | "password" = "text";
   export let label: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
 

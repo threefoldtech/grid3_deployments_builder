@@ -8,6 +8,8 @@ export class Worker {
     public name = "w0",
     public cpu = 2,
     public memory = 2048,
-    public publicIp = false
+    public publicIp = false,
+    public rootFsSize: number = 1,
+    public planetary: boolean = false
   ) {}
 }

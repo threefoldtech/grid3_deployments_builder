@@ -8,6 +8,11 @@
     VirtualMachine,
     VirtualMachineDisk,
     Kubernetes,
+    KubernetesNode,
+    Machine,
+    Machines,
+    K8s,
+    K8S,
   } from "grid3_client_ts";
   import { Resource, VM } from "src/models";
 
@@ -22,7 +27,7 @@
   $: mnemStore = $mnemonicsStore;
   $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
 
-  async function deployVm(
+  async function deployVM(
     network: Network,
     twinId: string,
     explorerUrl: string,
@@ -37,6 +42,7 @@
       const d = new VirtualMachineDisk();
       d.name = disk.name;
       d.size = disk.size;
+      d.mountpoint = disk.mount;
       return d;
     });
 
@@ -50,14 +56,18 @@
       virtualMachine.flist,
       virtualMachine.cpu,
       virtualMachine.memory,
+      virtualMachine.rootFsSize, // Add rootfs_size Number in GB
       disks,
       virtualMachine.publicIp,
+      virtualMachine.planetary, // Add to VM Boolean
       network,
       virtualMachine.entrypoint,
       envs,
       "",
       ""
     );
+    console.log(deployments)
+    console.log(wgConfig)
 
     const twinHandler = new TwinDeploymentHandler(
       rmb,
@@ -80,78 +90,75 @@
     network: Network,
     resource: Resource
   ) {
+    const k8s = new K8s(+twinId, explorerUrl, mnemonics, rmb);
     const kubernetes = new Kubernetes(+twinId, explorerUrl, mnemonics, rmb);
-    const addMasters = await Promise.all(
-      resource.masters.map((m) =>
-        kubernetes.add_master(
-          m.name,
-          m.node,
-          "secret",
-          m.cpu,
-          m.memory,
-          m.diskSize,
-          m.publicip,
-          network,
-          "sshkey",
-          "",
-          ""
-        )
-      )
-    );
+    const masters = resource.masters.map((m) => {
+      let k = new KubernetesNode();
+      k.name = m.name;
+      k.node_id = m.node;
+      k.cpu = m.cpu;
+      k.disk_size = m.diskSize;
+      k.memory = m.memory;
+      k.public_ip = m.publicIp;
+      k.rootfs_size = m.rootFsSize;
+      k.planetary = m.planetary;
+      return k;
+    });
 
-    const addWorkers = await Promise.all(
-      resource.workers.map((w) =>
-        kubernetes.add_worker(
-          w.name,
-          w.node,
-          "secret",
-          "masterIp" /* we need to know how to get master ip */,
-          w.cpu,
-          w.memory,
-          w.diskSize,
-          false /* should add publicip to worker */,
-          network,
-          "sshkey",
-          "",
-          ""
-        )
-      )
-    );
+    const workers = resource.workers.map((w) => {
+      let k = new KubernetesNode();
+      k.name = w.name;
+      k.node_id = w.node;
+      k.cpu = w.cpu;
+      k.disk_size = w.diskSize;
+      k.memory = w.memory;
+      k.public_ip = w.publicIp;
+      k.rootfs_size = w.rootFsSize;
+      k.planetary = w.planetary;
+      return k;
+    });
   }
 
-  async function deployZDB(){}
+  async function deployZDB() {}
 
   async function onDeployHandler() {
     close();
 
-    const rmb = new HTTPMessageBusClient(mnemStore.proxyUrl);
+    const rmb = new HTTPMessageBusClient(+mnemStore.twinId, mnemStore.proxyUrl);
 
     const project = store.projects[store.active];
     const nw = project.network;
-    const { twinId, explorerUrl, mnemonics } = mnemStore;
-
+    const { twinId, explorerUrl, mnemonics, proxyUrl } = mnemStore;
     const network = new Network(nw.name, nw.ipRange, rmb);
-    const data = await deployVm(
-      network,
-      twinId,
-      explorerUrl,
-      mnemonics,
-      rmb,
-      project.resources[0].vms[0],
-      project.resources[0].node
-    );
+    let results = new Map();
+    for (let r of project.resources) {
+      if (r.type === "deployment") {
+        for (let c of r.vms) {
+          const data = await deployVM(
+            network,
+            twinId,
+            explorerUrl,
+            mnemonics,
+            rmb,
+            c,
+            r.node
+          );
+          console.log(data);
+          results.set(c.name, data);
+        }
+      } else if (r.type === "kubernetes") {
+        /* Kubernetes */
+        const data = await deployKubernetes(
+          twinId,
+          explorerUrl,
+          mnemonics,
+          rmb,
+          network,
+          project.resources[0]
+        );
+      }
+    }
 
-    console.log(data /* { result, wgConfig } */);
-
-    /* Kubernetes */
-    // const data = await deployKubernetes(
-    //   twinId,
-    //   explorerUrl,
-    //   mnemonics,
-    //   rmb,
-    //   network,
-    //   project.resources[0]
-    // );
     // console.log(data);
   }
 </script>
@@ -159,7 +166,7 @@
 {#if mnemonicsIsNeeded}
   <div class="layout">
     <div class="layout__mnemonics">
-      <p>Please confirm to deploy</p>
+      <p>You are about to deploy {store.projects[store.active].name}</p>
       <div class="layout__mnemonics__actions">
         <button class="btn btn-sm btn-cancel" on:click={close}>Cancel</button>
         <button
@@ -173,7 +180,7 @@
 {/if}
 
 <button on:click={open} class="btn btn-deploy" disabled={!active}>
-  Deploy
+  <img src="/assets/deploy.svg" alt="configs" title="Configuration Settings" />
 </button>
 
 <style lang="scss" scoped>
@@ -252,6 +259,10 @@
       right: 1.5rem;
       bottom: 1.5rem;
       z-index: 1;
+      img {
+        width: 60px;
+        height: 60px;
+      }
     }
 
     &-sm {

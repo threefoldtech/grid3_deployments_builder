@@ -33,6 +33,11 @@
       type="number"
       on:input={codeStore.updateZdb(resourceIdx, idx, "size")}
     />
+    <!-- <Editable
+      label="Type"
+      value={zdb.diskType}
+      on:input={codeStore.updateZdb(resourceIdx, idx, "diskType")}
+    /> -->
     <Editable
       label="description"
       value={zdb.description}
@@ -40,6 +45,7 @@
     />
     <Editable
       label="password"
+      type="password"
       value={zdb.password}
       on:input={codeStore.updateZdb(resourceIdx, idx, "password")}
     />

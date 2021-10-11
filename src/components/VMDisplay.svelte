@@ -25,37 +25,50 @@
     <br />
   {:else}
     <Editable
-      label="name"
+      label="Name"
       value={vm.name}
       on:input={codeStore.updateVm(resourceIdx, idx, "name")}
     />
     <Editable
-      label="flist"
+      label="Flist"
       value={vm.flist}
       on:input={codeStore.updateVm(resourceIdx, idx, "flist")}
     />
     <Editable
-      label="cpu"
+      label="CPU"
       value={vm.cpu}
       type="number"
       on:input={codeStore.updateVm(resourceIdx, idx, "cpu")}
     />
     <Editable
-      label="memory"
+      label="Memory"
       value={vm.memory}
       type="number"
       on:input={codeStore.updateVm(resourceIdx, idx, "memory")}
     />
     <Editable
-      label="entrypoint"
+      label="Root FS Size"
+      value={vm.rootFsSize}
+      type="number"
+      on:input={codeStore.updateVm(resourceIdx, idx, "rootFsSize")}
+    />
+    <Editable
+      label="Entrypoint"
       value={vm.entrypoint}
       on:input={codeStore.updateVm(resourceIdx, idx, "entrypoint")}
     />
-    <Editable label="Public Ip">
+    <Editable label="Public IP">
       <input
         type="checkbox"
         checked={vm.publicIp}
         on:change={codeStore.updateVm(resourceIdx, idx, "publicIp")}
+      />
+    </Editable>
+    <Editable label="Planetary">
+      <input
+        type="checkbox"
+        checked={vm.planetary}
+        on:change={codeStore.updateVm(resourceIdx, idx, "planetary")}
       />
     </Editable>
   {/if}

@@ -23,41 +23,53 @@
 
   {#if !collapse}
     <Editable
-      label="Disk Size"
-      value={master.diskSize}
-      on:input={codeStore.updateMaster(resourceIdx, idx, "diskSize")}
+      label="Name"
+      value={master.name}
+      on:input={codeStore.updateMaster(resourceIdx, idx, "name")}
     />
     <Editable
-      label="node"
+      label="Node"
       value={master.node}
       type="number"
       on:input={codeStore.updateMaster(resourceIdx, idx, "node")}
     />
     <Editable
-      label="name"
-      value={master.name}
-      on:input={codeStore.updateMaster(resourceIdx, idx, "name")}
-    />
-    <Editable
-      label="cpu"
+      label="CPU"
       value={master.cpu}
       type="number"
       on:input={codeStore.updateMaster(resourceIdx, idx, "cpu")}
     />
-
-    <Editable label="publicip">
-      <input
-        type="checkbox"
-        checked={master.publicip}
-        on:change={codeStore.updateMaster(resourceIdx, idx, "publicip")}
-      />
-    </Editable>
-
     <Editable
-      label="memory"
+      label="Memory"
       value={master.memory}
       type="number"
       on:input={codeStore.updateMaster(resourceIdx, idx, "memory")}
     />
+    <Editable
+      label="Root FS Size"
+      value={master.rootFsSize}
+      type="number"
+      on:input={codeStore.updateMaster(resourceIdx, idx, "rootFsSize")}
+    />
+    <Editable
+      label="Disk Size"
+      type="number"
+      value={master.diskSize}
+      on:input={codeStore.updateMaster(resourceIdx, idx, "diskSize")}
+    />
+    <Editable label="Public IP">
+      <input
+        type="checkbox"
+        checked={master.publicIp}
+        on:change={codeStore.updateMaster(resourceIdx, idx, "publicIp")}
+      />
+    </Editable>
+    <Editable label="Planetary">
+      <input
+        type="checkbox"
+        checked={master.planetary}
+        on:change={codeStore.updateMaster(resourceIdx, idx, "planetary")}
+      />
+    </Editable>
   {/if}
 </div>

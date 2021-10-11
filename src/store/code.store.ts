@@ -214,9 +214,9 @@ function createCodeStore() {
     ) {
       return (e: any) => {
         return update((value) => {
-          if (key === "publicip") {
-            const val = value.projects[value.active].resources[resourceIdx].masters[index].publicip; // prettier-ignore
-            value.projects[value.active].resources[resourceIdx].masters[index].publicip = !val; // prettier-ignore
+          if (key === "publicIp") {
+            const val = value.projects[value.active].resources[resourceIdx].masters[index].publicIp; // prettier-ignore
+            value.projects[value.active].resources[resourceIdx].masters[index].publicIp = !val; // prettier-ignore
           } else {
             const { type, value: val } = e.target;
             value.projects[value.active].resources[resourceIdx].masters[index][key] = type === "number" ? +val : val; // prettier-ignore
