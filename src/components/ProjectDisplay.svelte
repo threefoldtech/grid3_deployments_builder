@@ -27,7 +27,7 @@
       <Droppable {resourceIdx}>
         <Block
           color="--resource"
-          on:click={codeStore.removeResource.bind(codeStore)}
+          on:click={codeStore.removeResource.bind(codeStore, resourceIdx)}
         >
           <ResourceDisplay {resource} idx={resourceIdx} />
 

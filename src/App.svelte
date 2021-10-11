@@ -4,6 +4,7 @@
   import TerraForm from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/Configurations.svelte";
+  import Droppable from './components/Droppable.svelte';
 
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
@@ -65,16 +66,17 @@
     {/if}
   </div>
 </aside>
-<main>
-  <TerraForm />
-</main>
+<Droppable>
+  <main>
+    <TerraForm />
+  </main>
+</Droppable>
 <FloatingActions />
 
 <style lang="scss" scoped>
   main {
     padding-left: var(--sidenav-width);
     height: 100%;
-    background-color: var(--ground-bg);
   }
   .sidenav {
     position: fixed;
@@ -84,6 +86,7 @@
     width: var(--sidenav-width);
     display: flex;
     border: 0.1rem solid var(--sidenav-border);
+    z-index: 99;
     &__actions {
       width: 6rem;
       border: 0.1rem solid var(--sidenav-border);
