@@ -26,7 +26,7 @@
     <span class="editable__label">{label}</span>
     <span>&nbsp; <span class="keyword">=</span> &nbsp;</span>
   {/if}
-  {#if value}
+  {#if value !== null}
     <span class="editable__fake" bind:this={fake_span}>
       {value}
     </span>

@@ -3,6 +3,8 @@
   import codeStore from "../store/code.store";
   import Collapse from "./Collapse.svelte";
   import Editable from "./Editable.svelte";
+  import Selectable from "./Selectable.svelte";
+  import { DeviceTypes, ZdbModes } from "grid3_client_ts";
 
   export let resourceIdx: number;
   export let idx: number;
@@ -23,25 +25,26 @@
 
   {#if !collapse}
     <Editable
-      label="name"
+      label="Name"
       value={zdb.name}
       on:input={codeStore.updateZdb(resourceIdx, idx, "name")}
     />
     <Editable
-      label="size"
+      label="Node"
+      value={zdb.node}
+      type="number"
+      on:input={codeStore.updateZdb(resourceIdx, idx, "node")}
+    />
+    <Editable
+      label="Size"
       value={zdb.size}
       type="number"
       on:input={codeStore.updateZdb(resourceIdx, idx, "size")}
     />
-    <!-- <Editable
+    <Selectable
       label="Type"
-      value={zdb.diskType}
-      on:input={codeStore.updateZdb(resourceIdx, idx, "diskType")}
-    /> -->
-    <Editable
-      label="description"
-      value={zdb.description}
-      on:input={codeStore.updateZdb(resourceIdx, idx, "description")}
+      options= {[DeviceTypes.hdd, DeviceTypes.ssd]}
+      on:change={codeStore.updateZdb(resourceIdx, idx, "diskType")}
     />
     <Editable
       label="password"
@@ -49,10 +52,17 @@
       value={zdb.password}
       on:input={codeStore.updateZdb(resourceIdx, idx, "password")}
     />
-    <Editable
+    <Selectable
       label="mode"
-      value={zdb.mode}
-      on:input={codeStore.updateZdb(resourceIdx, idx, "mode")}
+      options={[ZdbModes.seq, ZdbModes.user]}
+      on:change={codeStore.updateZdb(resourceIdx, idx, "mode")}
     />
+    <Editable label="Public IP">
+      <input
+        type="checkbox"
+        checked={zdb.publicIp}
+        on:change={codeStore.updateZdb(resourceIdx, idx, "publicIp")}
+      />
+    </Editable>
   {/if}
 </div>

@@ -30,6 +30,12 @@
       on:input={codeStore.updateVm(resourceIdx, idx, "name")}
     />
     <Editable
+      label="Node"
+      value={vm.node}
+      type="number"
+      on:input={codeStore.updateVm(resourceIdx, idx, "node")}
+    />
+    <Editable
       label="Flist"
       value={vm.flist}
       on:input={codeStore.updateVm(resourceIdx, idx, "flist")}

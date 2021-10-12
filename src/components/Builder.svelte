@@ -67,6 +67,7 @@
   </div>
   <div class="sidenav__actions">
     <button>
+      <img src="/assets/import.png" alt="import icon" width="40" />
       <input
         id="f"
         type="file"
@@ -74,10 +75,11 @@
         accept="application/JSON"
         on:change={importFromJson}
       />
-      <label for="f"> Import JSON </label>
+      <label for="f">Import</label>
     </button>
     <button disabled={!code}>
-      <a download="store.json" href={exportAsJson(store)}> Export as JSON </a>
+      <img src="/assets/export.png" alt="export icon" width="40" />
+      <a download="store.json" href={exportAsJson(store)}>Export</a>
     </button>
   </div>
 </aside>
@@ -95,8 +97,11 @@
       margin-top: auto;
 
       > button {
-        display: block;
-        width: 100%;
+        border: 3px solid;
+        border-radius: 2rem;
+        display: flex;
+        width: 200px;
+        height: 60px;
         margin: 1rem 0;
 
         &[disabled] {
@@ -105,13 +110,18 @@
 
         a,
         label {
-          display: block;
+          display:flex;
           height: 100%;
           width: 100%;
           cursor: pointer;
           text-transform: capitalize;
-          padding: 1.5rem 0;
+          padding: 1.5rem;
           font-size: 2rem;
+          font-weight: bold;
+        }
+        img {
+          width: 50px;
+          display: flex;
         }
       }
     }

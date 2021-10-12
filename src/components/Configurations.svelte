@@ -5,7 +5,7 @@
 
 <section class="container">
   <div>
-    <p>Explorer URL:</p>
+    <p>Explorer URL</p>
     <input
       placeholder="Explorer url"
       value={mnemStore.explorerUrl}
@@ -13,7 +13,7 @@
     />
   </div>
   <div>
-    <p>RMB Proxy URL:</p>
+    <p>RMB Proxy URL</p>
     <input
       placeholder="rmb proxy"
       value={mnemStore.proxyUrl}
@@ -21,7 +21,7 @@
     />
   </div>
   <div>
-    <p>TwinID:</p>
+    <p>TwinID</p>
     <input
       placeholder="twinid"
       value={mnemStore.twinId}
@@ -29,7 +29,7 @@
     />
   </div>
   <div>
-    <p>Mnemonics:</p>
+    <p>Mnemonics</p>
     <textarea
       placeholder="mnemonics"
       value={mnemStore.mnemonics}

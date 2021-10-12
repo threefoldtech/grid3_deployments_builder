@@ -129,10 +129,8 @@ function createCodeStore() {
                 undefined,
                 undefined,
                 undefined,
-                undefined,
-                undefined,
                 [new Master()],
-                [new Worker(), new Worker(), new Worker(), new Worker()]
+                [new Worker()]
               )
             );
             break;
@@ -200,8 +198,18 @@ function createCodeStore() {
     updateZdb<R extends keyof ZDB>(resourceIdx: number, index: number, key: R) {
       return (e: any) => {
         return update((value) => {
-          const { type, value: val } = e.target;
-          value.projects[value.active].resources[resourceIdx].zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
+          if (key === "publicIp"){
+            const val = value.projects[value.active].resources[resourceIdx].zdbs[index].publicIp; // prettier-ignore
+            value.projects[value.active].resources[resourceIdx].zdbs[index].publicIp = !val; // prettier-ignore
+          }else if (key === "diskType" || key === "mode"){
+            value.projects[value.active].resources[resourceIdx].zdbs[index].diskType = e.target.options[e.target.options.selectedIndex].value
+            // console.log("e",e)
+            // console.log("value", value)
+          }else{
+            const { type, value: val } = e.target;
+            value.projects[value.active].resources[resourceIdx].zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
+          }
+          
           return value;
         });
       };

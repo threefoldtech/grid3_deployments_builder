@@ -3,18 +3,21 @@
   import mnemonicsStore from "../store/mnemonics.store";
   import { HTTPMessageBusClient } from "ts-rmb-http-client";
   import {
-    Network,
-    TwinDeploymentHandler,
-    VirtualMachine,
-    VirtualMachineDisk,
-    Kubernetes,
-    KubernetesNode,
-    Machine,
-    Machines,
-    K8s,
-    K8S,
+    NetworkModel,
+    DiskModel,
+    KubernetesNodeModel,
+    MachineModule,
+    MachineModel,
+    MachinesModel,
+    K8sModule,
+    K8SModel,
+    ZDBModel,
+    ZDBSModel,
+    ZdbsModule,
+    ZdbModes,
+    DeviceTypes,
   } from "grid3_client_ts";
-  import { Resource, VM } from "src/models";
+  import { Resource } from "src/models";
 
   $: store = $codeStore;
   $: active = store.active > -1;
@@ -27,73 +30,68 @@
   $: mnemStore = $mnemonicsStore;
   $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
 
+  // Deploy VM Function
   async function deployVM(
-    network: Network,
+    network: NetworkModel,
     twinId: string,
     explorerUrl: string,
     mnemonics: string,
     rmb: HTTPMessageBusClient,
-    virtualMachine: VM,
-    nodeId: number
+    resource: Resource
   ) {
-    const vm = new VirtualMachine(+twinId, explorerUrl, mnemonics, rmb);
-    // const vms = project.resources.map((r) => r.vms).flat();
-    const disks = virtualMachine.disks.map((disk) => {
-      const d = new VirtualMachineDisk();
-      d.name = disk.name;
-      d.size = disk.size;
-      d.mountpoint = disk.mount;
-      return d;
+    const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
+
+    // Construct Machines
+    const vmsModel = resource.vms.map((vm) => {
+      let vmModel = new MachineModel();
+      vmModel.name = vm.name;
+      vmModel.node_id = vm.node;
+      vmModel.flist = vm.flist;
+      vmModel.cpu = vm.cpu;
+      vmModel.memory = vm.memory;
+      vmModel.rootfs_size = vm.rootFsSize;
+      vmModel.entrypoint = vm.entrypoint;
+      vmModel.public_ip = vm.publicIp;
+      vmModel.planetary = vm.planetary;
+      vmModel.disks = vm.disks.map((disk) => {
+        const d = new DiskModel();
+        d.name = disk.name;
+        d.size = disk.size;
+        d.mountpoint = disk.mount;
+        return d;
+      });
+      vmModel.env = vm.env_vars.reduce((res, { key, value }) => {
+        res[key] = value;
+        return res;
+      }, {});
+      return vmModel;
     });
 
-    const envs = virtualMachine.env_vars.reduce((res, { key, value }) => {
-      res[key] = value;
-      return res;
-    }, {});
-    const [deployments, wgConfig] = await vm.create(
-      virtualMachine.name,
-      nodeId,
-      virtualMachine.flist,
-      virtualMachine.cpu,
-      virtualMachine.memory,
-      virtualMachine.rootFsSize, // Add rootfs_size Number in GB
-      disks,
-      virtualMachine.publicIp,
-      virtualMachine.planetary, // Add to VM Boolean
-      network,
-      virtualMachine.entrypoint,
-      envs,
-      "",
-      ""
-    );
-    console.log(deployments)
-    console.log(wgConfig)
+    // Construct Machines Payload
+    const vmsPayload = new MachinesModel();
+    vmsPayload.name = resource.name;
+    vmsPayload.machines = vmsModel;
+    vmsPayload.network = network;
+    vmsPayload.description = resource.description;
+    vmsPayload.metadata = resource.metadata;
 
-    const twinHandler = new TwinDeploymentHandler(
-      rmb,
-      +twinId,
-      explorerUrl,
-      mnemonics
-    );
-    const result = await twinHandler.handle(deployments);
-    // it can return contract id or error
-    // contract id can be used later to cancel contract
-
-    return { result, wgConfig };
+    // Deploy
+    const result = vmDeployer.deploy(vmsPayload);
+    return result;
   }
 
+  // Deploy Kubernetes Function
   async function deployKubernetes(
     twinId: string,
     explorerUrl: string,
     mnemonics: string,
     rmb: HTTPMessageBusClient,
-    network: Network,
+    network: NetworkModel,
     resource: Resource
   ) {
-    const k8s = new K8s(+twinId, explorerUrl, mnemonics, rmb);
-    const kubernetes = new Kubernetes(+twinId, explorerUrl, mnemonics, rmb);
+    const k8s = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
     const masters = resource.masters.map((m) => {
-      let k = new KubernetesNode();
+      let k = new KubernetesNodeModel();
       k.name = m.name;
       k.node_id = m.node;
       k.cpu = m.cpu;
@@ -106,7 +104,7 @@
     });
 
     const workers = resource.workers.map((w) => {
-      let k = new KubernetesNode();
+      let k = new KubernetesNodeModel();
       k.name = w.name;
       k.node_id = w.node;
       k.cpu = w.cpu;
@@ -117,49 +115,95 @@
       k.planetary = w.planetary;
       return k;
     });
+    let kubernetesPayload = new K8SModel();
+    kubernetesPayload.name = resource.name;
+    kubernetesPayload.secret = resource.secret;
+    kubernetesPayload.network = network;
+    kubernetesPayload.masters = masters;
+    kubernetesPayload.workers = workers;
+    kubernetesPayload.metadata = resource.metadata;
+    kubernetesPayload.description = resource.description;
+    kubernetesPayload.ssh_key = resource.sshKey;
+    const result = k8s.deploy(kubernetesPayload);
+    return result;
   }
 
-  async function deployZDB() {}
+  async function deployZDB(
+    twinId: string,
+    explorerUrl: string,
+    mnemonics: string,
+    rmb: HTTPMessageBusClient,
+    resource: Resource
+  ) {
+    const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
+    const zdbs = resource.zdbs.map((z) => {
+      let zdb = new ZDBModel();
+      zdb.name = z.name;
+      zdb.node_id = z.node;
+      zdb.mode = z.mode as ZdbModes;
+      zdb.disk_size = z.size;
+      zdb.disk_type = z.diskType as DeviceTypes;
+      zdb.public = z.publicIp;
+      zdb.namespace = z.namespace;
+      zdb.password = z.password;
+      return zdb;
+    });
+    let zdbsPayload = new ZDBSModel();
+    zdbsPayload.name = resource.name + "ZDBs";
+    zdbsPayload.zdbs = zdbs;
+    zdbsPayload.description = resource.description;
+    zdbsPayload.metadata = resource.metadata;
+    const data = zdbsDeployer.deploy(zdbsPayload);
+    return data;
+  }
 
   async function onDeployHandler() {
     close();
-
     const rmb = new HTTPMessageBusClient(+mnemStore.twinId, mnemStore.proxyUrl);
 
     const project = store.projects[store.active];
     const nw = project.network;
     const { twinId, explorerUrl, mnemonics, proxyUrl } = mnemStore;
-    const network = new Network(nw.name, nw.ipRange, rmb);
+    const network = new NetworkModel();
+    network.name = nw.name;
+    network.ip_range = nw.ipRange;
     let results = new Map();
     for (let r of project.resources) {
       if (r.type === "deployment") {
-        for (let c of r.vms) {
-          const data = await deployVM(
-            network,
-            twinId,
-            explorerUrl,
-            mnemonics,
-            rmb,
-            c,
-            r.node
-          );
-          console.log(data);
-          results.set(c.name, data);
-        }
+        const vmResult = await deployVM(
+          network,
+          twinId,
+          explorerUrl,
+          mnemonics,
+          rmb,
+          r
+        );
+        console.log(vmResult);
+        results.set(r.name, vmResult);
       } else if (r.type === "kubernetes") {
         /* Kubernetes */
-        const data = await deployKubernetes(
+        const kubernetsResult = await deployKubernetes(
           twinId,
           explorerUrl,
           mnemonics,
           rmb,
           network,
-          project.resources[0]
+          r
         );
+        results.set(r.name, kubernetsResult);
       }
+      if (r.zdbs) {
+          const zdbResult = await deployZDB(
+            twinId,
+            explorerUrl,
+            mnemonics,
+            rmb,
+            r
+          );
+          console.log(zdbResult);
+          results.set(r.name + "ZDBs", zdbResult);
+        }
     }
-
-    // console.log(data);
   }
 </script>
 
@@ -208,29 +252,6 @@
 
       p {
         margin-bottom: 1rem;
-      }
-
-      textarea,
-      input {
-        max-width: 100%;
-        width: 100%;
-        height: 20rem;
-        resize: none;
-        border-radius: 5px;
-        border-color: #ccc;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        outline: none !important;
-
-        &:hover,
-        &:focus {
-          border-color: darken(#ccc, 20);
-        }
-      }
-
-      input {
-        height: auto;
-        border-width: 1px;
       }
 
       &__actions {

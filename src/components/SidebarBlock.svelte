@@ -6,7 +6,7 @@
 <div
   class="block"
   draggable="true"
-  style={"background-color: var(--" + label + ");"}
+  style={"border-color: var(--" + label + ");"}
   on:dragstart={(e) => e.dataTransfer.setData("data", label)}
   on:click
 >
@@ -16,6 +16,7 @@
 
 <style lang="scss" scoped>
   .block {
+    border: 3px solid;
     border-radius: 2rem;
     margin-bottom: 1.5rem;
     padding: 2rem 0;
@@ -24,18 +25,18 @@
     align-items: center;
     cursor: pointer;
     width: 200px;
-    height: 80px;
+    height: 60px;
 
     p {
       text-transform: capitalize;
-      color: var(--white);
+      color: var(--black);
       font-size: 2rem;
     }
     
     img {
       padding: 0.5rem;
-      width: 60px;
-      height: 60px;
+      width: 50;
+      height: 50px;
     }
   }
 </style>
