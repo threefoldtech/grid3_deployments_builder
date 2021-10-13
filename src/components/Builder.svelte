@@ -56,7 +56,7 @@
         <SidebarBlock label="vms" img="../assets/vm.png" on:click={add("vms")} />
         {#if hasKubernetes}
           <SidebarBlock label="master" img="../assets/kubernetes_master.png" on:click={add("master")} />
-          <SidebarBlock label="worker" img="../assets/kubernetes.png" on:click={add("worker")} />
+          <SidebarBlock label="worker" img="../assets/kubernetes_worker.png" on:click={add("worker")} />
         {/if}
         {#if hasVms}
           <SidebarBlock label="disks" img="../assets/disk.svg" on:click={add("disks")} />
