@@ -6,21 +6,26 @@
   --ground-bg: rgba(241, 241, 241, 0.5);
   --keyword: #ec44ff;
 
-  --resource: #4caf50;
-  --resource-bg: #dff5df;
+  /* --resource: #4caf50;
+  --resource-bg: #dff5df; */
   --deployment: #4caf50;
-  --deployment-bg: #dff5df;
+  --deployment-bg: #e6f5e6;
   --disks: #2196f3;
   --disks-bg: #d8eeff;
   --vms: #009688;
   --vms-bg: #c5f1ed;
-  --env_vars: #673ab7;
-  --env_vars-bg: #ddcdf9;
+  --env_vars: #ff8c00;
+  --env_vars-bg: #fff5ee;
   --zdbs: red;
-  --network: brown;
+  --zdbs-bg: #ffe4e1;
+  --network: black;
+  --network-bg: white;
   --master: steelblue;
-  --worker: lightblue;
+  --master-bg: rgb(209, 223, 238);
+  --worker: #808080;
+  --worker-bg: #ecebeb;
   --kubernetes: purple;
+  --kubernetes-bg: rgb(244, 244, 255);
 }
 
 * {

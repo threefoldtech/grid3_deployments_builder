@@ -18,7 +18,7 @@
 
 {#if project}
   {#if project.network}
-    <Block color="--resource" removeable={false}>
+    <Block color="--network" removeable={false}>
       <NetworkDisplay network={project.network} />
     </Block>
   {/if}
@@ -26,14 +26,14 @@
     <div>
       <Droppable {resourceIdx}>
         <Block
-          color="--resource"
+          color="--{resource.type}"
           on:click={codeStore.removeResource.bind(codeStore, resourceIdx)}
         >
           <ResourceDisplay {resource} idx={resourceIdx} />
 
           {#each resource.zdbs as zdb, i (zdb.id)}
             <Block
-              color="--resource"
+              color="--zdbs"
               on:click={codeStore.removeZdb.bind(codeStore, resourceIdx, i)}
             >
               <ZdbDisplay {resourceIdx} {zdb} idx={i} />
@@ -42,7 +42,7 @@
 
           {#each resource.masters as master, i (master.id)}
             <Block
-              color="--disks"
+              color="--master"
               on:click={codeStore.removeMaster.bind(codeStore, resourceIdx, i)}
             >
               <MasterDisplay {resourceIdx} idx={i} {master} />
@@ -51,7 +51,7 @@
 
           {#each resource.workers as worker, i (worker.id)}
             <Block
-              color="--disks"
+              color="--worker"
               on:click={codeStore.removeWorker.bind(codeStore, resourceIdx, i)}
             >
               <WorkerDisplay {resourceIdx} idx={i} {worker} />
