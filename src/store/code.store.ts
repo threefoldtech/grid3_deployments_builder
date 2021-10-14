@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
-
+import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import {
   Project,
   Env,
@@ -13,6 +13,18 @@ import {
   Worker,
 } from "../models";
 
+import {
+  DeleteMachineModel,
+  DeleteWorkerModel,
+  DeleteZDBModel,
+  K8SDeleteModel,
+  MachinesDeleteModel,
+  MachineModule,
+  K8sModule,
+  ZdbsModule,
+  ZDBDeleteModel,
+} from "grid3_client_ts";
+
 export type Add_Types =
   | "project"
   | "deployment"
@@ -20,6 +32,7 @@ export type Add_Types =
   | "vms"
   | "env_vars"
   | "zdbs"
+  | "zdb"
   | "master"
   | "worker"
   | "network"
@@ -66,7 +79,7 @@ function createCodeStore() {
     add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
         // prettier-ignore
-        if (type == "vms" || type == "master" || type == "worker" || type == "zdbs")
+        if (type == "vms" || type == "master" || type == "worker" || type == "zdb")
           if (resourceIdx == undefined && value.projects[value.active].resources.length === 1)
             resourceIdx = 0;
 
@@ -81,8 +94,21 @@ function createCodeStore() {
             break;
 
           case "zdbs":
+            value.projects[value.active].resources.push(new Resource(
+              "zdbs",
+              undefined,
+              "zdbs_deployment",
+              undefined,
+              [new ZDB(), new ZDB()],
+              undefined,
+              undefined
+            )); // prettier-ignore
+            break;
+
+          case "zdb":
             if (resourceIdx != undefined)
-              value.projects[value.active].resources[resourceIdx].zdbs.push(new ZDB()); // prettier-ignore
+              if (value.projects[value.active].resources[resourceIdx].type === 'zdbs')
+                value.projects[value.active].resources[resourceIdx].zdbs.push(new ZDB()); // prettier-ignore
             break;
 
           case "master":
@@ -126,7 +152,7 @@ function createCodeStore() {
               new Resource(
                 "kubernetes",
                 undefined,
-                undefined,
+                "kubernetes_deployment",
                 undefined,
                 undefined,
                 [new Master()],
@@ -170,6 +196,9 @@ function createCodeStore() {
           if (key === "publicIp") {
             const val = value.projects[value.active].resources[resourceIdx].vms[index].publicIp; // prettier-ignore
             value.projects[value.active].resources[resourceIdx].vms[index].publicIp = !val; // prettier-ignore
+          } else if (key === "planetary") {
+            const val = value.projects[value.active].resources[resourceIdx].vms[index].planetary; // prettier-ignore
+            value.projects[value.active].resources[resourceIdx].vms[index].planetary = !val; // prettier-ignore
           } else {
             const { type, value: val } = e.target;
             value.projects[value.active].resources[resourceIdx].vms[index][key] = type === "number" ? +val : val; // prettier-ignore
@@ -178,7 +207,6 @@ function createCodeStore() {
         });
       };
     },
-
 
     updateEnv<R extends keyof Env>(
       resourceIdx: number,
@@ -198,18 +226,18 @@ function createCodeStore() {
     updateZdb<R extends keyof ZDB>(resourceIdx: number, index: number, key: R) {
       return (e: any) => {
         return update((value) => {
-          if (key === "publicIp"){
+          if (key === "publicIp") {
             const val = value.projects[value.active].resources[resourceIdx].zdbs[index].publicIp; // prettier-ignore
             value.projects[value.active].resources[resourceIdx].zdbs[index].publicIp = !val; // prettier-ignore
-          }else if (key === "diskType" || key === "mode"){
-            value.projects[value.active].resources[resourceIdx].zdbs[index].diskType = e.target.options[e.target.options.selectedIndex].value
-            // console.log("e",e)
-            // console.log("value", value)
-          }else{
+          } else if (key === "diskType" || key === "mode") {
+            value.projects[value.active].resources[resourceIdx].zdbs[index][
+              key
+            ] = e.target.options[e.target.options.selectedIndex].value;
+          } else {
             const { type, value: val } = e.target;
             value.projects[value.active].resources[resourceIdx].zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
           }
-          
+
           return value;
         });
       };
@@ -225,6 +253,9 @@ function createCodeStore() {
           if (key === "publicIp") {
             const val = value.projects[value.active].resources[resourceIdx].masters[index].publicIp; // prettier-ignore
             value.projects[value.active].resources[resourceIdx].masters[index].publicIp = !val; // prettier-ignore
+          } else if (key === "planetary") {
+            const val = value.projects[value.active].resources[resourceIdx].vms[index].planetary; // prettier-ignore
+            value.projects[value.active].resources[resourceIdx].vms[index].planetary = !val; // prettier-ignore
           } else {
             const { type, value: val } = e.target;
             value.projects[value.active].resources[resourceIdx].masters[index][key] = type === "number" ? +val : val; // prettier-ignore
@@ -244,6 +275,9 @@ function createCodeStore() {
           if (key === "publicIp") {
             const val = value.projects[value.active].resources[resourceIdx].workers[index].publicIp; // prettier-ignore
             value.projects[value.active].resources[resourceIdx].workers[index].publicIp = !val; // prettier-ignore
+          } else if (key === "planetary") {
+            const val = value.projects[value.active].resources[resourceIdx].vms[index].planetary; // prettier-ignore
+            value.projects[value.active].resources[resourceIdx].vms[index].planetary = !val; // prettier-ignore
           } else {
             const { type, value: val } = e.target;
             value.projects[value.active].resources[resourceIdx].workers[index][key] = type === "number" ? +val : val; // prettier-ignore
@@ -271,6 +305,47 @@ function createCodeStore() {
       };
     },
 
+    updateDeploy(resourceIdx: number, val: boolean = true) {
+      return update((value) => {
+        value.projects[value.active].resources[resourceIdx].isDeployed = val;
+        switch (value.projects[value.active].resources[resourceIdx].type) {
+          case "deployment":
+            value.projects[value.active].resources[resourceIdx].vms.forEach(
+              (vm) => {
+                vm.isDeployed = true;
+                vm.disks.forEach((d) => {
+                  d.isDeployed = true;
+                });
+                vm.env_vars.forEach((env) => {
+                  env.isDeployed = true;
+                });
+              }
+            );
+            break;
+          case "kubernetes":
+            value.projects[value.active].resources[resourceIdx].masters.forEach(
+              (m) => {
+                m.isDeployed = true;
+              }
+            );
+            value.projects[value.active].resources[resourceIdx].workers.forEach(
+              (w) => {
+                w.isDeployed = true;
+              }
+            );
+            break;
+          case "zdbs":
+            value.projects[value.active].resources[resourceIdx].zdbs.forEach(
+              (z) => {
+                z.isDeployed = true;
+              }
+            );
+            break;
+        }
+        return value;
+      });
+    },
+
     removeFromResource(resourceIdx: number, key: "vms", idx: number) {
       return () => {
         return update((value) => {
@@ -294,19 +369,85 @@ function createCodeStore() {
       };
     },
 
-    removeResource(idx: number) {
+    removeResource(idx: number, mnemStore) {
       return update((value) => {
-        value.projects[value.active].resources.splice(idx, 1);
+        const rmb = new HTTPMessageBusClient(
+          mnemStore.twinId,
+          mnemStore.proxyUrl
+        );
+        if (value.projects[value.active].resources[idx].isDeployed) {
+          let result;
+          switch (value.projects[value.active].resources[idx].type) {
+            case "deployment":
+              const machineDeployer = new MachineModule(
+                mnemStore.twinId,
+                mnemStore.explorerUrl,
+                mnemStore.mnemonics,
+                rmb
+              );
+              machineDeployer.fileName = value.projects[value.active].name +"/" +machineDeployer.fileName; //prettier-ignore
+              const deleteMachines = new MachinesDeleteModel();
+              deleteMachines.name =
+                value.projects[value.active].resources[idx].name;
+              result = machineDeployer.delete(deleteMachines);
+              console.log(result);
+              break;
+            case "kubernetes":
+              const kubeDeployer = new K8sModule(
+                mnemStore.twinId,
+                mnemStore.explorerUrl,
+                mnemStore.mnemonics,
+                rmb
+              );
+              kubeDeployer.fileName = value.projects[value.active].name + "/" + kubeDeployer.fileName; //prettier-ignore
+              const deleteKube = new K8SDeleteModel();
+              deleteKube.name =
+                value.projects[value.active].resources[idx].name;
+              result = kubeDeployer.delete(deleteKube);
+              console.log(result);
+              break;
+            case "zdbs":
+              const zdbDeployer = new ZdbsModule(
+                mnemStore.twinId,
+                mnemStore.explorerUrl,
+                mnemStore.mnemonics,
+                rmb
+              );
+              zdbDeployer.fileName = value.projects[value.active].name + "/" + zdbDeployer.fileName;
+              const deleteZdb = new ZDBDeleteModel();
+              deleteZdb.name = value.projects[value.active].resources[idx].name;
+              result = zdbDeployer.delete(deleteZdb);
+              console.log(result);
+              break;
+          }
+          result.then((res) => {
+            if (res.deleted.length) {
+              value.projects[value.active].resources.splice(idx, 1);
+            }
+          });
+        } else {
+          value.projects[value.active].resources.splice(idx, 1);
+        }
         return value;
       });
     },
 
-    removeProject(idx: number) {
+    removeProject(idx: number, mnemStore) {
       return update((value) => {
         value.projects.splice(idx, 1);
         value.active = -1;
         return value;
       });
+    },
+
+    renameProject(idx: number) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          value.projects[idx].name = val;
+          return value;
+        });
+      };
     },
 
     removeNetwork() {
@@ -316,9 +457,31 @@ function createCodeStore() {
       });
     },
 
-    removeZdb(resourceIdx: number, idx: number) {
+    removeZdb(resourceIdx: number, idx: number, mnemStore) {
       return update((value) => {
-        value.projects[value.active].resources[resourceIdx].zdbs.splice(idx, 1);
+        if (value.projects[value.active].resources[resourceIdx].zdbs[idx].isDeployed) {
+          const rmb = new HTTPMessageBusClient(
+            mnemStore.twinId,
+            mnemStore.proxyUrl
+          );
+          const zdbDeployer = new ZdbsModule(
+            mnemStore.twinId,
+            mnemStore.explorerUrl,
+            mnemStore.mnemonics,
+            rmb
+          );
+          zdbDeployer.fileName = value.projects[value.active].name + "/" + zdbDeployer.fileName; //prettier-ignore
+          const deleteZdbPayload = new DeleteZDBModel();
+          deleteZdbPayload.deployment_name = value.projects[value.active].resources[resourceIdx].name;
+          deleteZdbPayload.name = value.projects[value.active].resources[resourceIdx].zdbs[idx].name;
+          zdbDeployer.deleteZdb(deleteZdbPayload).then((res) => {
+            if (res.deleted.length || res.updated.length) {
+              value.projects[value.active].resources[resourceIdx].zdbs.splice(idx,1); //prettier-ignore
+            }
+          });
+        }else{
+          value.projects[value.active].resources[resourceIdx].zdbs.splice(idx,1); //prettier-ignore
+        }
         return value;
       });
     },
@@ -330,9 +493,61 @@ function createCodeStore() {
       });
     },
 
-    removeWorker(resourceIdx: number, idx: number) {
+    removeWorker(resourceIdx: number, idx: number, mnemStore) {
       return update((value) => {
-        value.projects[value.active].resources[resourceIdx].workers.splice(idx, 1); // prettier-ignore
+        if (value.projects[value.active].resources[resourceIdx].workers[idx].isDeployed) {
+          const rmb = new HTTPMessageBusClient(
+            mnemStore.twinId,
+            mnemStore.proxyUrl
+          );
+          console.log(rmb.twinId)
+          const kubeDeployer = new K8sModule(
+            mnemStore.twinId,
+            mnemStore.explorerUrl,
+            mnemStore.mnemonics,
+            rmb
+          );
+          kubeDeployer.fileName = value.projects[value.active].name + "/" + kubeDeployer.fileName; //prettier-ignore
+          const deleteWorkerModel = new DeleteWorkerModel();
+          deleteWorkerModel.deployment_name = value.projects[value.active].resources[resourceIdx].name;
+          deleteWorkerModel.name = value.projects[value.active].resources[resourceIdx].workers[idx].name;
+          kubeDeployer.deleteWorker(deleteWorkerModel).then((res) => {
+            if (res.deleted.length || res.updated.length) {
+              value.projects[value.active].resources[resourceIdx].workers.splice(idx,1); //prettier-ignore
+            }
+          });
+        }else{
+          value.projects[value.active].resources[resourceIdx].workers.splice(idx, 1); // prettier-ignore
+        }
+        return value;
+      });
+    },
+
+    removeVM(resourceIdx: number, idx: number, mnemStore) {
+      return update((value) => {
+        if (value.projects[value.active].resources[resourceIdx].vms[idx].isDeployed) {
+          const rmb = new HTTPMessageBusClient(
+            mnemStore.twinId,
+            mnemStore.proxyUrl
+          );
+          const vmDeployer = new MachineModule(
+            mnemStore.twinId,
+            mnemStore.explorerUrl,
+            mnemStore.mnemonics,
+            rmb
+          );
+          vmDeployer.fileName = value.projects[value.active].name +"/" +vmDeployer.fileName; //prettier-ignore
+          const deleteVM = new DeleteMachineModel();
+          deleteVM.deployment_name = value.projects[value.active].resources[resourceIdx].name;
+          deleteVM.name = value.projects[value.active].resources[resourceIdx].vms[idx].name;
+          vmDeployer.deleteMachine(deleteVM).then((res) => {
+            if (res.deleted.length || res.updated.length) {
+              value.projects[value.active].resources[resourceIdx].vms.splice(idx,1); //prettier-ignore
+            }
+          });
+        }else{
+          value.projects[value.active].resources[resourceIdx].vms.splice(idx, 1); // prettier-ignore
+        }
         return value;
       });
     },

@@ -10,6 +10,7 @@ export class Master {
     public publicIp = true,
     public memory = 2048,
     public rootFsSize: number = 1,
-    public planetary: boolean = false
+    public planetary: boolean = false,
+    public isDeployed: boolean = false
   ) {}
 }

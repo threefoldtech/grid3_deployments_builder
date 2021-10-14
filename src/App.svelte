@@ -4,13 +4,13 @@
   import TerraForm from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/Configurations.svelte";
-  import Droppable from './components/Droppable.svelte';
+  import Droppable from "./components/Droppable.svelte";
 
+  let type = "text";
   let explorer = 0;
+  let disable: boolean[]= [true];
   const setExplorer = (x: number) => () => (explorer = x);
   import { loadFromFile, dumpToFile } from "grid3_client_ts";
-  dumpToFile("/xx", "aa");
-  console.log(loadFromFile("/xx"));
   $: store = $codeStore;
 </script>
 
@@ -32,7 +32,11 @@
       on:click={setExplorer(2)}
       class={"sidenav__actions__item " + (explorer === 2 ? "active" : "")}
     >
-      <img src="/assets/settings.svg" alt="configs" title="Configuration Settings" />
+      <img
+        src="/assets/settings.svg"
+        alt="configs"
+        title="Configuration Settings"
+      />
     </button>
   </div>
   <div class="sidenav__content">
@@ -50,12 +54,45 @@
           on:click={codeStore.setActiveProject.bind(codeStore, i)}
         >
           <strong>#{i}</strong>
-          {project.name}
+          <input
+            {type}
+            value={project.name}
+            disabled={disable[i]}
+            on:input={codeStore.renameProject(i)}
+            style="display: inline-block;"
+          />
           <span
-            style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
+            style="display: inline-block; font-size: 1.5rem; color: red;"
             on:click={codeStore.removeProject.bind(codeStore, i)}
           >
-            X
+            <img
+              src="/assets/notdeployed.png"
+              alt="edit"
+              title="edit project"
+              width="12"
+            />
+          </span>
+          <span
+            style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
+            on:click={() => {
+              disable[i] = !disable[i];
+            }}
+          >
+            {#if disable[i]}
+              <img
+                src="/assets/edit.png"
+                alt="edit"
+                title="edit project"
+                width="12"
+              />
+            {:else}
+              <img
+                src="/assets/deployed.png"
+                alt="edit"
+                title="save project"
+                width="12"
+              />
+            {/if}
           </span>
         </button>
       {/each}
@@ -126,6 +163,11 @@
         cursor: pointer;
         &.active {
           background-color: #e9e9e9;
+        }
+
+        input:disabled {
+          border: none;
+          background-color: transparent;
         }
       }
     }

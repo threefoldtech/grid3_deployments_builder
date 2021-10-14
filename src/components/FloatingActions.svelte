@@ -37,10 +37,11 @@
     explorerUrl: string,
     mnemonics: string,
     rmb: HTTPMessageBusClient,
-    resource: Resource
+    resource: Resource,
+    projectName: string
   ) {
     const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
-
+    vmDeployer.fileName = projectName +"/" + vmDeployer.fileName;
     // Construct Machines
     const vmsModel = resource.vms.map((vm) => {
       let vmModel = new MachineModel();
@@ -87,9 +88,11 @@
     mnemonics: string,
     rmb: HTTPMessageBusClient,
     network: NetworkModel,
-    resource: Resource
+    resource: Resource,
+    projectName: string
   ) {
     const k8s = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
+    k8s.fileName = projectName +"/" + k8s.fileName;
     const masters = resource.masters.map((m) => {
       let k = new KubernetesNodeModel();
       k.name = m.name;
@@ -133,9 +136,11 @@
     explorerUrl: string,
     mnemonics: string,
     rmb: HTTPMessageBusClient,
-    resource: Resource
+    resource: Resource,
+    projectName: string
   ) {
     const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
+    zdbsDeployer.fileName = projectName + "/" + zdbsDeployer.fileName;
     const zdbs = resource.zdbs.map((z) => {
       let zdb = new ZDBModel();
       zdb.name = z.name;
@@ -159,50 +164,52 @@
 
   async function onDeployHandler() {
     close();
-    const rmb = new HTTPMessageBusClient(+mnemStore.twinId, mnemStore.proxyUrl);
-
     const project = store.projects[store.active];
     const nw = project.network;
     const { twinId, explorerUrl, mnemonics, proxyUrl } = mnemStore;
+    const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
     const network = new NetworkModel();
     network.name = nw.name;
     network.ip_range = nw.ipRange;
     let results = new Map();
-    for (let r of project.resources) {
-      if (r.type === "deployment") {
+    for (let [i, resource] of project.resources.entries()) {
+      if (resource.type === "deployment") {
         const vmResult = await deployVM(
           network,
           twinId,
           explorerUrl,
           mnemonics,
           rmb,
-          r
+          resource,
+          project.name
         );
         console.log(vmResult);
-        results.set(r.name, vmResult);
-      } else if (r.type === "kubernetes") {
-        /* Kubernetes */
+        results.set(resource.name, vmResult);
+      } else if (resource.type === "kubernetes") {
+    //     /* Kubernetes */
         const kubernetsResult = await deployKubernetes(
           twinId,
           explorerUrl,
           mnemonics,
           rmb,
           network,
-          r
+          resource,
+          project.name
         );
-        results.set(r.name, kubernetsResult);
+        results.set(resource.name, kubernetsResult);
+      } else if (resource.type === "zdbs") {
+        const zdbResult = await deployZDB(
+          twinId,
+          explorerUrl,
+          mnemonics,
+          rmb,
+          resource,
+          project.name
+        );
+        console.log(zdbResult);
+        results.set(resource.name, zdbResult);
       }
-      if (r.zdbs) {
-          const zdbResult = await deployZDB(
-            twinId,
-            explorerUrl,
-            mnemonics,
-            rmb,
-            r
-          );
-          console.log(zdbResult);
-          results.set(r.name + "ZDBs", zdbResult);
-        }
+      codeStore.updateDeploy(i)
     }
   }
 </script>

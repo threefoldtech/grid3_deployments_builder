@@ -5,7 +5,7 @@ import { Network } from "./network";
 export class Project {
   constructor(
     public id = v4(),
-    public name = "new_project",
+    public name:string = "new_project",
     public network: Network | null = new Network(),
     public resources: Resource[] = []
   ) {}

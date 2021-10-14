@@ -6,6 +6,7 @@ export class Disk {
     public name: string = "mydisk",
     public size: number = 2,
     public mount: string = "/opt",
-    public description: string = "this is my disk description"
+    public description: string = "this is my disk description",
+    public isDeployed: boolean = false
   ) {}
 }

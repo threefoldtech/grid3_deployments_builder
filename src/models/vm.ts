@@ -15,6 +15,7 @@ export class VM {
     public env_vars: Env[] = [],
     public disks: Disk[] = [],
     public publicIp: boolean = false,
-    public planetary: boolean = false
+    public planetary: boolean = false,
+    public isDeployed: boolean = false
   ) {}
 }

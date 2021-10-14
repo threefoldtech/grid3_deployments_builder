@@ -10,6 +10,7 @@ export class Worker {
     public memory = 2048,
     public publicIp = false,
     public rootFsSize: number = 1,
-    public planetary: boolean = false
+    public planetary: boolean = false,
+    public isDeployed: boolean = false
   ) {}
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import codeStore from "../store/code.store";
+  import mnemonicsStore from "src/store/mnemonics.store";
   import Block from "./Block.svelte";
   import DiskDisplay from "./DiskDisplay.svelte";
   import ResourceDisplay from "./ResourceDisplay.svelte";
@@ -14,6 +15,8 @@
   $: store = $codeStore;
   $: idx = store.active;
   $: project = store.projects[idx];
+  $: mnemStore = $mnemonicsStore;
+
 </script>
 
 {#if project}
@@ -27,14 +30,14 @@
       <Droppable {resourceIdx}>
         <Block
           color="--{resource.type}"
-          on:click={codeStore.removeResource.bind(codeStore, resourceIdx)}
+          on:click={codeStore.removeResource.bind(codeStore, resourceIdx, mnemStore)}
         >
           <ResourceDisplay {resource} idx={resourceIdx} />
 
           {#each resource.zdbs as zdb, i (zdb.id)}
             <Block
-              color="--zdbs"
-              on:click={codeStore.removeZdb.bind(codeStore, resourceIdx, i)}
+              color="--zdb"
+              on:click={codeStore.removeZdb.bind(codeStore, resourceIdx, i, mnemStore)}
             >
               <ZdbDisplay {resourceIdx} {zdb} idx={i} />
             </Block>
@@ -44,6 +47,7 @@
             <Block
               color="--master"
               on:click={codeStore.removeMaster.bind(codeStore, resourceIdx, i)}
+              removeable = {!master.isDeployed}
             >
               <MasterDisplay {resourceIdx} idx={i} {master} />
             </Block>
@@ -52,7 +56,7 @@
           {#each resource.workers as worker, i (worker.id)}
             <Block
               color="--worker"
-              on:click={codeStore.removeWorker.bind(codeStore, resourceIdx, i)}
+              on:click={codeStore.removeWorker.bind(codeStore, resourceIdx, i, mnemStore)}
             >
               <WorkerDisplay {resourceIdx} idx={i} {worker} />
             </Block>
@@ -62,7 +66,7 @@
             <Droppable {resourceIdx} {idx}>
               <Block
                 color="--vms"
-                on:click={codeStore.removeFromResource(resourceIdx, "vms", idx)}
+                on:click={codeStore.removeVM.bind(codeStore, resourceIdx, idx, mnemStore)}
               >
                 <VMDisplay {resourceIdx} {vm} {idx} />
 
@@ -76,6 +80,7 @@
                       "disks",
                       diskIdx
                     )}
+                    removeable = {!disk.isDeployed}
                   >
                     <DiskDisplay
                       {...{ resourceIdx, vmIdx: idx, idx: diskIdx, disk }}
@@ -92,6 +97,7 @@
                       "env_vars",
                       eIdx
                     )}
+                    removeable = {!env.isDeployed}
                   >
                     <EnvDisplay {resourceIdx} {env} vmIdx={idx} idx={eIdx} />
                   </Block>

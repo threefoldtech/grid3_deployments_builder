@@ -2,6 +2,7 @@
   export let options: string[];
   export let label: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
+  export let deployed: boolean = false;
 </script>
 
 <div class="selectable" {style}>
@@ -10,7 +11,7 @@
     <span>&nbsp; <span class="keyword">=</span> &nbsp;</span>
   {/if}
   <div class="select-dropdown">
-    <select on:change>
+    <select on:change disabled={deployed}>
       {#each options as option}
         <option value={option}> {option} </option>
       {/each}

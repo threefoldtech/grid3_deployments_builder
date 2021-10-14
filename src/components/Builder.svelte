@@ -10,6 +10,9 @@
   $: hasNetwork = code && code.network;
   $: hasKubernetes =
     code && code.resources.some((r) => r.type === "kubernetes");
+  $: hasDeployment =
+    code && code.resources.some((r) => r.type === "deployment");
+  $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs");
 
   function add(key: Add_Types) {
     return () => {
@@ -46,21 +49,66 @@
     {#if !code}
       <p>Please select project</p>
     {:else if code}
-      <SidebarBlock label="deployment" img="../assets/deployment.png" on:click={add("deployment")} />
       {#if !hasNetwork}
-        <SidebarBlock label="network" img="../assets/network.png" on:click={add("network")} />
+        <SidebarBlock
+          label="network"
+          img="../assets/network.png"
+          on:click={add("network")}
+        />
       {/if}
-      <SidebarBlock label="kubernetes" img="../assets/kubernetes.png" on:click={add("kubernetes")} />
+      <SidebarBlock
+        label="deployment"
+        img="../assets/deployment.png"
+        on:click={add("deployment")}
+      />
+      <SidebarBlock
+        label="kubernetes"
+        img="../assets/kubernetes.png"
+        on:click={add("kubernetes")}
+      />
+      <SidebarBlock
+        label="zdbs"
+        img="../assets/zdbs.png"
+        on:click={add("zdbs")}
+      />
       {#if code.resources.length}
-        <SidebarBlock label="zdbs" img="../assets/zdbs.png" on:click={add("zdbs")} />
-        <SidebarBlock label="vms" img="../assets/vm.png" on:click={add("vms")} />
+        {#if hasDeployment}
+          <SidebarBlock
+            label="vms"
+            img="../assets/vm.png"
+            on:click={add("vms")}
+          />
+        {/if}
         {#if hasKubernetes}
-          <SidebarBlock label="master" img="../assets/kubernetes_master.png" on:click={add("master")} />
-          <SidebarBlock label="worker" img="../assets/kubernetes_worker.png" on:click={add("worker")} />
+          <SidebarBlock
+            label="master"
+            img="../assets/kubernetes_master.png"
+            on:click={add("master")}
+          />
+          <SidebarBlock
+            label="worker"
+            img="../assets/kubernetes_worker.png"
+            on:click={add("worker")}
+          />
         {/if}
         {#if hasVms}
-          <SidebarBlock label="disks" img="../assets/disk.svg" on:click={add("disks")} />
-          <SidebarBlock label="env_vars" img="../assets/env.svg" on:click={add("env_vars")} />
+          <SidebarBlock
+            label="disks"
+            img="../assets/disk.svg"
+            on:click={add("disks")}
+          />
+          <SidebarBlock
+            label="env_vars"
+            img="../assets/env.svg"
+            on:click={add("env_vars")}
+          />
+        {/if}
+        {#if hasZDBs}
+          <SidebarBlock
+            label="zdb"
+            img="../assets/zdb.png"
+            on:click={add("zdb")}
+          />
         {/if}
       {/if}
     {/if}
@@ -110,7 +158,7 @@
 
         a,
         label {
-          display:flex;
+          display: flex;
           height: 100%;
           width: 100%;
           cursor: pointer;
