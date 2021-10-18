@@ -110,6 +110,8 @@ function createCodeStore() {
             if (resourceIdx != undefined)
               if (value.projects[value.active].resources[resourceIdx].type === 'zdbs')
                 value.projects[value.active].resources[resourceIdx].zdbs.push(new ZDB()); // prettier-ignore
+              else
+                addToast({message: `Can't add new zdb to ${value.projects[value.active].resources[resourceIdx].type} type`, type: "error", dismissible: true, timeout: 3000})
             break;
 
           case "master":
@@ -149,15 +151,18 @@ function createCodeStore() {
 
           case "machine":
             if (resourceIdx != undefined)
-              if (value.projects[value.active].resources[resourceIdx].type !== 'kubernetes')
+              if (value.projects[value.active].resources[resourceIdx].type === 'machines')
                 value.projects[value.active].resources[resourceIdx].vms.push(new VM()); // prettier-ignore
-                else
-                addToast({message: `Can't add new worker to ${value.projects[value.active].resources[resourceIdx].type} type`, type: "error", dismissible: true, timeout: 3000})
+              else
+                addToast({message: `Can't add new machine to ${value.projects[value.active].resources[resourceIdx].type} type`, type: "error", dismissible: true, timeout: 3000})
             break;
 
           case "env_vars":
             if (resourceIdx != undefined && idx != undefined)
               value.projects[value.active].resources[resourceIdx].vms[idx].env_vars.push(new Env()); // prettier-ignore
+            else
+              addToast({message: `Can't add new env_vars to ${value.projects[value.active].resources[resourceIdx].type} type`, type: "error", dismissible: true, timeout: 3000})
+
             break;
 
           case "network":

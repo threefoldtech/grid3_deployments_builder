@@ -94,7 +94,7 @@
         {#if hasVms}
           <SidebarBlock
             label="disks"
-            img="../assets/disk.svg"
+            img="../assets/disk.png"
             on:click={add("disks")}
           />
           <SidebarBlock
