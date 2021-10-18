@@ -1,24 +1,11 @@
 <script lang="ts">
   import codeStore from "../store/code.store";
   import mnemonicsStore from "../store/mnemonics.store";
+  import Toasts from "../components/Toasts.svelte";
+  import { addToast } from "../store/toast.store";
   import { HTTPMessageBusClient } from "ts-rmb-http-client";
-  import {
-    NetworkModel,
-    DiskModel,
-    KubernetesNodeModel,
-    MachineModule,
-    MachineModel,
-    MachinesModel,
-    K8sModule,
-    K8SModel,
-    ZDBModel,
-    ZDBSModel,
-    ZdbsModule,
-    ZdbModes,
-    DeviceTypes,
-  } from "grid3_client_ts";
-  import { Resource } from "src/models";
-
+  import {NetworkModel} from "grid3_client_ts"
+  import {handleKubernetes, handleVMs, handleZDBs} from "../grid3/grid3"
   $: store = $codeStore;
   $: active = store.active > -1;
 
@@ -29,138 +16,6 @@
 
   $: mnemStore = $mnemonicsStore;
   $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
-
-  // Deploy VM Function
-  async function deployVM(
-    network: NetworkModel,
-    twinId: string,
-    explorerUrl: string,
-    mnemonics: string,
-    rmb: HTTPMessageBusClient,
-    resource: Resource,
-    projectName: string
-  ) {
-    const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
-    vmDeployer.fileName = projectName +"/" + vmDeployer.fileName;
-    // Construct Machines
-    const vmsModel = resource.vms.map((vm) => {
-      let vmModel = new MachineModel();
-      vmModel.name = vm.name;
-      vmModel.node_id = vm.node;
-      vmModel.flist = vm.flist;
-      vmModel.cpu = vm.cpu;
-      vmModel.memory = vm.memory;
-      vmModel.rootfs_size = vm.rootFsSize;
-      vmModel.entrypoint = vm.entrypoint;
-      vmModel.public_ip = vm.publicIp;
-      vmModel.planetary = vm.planetary;
-      vmModel.disks = vm.disks.map((disk) => {
-        const d = new DiskModel();
-        d.name = disk.name;
-        d.size = disk.size;
-        d.mountpoint = disk.mount;
-        return d;
-      });
-      vmModel.env = vm.env_vars.reduce((res, { key, value }) => {
-        res[key] = value;
-        return res;
-      }, {});
-      return vmModel;
-    });
-
-    // Construct Machines Payload
-    const vmsPayload = new MachinesModel();
-    vmsPayload.name = resource.name;
-    vmsPayload.machines = vmsModel;
-    vmsPayload.network = network;
-    vmsPayload.description = resource.description;
-    vmsPayload.metadata = resource.metadata;
-
-    // Deploy
-    const result = vmDeployer.deploy(vmsPayload);
-    return result;
-  }
-
-  // Deploy Kubernetes Function
-  async function deployKubernetes(
-    twinId: string,
-    explorerUrl: string,
-    mnemonics: string,
-    rmb: HTTPMessageBusClient,
-    network: NetworkModel,
-    resource: Resource,
-    projectName: string
-  ) {
-    const k8s = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
-    k8s.fileName = projectName +"/" + k8s.fileName;
-    const masters = resource.masters.map((m) => {
-      let k = new KubernetesNodeModel();
-      k.name = m.name;
-      k.node_id = m.node;
-      k.cpu = m.cpu;
-      k.disk_size = m.diskSize;
-      k.memory = m.memory;
-      k.public_ip = m.publicIp;
-      k.rootfs_size = m.rootFsSize;
-      k.planetary = m.planetary;
-      return k;
-    });
-
-    const workers = resource.workers.map((w) => {
-      let k = new KubernetesNodeModel();
-      k.name = w.name;
-      k.node_id = w.node;
-      k.cpu = w.cpu;
-      k.disk_size = w.diskSize;
-      k.memory = w.memory;
-      k.public_ip = w.publicIp;
-      k.rootfs_size = w.rootFsSize;
-      k.planetary = w.planetary;
-      return k;
-    });
-    let kubernetesPayload = new K8SModel();
-    kubernetesPayload.name = resource.name;
-    kubernetesPayload.secret = resource.secret;
-    kubernetesPayload.network = network;
-    kubernetesPayload.masters = masters;
-    kubernetesPayload.workers = workers;
-    kubernetesPayload.metadata = resource.metadata;
-    kubernetesPayload.description = resource.description;
-    kubernetesPayload.ssh_key = resource.sshKey;
-    const result = k8s.deploy(kubernetesPayload);
-    return result;
-  }
-
-  async function deployZDB(
-    twinId: string,
-    explorerUrl: string,
-    mnemonics: string,
-    rmb: HTTPMessageBusClient,
-    resource: Resource,
-    projectName: string
-  ) {
-    const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
-    zdbsDeployer.fileName = projectName + "/" + zdbsDeployer.fileName;
-    const zdbs = resource.zdbs.map((z) => {
-      let zdb = new ZDBModel();
-      zdb.name = z.name;
-      zdb.node_id = z.node;
-      zdb.mode = z.mode as ZdbModes;
-      zdb.disk_size = z.size;
-      zdb.disk_type = z.diskType as DeviceTypes;
-      zdb.public = z.publicIp;
-      zdb.namespace = z.namespace;
-      zdb.password = z.password;
-      return zdb;
-    });
-    let zdbsPayload = new ZDBSModel();
-    zdbsPayload.name = resource.name + "ZDBs";
-    zdbsPayload.zdbs = zdbs;
-    zdbsPayload.description = resource.description;
-    zdbsPayload.metadata = resource.metadata;
-    const data = zdbsDeployer.deploy(zdbsPayload);
-    return data;
-  }
 
   async function onDeployHandler() {
     close();
@@ -173,46 +28,18 @@
     network.ip_range = nw.ipRange;
     let results = new Map();
     for (let [i, resource] of project.resources.entries()) {
-      if (resource.type === "deployment") {
-        const vmResult = await deployVM(
-          network,
-          twinId,
-          explorerUrl,
-          mnemonics,
-          rmb,
-          resource,
-          project.name
-        );
-        console.log(vmResult);
-        results.set(resource.name, vmResult);
+      if (resource.type === "machines") {
+        await handleVMs(network,twinId,explorerUrl,mnemonics,rmb, project, i)
       } else if (resource.type === "kubernetes") {
-    //     /* Kubernetes */
-        const kubernetsResult = await deployKubernetes(
-          twinId,
-          explorerUrl,
-          mnemonics,
-          rmb,
-          network,
-          resource,
-          project.name
-        );
-        results.set(resource.name, kubernetsResult);
+        await handleKubernetes(network,twinId,explorerUrl,mnemonics,rmb, project, i)
       } else if (resource.type === "zdbs") {
-        const zdbResult = await deployZDB(
-          twinId,
-          explorerUrl,
-          mnemonics,
-          rmb,
-          resource,
-          project.name
-        );
-        console.log(zdbResult);
-        results.set(resource.name, zdbResult);
+        await handleZDBs(twinId,explorerUrl,mnemonics,rmb, project, i)
       }
-      codeStore.updateDeploy(i)
     }
   }
 </script>
+
+<Toasts />
 
 {#if mnemonicsIsNeeded}
   <div class="layout">
