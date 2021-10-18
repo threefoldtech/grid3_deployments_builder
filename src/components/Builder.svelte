@@ -10,8 +10,8 @@
   $: hasNetwork = code && code.network;
   $: hasKubernetes =
     code && code.resources.some((r) => r.type === "kubernetes");
-  $: hasDeployment =
-    code && code.resources.some((r) => r.type === "deployment");
+  $: hasMachines =
+    code && code.resources.some((r) => r.type === "machines");
   $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs");
 
   function add(key: Add_Types) {
@@ -57,9 +57,9 @@
         />
       {/if}
       <SidebarBlock
-        label="deployment"
-        img="../assets/deployment.png"
-        on:click={add("deployment")}
+        label="machines"
+        img="../assets/vms.png"
+        on:click={add("machines")}
       />
       <SidebarBlock
         label="kubernetes"
@@ -72,11 +72,11 @@
         on:click={add("zdbs")}
       />
       {#if code.resources.length}
-        {#if hasDeployment}
+        {#if hasMachines}
           <SidebarBlock
-            label="vms"
+            label="machine"
             img="../assets/vm.png"
-            on:click={add("vms")}
+            on:click={add("machine")}
           />
         {/if}
         {#if hasKubernetes}

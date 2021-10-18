@@ -8,12 +8,12 @@
 
   /* --resource: #4caf50;
   --resource-bg: #dff5df; */
-  --deployment: #4caf50;
-  --deployment-bg: #e6f5e6;
+  --machines: #4caf50;
+  --machines-bg: #e6f5e6;
   --disks: #2196f3;
   --disks-bg: #d8eeff;
-  --vms: #009688;
-  --vms-bg: #c5f1ed;
+  --machine: #009688;
+  --machine-bg: #c5f1ed;
   --env_vars: #ff8c00;
   --env_vars-bg: #fff5ee;
   --zdbs: red;

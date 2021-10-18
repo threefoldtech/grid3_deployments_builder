@@ -65,7 +65,7 @@
           {#each resource.vms as vm, idx (vm.id)}
             <Droppable {resourceIdx} {idx}>
               <Block
-                color="--vms"
+                color="--machine"
                 on:click={codeStore.removeVM.bind(codeStore, resourceIdx, idx, mnemStore)}
               >
                 <VMDisplay {resourceIdx} {vm} {idx} />

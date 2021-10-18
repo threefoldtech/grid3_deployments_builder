@@ -13,8 +13,8 @@
 <div class="resource">
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    {#if resource.type === "deployment"}
-    <img src="/assets/deployment.png" alt="deployment icon" width="40" />
+    {#if resource.type === "machines"}
+    <img src="/assets/vms.png" alt="deployment icon" width="40" />
     {:else if resource.type === "kubernetes"}
     <img src="/assets/kubernetes.png" alt="kubernetes icon" width="40" />
     {:else if resource.type === "zdbs"}
