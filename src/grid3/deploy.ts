@@ -1,7 +1,7 @@
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
-import { Resource, Worker, VM, ZDB, Project } from "../models";
+import { Worker, Machine, ZDB, Project, Machines, Kubernetes, ZDBs } from "../models";
 import codeStore from "../store/code.store";
-import { addToast } from "../store/toast.store";
+import { addSuccessToast, addInfoToast, addErrorToast } from "../store/toast.store";
 import {
   NetworkModel,
   DiskModel,
@@ -30,95 +30,58 @@ function checkResult(result): boolean {
 
 async function handleVMs(
   network: NetworkModel,
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
+  mnemStore,
   project: Project,
   resourceId: number
 ) {
-  let resource = project.resources[resourceId];
+  let resource = project.resources[resourceId] as Machines;
   // Check if deployment already deployed before, Will add new vm only.
   if (resource.isDeployed) {
     let is_changed: boolean = false; // flag to check if no change happen
-    for (let [i, vm] of resource.vms.entries()) {
+    for (let [i, vm] of (resource.machines.entries())) {
       // If vm is not deployed --> add new vm to the current deployment
       if (!vm.isDeployed) {
         is_changed = true;
         const vmResult = await addVM(
-          twinId,
-          explorerUrl,
-          mnemonics,
-          rmb,
+          mnemStore,
           vm,
           resource.name,
           project.name
         );
         if (checkResult(vmResult)) {
-          addToast({
-            message: `${vm.name} added successfully`,
-            type: "success",
-            dismissible: true,
-            timeout: 3000,
-          });
+          addSuccessToast(`${vm.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
         } else {
-          addToast({
-            message: `Error happen while adding ${vm.name}`,
-            type: "error",
-            dismissible: true,
-            timeout: 3000,
-          });
+          addErrorToast(`Error happen while adding ${vm.name}`);
         }
       }
     }
     if (!is_changed) {
-      addToast({
-        message: "No new machine added, all VMs already deployed",
-        type: "info",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addInfoToast("No new machine added, all VMs already deployed");
     }
   } else {
     const vmResult = await deployVMs(
       network,
-      twinId,
-      explorerUrl,
-      mnemonics,
-      rmb,
+      mnemStore,
       resource,
       project.name
     );
     if (checkResult(vmResult)) {
-      addToast({
-        message: `${resource.name} deployed successfully`,
-        type: "success",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addToast({
-        message: `Error happen while deploying ${resource.name}`,
-        type: "error",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addErrorToast(`Error happen while deploying ${resource.name}`);
     }
   }
 }
 
 async function handleKubernetes(
   network: NetworkModel,
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
+  mnemStore,
   project: Project,
   resourceId: number
 ) {
-  let resource = project.resources[resourceId];
+  let resource = project.resources[resourceId] as Kubernetes;
   // Check if deployment already deployed before, Will add new workers only.
   if (resource.isDeployed) {
     let is_changed = false; // flag to check if no change happen
@@ -126,78 +89,44 @@ async function handleKubernetes(
       if (!w.isDeployed) {
         is_changed = true;
         const addWorkerResult = await addWorker(
-          twinId,
-          explorerUrl,
-          mnemonics,
-          rmb,
+          mnemStore,
           w,
           resource.name,
           project.name
         );
         if (checkResult(addWorkerResult)) {
-          addToast({
-            message: `${w.name} added successfully`,
-            type: "success",
-            dismissible: true,
-            timeout: 3000,
-          });
+          addSuccessToast(`${w.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
         } else {
-          addToast({
-            message: `Error happen while adding ${w.name}`,
-            type: "error",
-            dismissible: true,
-            timeout: 3000,
-          });
+          addErrorToast(`Error happen while adding ${w.name}`);
         }
       }
     }
     if (!is_changed) {
-      addToast({
-        message: "No new workers added, all workers already deployed",
-        type: "info",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addInfoToast("No new workers added, all workers already deployed");
     }
   } else {
     const kubernetsResult = await deployKubernetes(
-      twinId,
-      explorerUrl,
-      mnemonics,
-      rmb,
+      mnemStore,
       network,
       resource,
       project.name
     );
     if (checkResult(kubernetsResult)) {
-      addToast({
-        message: `${resource.name} deployed successfully`,
-        type: "success",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addToast({
-        message: `Error happen while deploying ${resource.name}`,
-        type: "error",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addErrorToast(`Error happen while deploying ${resource.name}`);
     }
   }
 }
 
 async function handleZDBs(
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
+  mnemStore,
   project: Project,
   resourceId: number
 ) {
-  let resource = project.resources[resourceId];
+  let resource = project.resources[resourceId] as ZDBs;
   // Check if deployment already deployed before, Will add new workers only.
   if (resource.isDeployed) {
     let is_changed = false; // flag to check if no change happen
@@ -205,64 +134,33 @@ async function handleZDBs(
       if (!z.isDeployed) {
         is_changed = true;
         const addZdbResult = await addZDB(
-          twinId,
-          explorerUrl,
-          mnemonics,
-          rmb,
+          mnemStore,
           z,
           resource.name,
           project.name
         );
         if (checkResult(addZdbResult)) {
-          addToast({
-            message: `${z.name} added successfully`,
-            type: "success",
-            dismissible: true,
-            timeout: 3000,
-          });
+          addSuccessToast(`${z.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
         } else {
-          addToast({
-            message: `Error happen while adding ${z.name}`,
-            type: "error",
-            dismissible: true,
-            timeout: 3000,
-          });
+          addErrorToast(`Error happen while adding ${z.name}`);
         }
       }
     }
     if (!is_changed) {
-      addToast({
-        message: "No new zdbs added, all zdbs already deployed",
-        type: "info",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addInfoToast("No new zdbs added, all zdbs already deployed");
     }
   } else {
     const zdbsResult = await deployZDBs(
-      twinId,
-      explorerUrl,
-      mnemonics,
-      rmb,
+      mnemStore,
       resource,
       project.name
     );
     if (checkResult(zdbsResult)) {
-      addToast({
-        message: `${resource.name} deployed successfully`,
-        type: "success",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addToast({
-        message: `Error happen while deploying ${resource.name}`,
-        type: "error",
-        dismissible: true,
-        timeout: 3000,
-      });
+      addErrorToast(`Error happen while deploying ${resource.name}`);
     }
   }
 }
@@ -270,17 +168,16 @@ async function handleZDBs(
 // Deploy VM Function
 async function deployVMs(
   network: NetworkModel,
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
-  resource: Resource,
+  mnemStore,
+  resource: Machines,
   projectName: string
 ) {
+  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
+  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
   const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
   vmDeployer.fileName = projectName + "/" + vmDeployer.fileName;
   // Construct Machines
-  const vmsModel = resource.vms.map((vm) => {
+  const vmsModel = resource.machines.map((vm) => {
     let vmModel = new MachineModel();
     vmModel.name = vm.name;
     vmModel.node_id = vm.node;
@@ -319,14 +216,13 @@ async function deployVMs(
 }
 
 async function addVM(
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
-  machine: VM,
+  mnemStore,
+  machine: Machine,
   deploymentName: string,
   projectName: string
 ) {
+  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
+  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
   const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
   vmDeployer.fileName = projectName + "/" + vmDeployer.fileName;
   let addVMPayload = new AddMachineModel();
@@ -355,14 +251,13 @@ async function addVM(
 
 // Deploy Kubernetes Function
 async function deployKubernetes(
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
+  mnemStore,
   network: NetworkModel,
-  resource: Resource,
+  resource: Kubernetes,
   projectName: string
 ) {
+  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
+  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
   const k8sDeployer = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
   k8sDeployer.fileName = projectName + "/" + k8sDeployer.fileName;
   const masters = resource.masters.map((m) => {
@@ -404,14 +299,13 @@ async function deployKubernetes(
 }
 
 async function addWorker(
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
+  mnemStore,
   worker: Worker,
   deploymentName: string,
   projectName: string
 ) {
+  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
+  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
   const k8sDeployer = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
   k8sDeployer.fileName = projectName + "/" + k8sDeployer.fileName;
   let addWorkerPayload = new AddWorkerModel();
@@ -429,13 +323,12 @@ async function addWorker(
 }
 
 async function deployZDBs(
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
-  resource: Resource,
+  mnemStore,
+  resource: ZDBs,
   projectName: string
 ) {
+  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
+  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
   const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
   zdbsDeployer.fileName = projectName + "/" + zdbsDeployer.fileName;
   const zdbs = resource.zdbs.map((z) => {
@@ -460,14 +353,13 @@ async function deployZDBs(
 }
 
 async function addZDB(
-  twinId: string,
-  explorerUrl: string,
-  mnemonics: string,
-  rmb: HTTPMessageBusClient,
+  mnemStore,
   zdb: ZDB,
   deploymentName: string,
   projectName: string
 ) {
+  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
+  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
   const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
   zdbsDeployer.fileName = projectName + "/" + zdbsDeployer.fileName;
   let zdbPaylaod = new AddZDBModel();

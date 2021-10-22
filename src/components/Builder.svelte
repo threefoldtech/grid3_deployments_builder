@@ -1,18 +1,19 @@
 <script lang="ts">
+import { Machines } from "src/models";
+
   import type { Add_Types, IStore } from "../store/code.store";
   import codeStore from "../store/code.store";
-  import SidebarBlock from "./SidebarBlock.svelte";
+  import SidebarBlock from "./base/SidebarBlock.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
   $: code = store.projects[idx];
-  $: hasVms = code && code.resources.some((r) => r.vms.length > 0);
   $: hasNetwork = code && code.network;
-  $: hasKubernetes =
-    code && code.resources.some((r) => r.type === "kubernetes");
-  $: hasMachines =
-    code && code.resources.some((r) => r.type === "machines");
-  $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs");
+  $: hasKubernetes = code && code.resources.some((r) => r.type === "kubernetes"); //prettier-ignore
+  $: hasMachines = code && code.resources.some((r) => r.type === "machines"); //prettier-ignore
+  $: hasMachine = hasMachines && code.resources.some((r) => r.type === "machines" && (r as Machines).machines.length); //prettier-ignore
+  $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs"); //prettier-ignore;
+
 
   function add(key: Add_Types) {
     return () => {
@@ -61,56 +62,78 @@
         img="../assets/vms.png"
         on:click={add("machines")}
       />
+      {#if hasMachines }
+        <SidebarBlock
+          label="machine"
+          img="../assets/vm.png"
+          on:click={add("machine")}
+        />
+      {/if}
+      {#if hasMachine }
+        <SidebarBlock
+          label="disk"
+          img="../assets/disk.png"
+          on:click={add("disk")}
+        />
+        <!-- TODO: Not Implemented -->
+        <SidebarBlock 
+          label="qsfs disk" 
+          img="../assets/disk.png"
+          on:click={add("disk")}
+        />
+        <!-- --------------------- -->
+        <SidebarBlock
+          label="envVar"
+          img="../assets/env.svg"
+          on:click={add("envVar")}
+        />
+      {/if}
       <SidebarBlock
         label="kubernetes"
         img="../assets/kubernetes.png"
         on:click={add("kubernetes")}
       />
+      {#if hasKubernetes }
+        <SidebarBlock
+          label="master"
+          img="../assets/kubernetes_master.png"
+          on:click={add("master")}
+        />
+        <SidebarBlock
+          label="worker"
+          img="../assets/kubernetes_worker.png"
+          on:click={add("worker")}
+        />
+      {/if}
       <SidebarBlock
         label="zdbs"
         img="../assets/zdbs.png"
         on:click={add("zdbs")}
       />
-      {#if code.resources.length}
-        {#if hasMachines}
-          <SidebarBlock
-            label="machine"
-            img="../assets/vm.png"
-            on:click={add("machine")}
-          />
-        {/if}
-        {#if hasKubernetes}
-          <SidebarBlock
-            label="master"
-            img="../assets/kubernetes_master.png"
-            on:click={add("master")}
-          />
-          <SidebarBlock
-            label="worker"
-            img="../assets/kubernetes_worker.png"
-            on:click={add("worker")}
-          />
-        {/if}
-        {#if hasVms}
-          <SidebarBlock
-            label="disks"
-            img="../assets/disk.png"
-            on:click={add("disks")}
-          />
-          <SidebarBlock
-            label="env_vars"
-            img="../assets/env.svg"
-            on:click={add("env_vars")}
-          />
-        {/if}
-        {#if hasZDBs}
-          <SidebarBlock
-            label="zdb"
-            img="../assets/zdb.png"
-            on:click={add("zdb")}
-          />
-        {/if}
+      {#if hasZDBs }
+        <SidebarBlock
+          label="zdb"
+          img="../assets/zdb.png"
+          on:click={add("zdb")}
+        />
       {/if}
+      <!-- TODO: Not Implemented -->
+      <SidebarBlock
+        label="qsfs zdbs"
+        img="../assets/zdbs.png"
+        on:click={add("zdbs")}
+      />
+      <!-- --------------------- -->
+      <SidebarBlock
+        label="gatewayFQDN"
+        img="../assets/gateways_fqdn.png"
+        on:click={add("gatewayFQDN")}
+      />
+      <SidebarBlock
+        label="gatewayName"
+        img="../assets/gateways.png"
+        on:click={add("gatewayName")}
+      />
     {/if}
   </div>
   <div class="sidenav__actions">

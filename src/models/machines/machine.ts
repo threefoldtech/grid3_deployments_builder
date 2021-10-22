@@ -1,8 +1,10 @@
 import { v4 } from "uuid";
+
 import type { Env } from "./env";
 import type { Disk } from "./disk";
+import type { QsfsDisk } from "./qsfs_disk";
 
-export class VM {
+export class Machine {
   constructor(
     public id: string = v4(),
     public name: string = "vm",
@@ -14,6 +16,7 @@ export class VM {
     public entrypoint: string = "/sbin/zinit init",
     public env_vars: Env[] = [],
     public disks: Disk[] = [],
+    public qsfsDisks: QsfsDisk[] = [],
     public publicIp: boolean = false,
     public planetary: boolean = false,
     public isDeployed: boolean = false

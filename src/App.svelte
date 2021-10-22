@@ -4,7 +4,11 @@
   import TerraForm from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/Configurations.svelte";
-  import Droppable from "./components/Droppable.svelte";
+  import Droppable from "./components/base/Droppable.svelte";
+  import { events } from "grid3_client_ts"
+  import { addInfoToast } from "./store/toast.store";
+
+  events.addListener("logs", addInfoToast)
 
   let type = "text";
   let explorer = 0;

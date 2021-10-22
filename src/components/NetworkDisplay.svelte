@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Network } from "../models";
   import codeStore from "../store/code.store";
-  import Collapse from "./Collapse.svelte";
-  import Editable from "./Editable.svelte";
+  import Collapse from "./base/Collapse.svelte";
+  import Editable from "./base/Editable.svelte";
 
   export let network: Network;
 
@@ -13,7 +13,7 @@
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
     <img src="/assets/network.png" alt="deployment icon" width="40" />
-    <span class="keyword">network</span>
+    <span class="keyword">Network</span>
     {#if collapse}
       <p>...</p>
     {/if}
@@ -21,12 +21,12 @@
 
   {#if !collapse}
     <Editable
-      label="name"
+      label="Name"
       value={network.name}
       on:input={codeStore.updateNetwork("name")}
     />
     <Editable
-      label="nodes"
+      label="Nodes"
       value={network.node.join(", ")}
       on:input={codeStore.updateNetwork("node")}
     />
@@ -36,7 +36,7 @@
       on:input={codeStore.updateNetwork("ipRange")}
     />
     <Editable
-      label="description"
+      label="Description"
       value={network.description}
       on:input={codeStore.updateNetwork("description")}
     />

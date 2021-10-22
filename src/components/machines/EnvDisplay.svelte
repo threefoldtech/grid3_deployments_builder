@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Env } from "../models/env";
-  import codeStore from "../store/code.store";
-  import Collapse from "./Collapse.svelte";
-  import Editable from "./Editable.svelte";
+  import type { Env } from "../../models";
+  import codeStore from "../../store/code.store";
+  import Collapse from "../base/Collapse.svelte";
+  import Editable from "../base/Editable.svelte";
 
   export let resourceIdx: number;
   export let vmIdx: number;
@@ -16,7 +16,7 @@
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
     <img src="/assets/env.svg" alt="deployment icon" width="40" />
-    <span class="keyword">env_var</span>
+    <span class="keyword">environment variable</span>
     {#if collapse}
       <p>...</p>
     {/if}

@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 import type { Resource } from "./resource";
 import { Network } from "./network";
 
+
 export class Project {
   constructor(
     public id = v4(),

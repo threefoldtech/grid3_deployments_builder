@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Disk } from "../models/disk";
-  import codeStore from "../store/code.store";
-  import Collapse from "./Collapse.svelte";
-  import Editable from "./Editable.svelte";
+  import type { Disk } from "../../models";
+  import codeStore from "../../store/code.store";
+  import Collapse from "../base/Collapse.svelte";
+  import Editable from "../base/Editable.svelte";
 
   export let resourceIdx: number;
   export let vmIdx: number;

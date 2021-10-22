@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { ZDB } from "../models";
-  import codeStore from "../store/code.store";
-  import Collapse from "./Collapse.svelte";
-  import Editable from "./Editable.svelte";
-  import Selectable from "./Selectable.svelte";
+  import type { ZDB } from "../../models";
+  import codeStore from "../../store/code.store";
+  import Collapse from "../base/Collapse.svelte";
+  import Editable from "../base/Editable.svelte";
+  import Selectable from "../base/Selectable.svelte";
   import { DeviceTypes, ZdbModes } from "grid3_client_ts";
 
   export let resourceIdx: number;

@@ -10,12 +10,12 @@
   --resource-bg: #dff5df; */
   --machines: #4caf50;
   --machines-bg: #e6f5e6;
-  --disks: #2196f3;
-  --disks-bg: #d8eeff;
+  --disk: #2196f3;
+  --disk-bg: #d8eeff;
   --machine: #009688;
   --machine-bg: #c5f1ed;
-  --env_vars: #ff8c00;
-  --env_vars-bg: #fff5ee;
+  --envVar: #ff8c00;
+  --envVar-bg: #fff5ee;
   --zdbs: red;
   --zdbs-bg: #ffe4e1;
   --zdb: gold;

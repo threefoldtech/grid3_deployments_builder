@@ -1,11 +1,12 @@
 <script lang="ts">
   import codeStore from "../store/code.store";
   import mnemonicsStore from "../store/mnemonics.store";
-  import Toasts from "../components/Toasts.svelte";
+  import Toasts from "../components/base/Toasts.svelte";
   import { addToast } from "../store/toast.store";
   import { HTTPMessageBusClient } from "ts-rmb-http-client";
   import {NetworkModel} from "grid3_client_ts"
-  import {handleKubernetes, handleVMs, handleZDBs} from "../grid3/grid3"
+  import {handleKubernetes, handleVMs, handleZDBs} from "src/grid3/index"
+  
   $: store = $codeStore;
   $: active = store.active > -1;
 
@@ -21,19 +22,19 @@
     close();
     const project = store.projects[store.active];
     const nw = project.network;
-    const { twinId, explorerUrl, mnemonics, proxyUrl } = mnemStore;
-    const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
     const network = new NetworkModel();
     network.name = nw.name;
     network.ip_range = nw.ipRange;
     let results = new Map();
     for (let [i, resource] of project.resources.entries()) {
       if (resource.type === "machines") {
-        await handleVMs(network,twinId,explorerUrl,mnemonics,rmb, project, i)
+        await handleVMs(network,mnemStore, project, i)
       } else if (resource.type === "kubernetes") {
-        await handleKubernetes(network,twinId,explorerUrl,mnemonics,rmb, project, i)
+        await handleKubernetes(network, mnemStore, project, i)
       } else if (resource.type === "zdbs") {
-        await handleZDBs(twinId,explorerUrl,mnemonics,rmb, project, i)
+        await handleZDBs(mnemStore, project, i)
+      }else if (resource.type === "gateways"){
+        console.log(resource)
       }
     }
   }
