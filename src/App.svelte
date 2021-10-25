@@ -12,14 +12,17 @@
 
   let type = "text";
   let explorer = 0;
-  let disable: boolean[]= [true];
   const setExplorer = (x: number) => () => (explorer = x);
-  import { loadFromFile, dumpToFile } from "grid3_client_ts";
   $: store = $codeStore;
 </script>
 
 <aside class="sidenav">
   <div class="sidenav__actions">
+    <img
+      src="/assets/threefold.svg"
+      alt="threefold"
+      title="threefold logo"
+    />
     <button
       on:click={setExplorer(0)}
       class={"sidenav__actions__item " + (explorer === 0 ? "active" : "")}
@@ -61,7 +64,7 @@
           <input
             {type}
             value={project.name}
-            disabled={disable[i]}
+            disabled={!project.rename}
             on:input={codeStore.renameProject(i)}
             style="display: inline-block;"
           />
@@ -79,10 +82,10 @@
           <span
             style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
             on:click={() => {
-              disable[i] = !disable[i];
+              project.rename = !project.rename;
             }}
           >
-            {#if disable[i]}
+            {#if !project.rename}
               <img
                 src="/assets/edit.png"
                 alt="edit"

@@ -1,7 +1,7 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
 import { addErrorToast } from "./toast.store";
-import { deleteMachines, deleteKubernetes, deleteZdbs, deleteZdb, deleteWorker, deleteMachine } from "src/grid3";
+import { deleteMachines, deleteKubernetes, deleteZdbs, deleteZdb, deleteWorker, deleteMachine, getClient } from "src/grid3";
 import {
   Project,
   Resource,
@@ -20,18 +20,6 @@ import {
   GatewayFQDN,
   GatewayName,
 } from "../models";
-
-import {
-  DeleteMachineModel,
-  DeleteWorkerModel,
-  DeleteZDBModel,
-  K8SDeleteModel,
-  MachinesDeleteModel,
-  MachineModule,
-  K8sModule,
-  ZdbsModule,
-  ZDBDeleteModel,
-} from "grid3_client_ts";
 
 export type Add_Types =
   | "project"
@@ -329,15 +317,7 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          if (key === "node") {
-            value.projects[value.active].network.node = val
-              .split(",")
-              .map((v) => v.trim())
-              .map((v) => +v)
-              .filter((v) => !isNaN(v));
-          } else {
             value.projects[value.active].network[key] = type === "number" ? +val : val; // prettier-ignore
-          }
           return value;
         });
       };
@@ -458,17 +438,18 @@ function createCodeStore() {
       return update((value) => {
         if (value.projects[value.active].resources[idx].isDeployed) {
           const projectName = value.projects[value.active].name
+          const gridClient = getClient(mnemStore, projectName);
           const deploymentName = value.projects[value.active].resources[idx].name
           let result: Promise<boolean>
           switch (value.projects[value.active].resources[idx].type) {
             case "machines":
-              result = deleteMachines(mnemStore, deploymentName, projectName)
+              result = deleteMachines(gridClient, deploymentName)
               break;
             case "kubernetes":
-              result = deleteKubernetes(mnemStore, deploymentName, projectName)
+              result = deleteKubernetes(gridClient, deploymentName)
               break;
             case "zdbs":
-              result = deleteZdbs(mnemStore, deploymentName, projectName)
+              result = deleteZdbs(gridClient, deploymentName)
               break;
             case "qsfsZdbs":
               break
@@ -538,7 +519,8 @@ function createCodeStore() {
           const zdbName = zdbToRemove.name;
           const deploymentName = value.projects[value.active].resources[resourceIdx].name;
           const projectName = value.projects[value.active].name;
-          const result = deleteZdb(mnemStore, zdbName, deploymentName, projectName);
+          const gridClient = getClient(mnemStore, projectName);
+          const result = deleteZdb(gridClient, zdbName, deploymentName);
           result.then((res) => {
             if (res) {
               (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.splice(idx,1); //prettier-ignore
@@ -565,7 +547,8 @@ function createCodeStore() {
           const workerName = workerToRemove.name;
           const deploymentName = value.projects[value.active].resources[resourceIdx].name;
           const projectName = value.projects[value.active].name;
-          const result = deleteWorker(mnemStore, workerName, deploymentName, projectName)
+          const gridClient = getClient(mnemStore, projectName);
+          const result = deleteWorker(gridClient, workerName, deploymentName)
           result.then((res) => {
             if (res) {
               (value.projects[value.active].resources[resourceIdx] as Kubernetes).workers.splice(idx,1); //prettier-ignore
@@ -585,7 +568,8 @@ function createCodeStore() {
           const machineName = vmToRemove.name;
           const deploymentName = value.projects[value.active].resources[resourceIdx].name;
           const projectName = value.projects[value.active].name;
-          const result = deleteMachine(mnemStore, machineName, deploymentName, projectName)
+          const gridClient = getClient(mnemStore, projectName);
+          const result = deleteMachine(gridClient, machineName, deploymentName)
           result.then((res) => {
             if (res) {
               (value.projects[value.active].resources[resourceIdx] as Machines).machines.splice(idx,1); //prettier-ignore

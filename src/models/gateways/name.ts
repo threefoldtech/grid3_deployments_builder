@@ -6,7 +6,7 @@ export class GatewayName implements ResourceInterface {
     readonly type: string = "name",
     public id: string = v4(),
     public node: number = 2,
-    public name: string = "NameGateway Deployment",
+    public name: string = "",
     public nameGateway: string = "gateway",
     public tlsPassThrough: boolean = false,
     public backends: string[] = ["backend1"],

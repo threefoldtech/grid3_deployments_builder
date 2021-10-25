@@ -52,86 +52,114 @@ import { Machines } from "src/models";
     {:else if code}
       {#if !hasNetwork}
         <SidebarBlock
-          label="network"
+          label="Network"
           img="../assets/network.png"
+          type="network"
+          level=0
           on:click={add("network")}
         />
       {/if}
       <SidebarBlock
-        label="machines"
+        label="Machines"
         img="../assets/vms.png"
+        type="machines"
+        level = 0
         on:click={add("machines")}
       />
       {#if hasMachines }
         <SidebarBlock
-          label="machine"
+          label="Generic Machine"
           img="../assets/vm.png"
+          type="machine"
+          level = 2
           on:click={add("machine")}
         />
       {/if}
       {#if hasMachine }
         <SidebarBlock
-          label="disk"
+          label="Disk"
           img="../assets/disk.png"
+          type="disk"
+          level = 3
           on:click={add("disk")}
         />
         <!-- TODO: Not Implemented -->
         <SidebarBlock 
-          label="qsfs disk" 
+          label="Qsfs Disk" 
           img="../assets/disk.png"
+          type="disk"
+          level = 3
           on:click={add("disk")}
         />
         <!-- --------------------- -->
         <SidebarBlock
-          label="envVar"
+          label="Enviroment Variable"
           img="../assets/env.svg"
+          type="envVar"
+          level = 3
           on:click={add("envVar")}
         />
       {/if}
       <SidebarBlock
-        label="kubernetes"
+        label="Kubernetes"
         img="../assets/kubernetes.png"
+        type="kubernetes"
+        level = 0
         on:click={add("kubernetes")}
       />
       {#if hasKubernetes }
         <SidebarBlock
-          label="master"
+          label="Master"
           img="../assets/kubernetes_master.png"
+          type="master"
+          level = 2
           on:click={add("master")}
         />
         <SidebarBlock
-          label="worker"
+          label="Worker"
           img="../assets/kubernetes_worker.png"
+          type="worker"
+          level = 2
           on:click={add("worker")}
         />
       {/if}
       <SidebarBlock
-        label="zdbs"
+        label="Zdbs"
         img="../assets/zdbs.png"
+        type="zdbs"
+        level = 0
         on:click={add("zdbs")}
       />
       {#if hasZDBs }
         <SidebarBlock
-          label="zdb"
+          label="Single Zdb"
           img="../assets/zdb.png"
+          type="zdb"
+          level = 2
           on:click={add("zdb")}
         />
       {/if}
       <!-- TODO: Not Implemented -->
       <SidebarBlock
-        label="qsfs zdbs"
+        label="Qsfs Zdbs"
         img="../assets/zdbs.png"
+        type="zdbs"
+        level = 0
         on:click={add("zdbs")}
       />
       <!-- --------------------- -->
       <SidebarBlock
-        label="gatewayFQDN"
+        label="Gateway FQDN"
         img="../assets/gateways_fqdn.png"
+        type="gatewayFQDN"
+        level = 0
         on:click={add("gatewayFQDN")}
       />
       <SidebarBlock
-        label="gatewayName"
+        label="Gateway Name"
         img="../assets/gateways.png"
+        type="gatewayName"
+        level = 0
         on:click={add("gatewayName")}
       />
     {/if}
@@ -171,7 +199,6 @@ import { Machines } from "src/models";
         border: 3px solid;
         border-radius: 2rem;
         display: flex;
-        width: 200px;
         height: 60px;
         margin: 1rem 0;
 

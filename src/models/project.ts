@@ -8,6 +8,7 @@ export class Project {
     public id = v4(),
     public name:string = "new_project",
     public network: Network | null = new Network(),
-    public resources: Resource[] = []
+    public resources: Resource[] = [],
+    public rename: boolean = false
   ) {}
 }

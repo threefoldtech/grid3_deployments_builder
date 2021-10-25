@@ -16,7 +16,7 @@
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
     <img src="/assets/disk.png" alt="deployment icon" width="40" />
-    <span class="keyword">disk</span>
+    <span class="keyword">Disk</span>
     {#if collapse}
       <p>...</p>
     {/if}

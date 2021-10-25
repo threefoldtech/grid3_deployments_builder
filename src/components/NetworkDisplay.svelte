@@ -26,19 +26,9 @@
       on:input={codeStore.updateNetwork("name")}
     />
     <Editable
-      label="Nodes"
-      value={network.node.join(", ")}
-      on:input={codeStore.updateNetwork("node")}
-    />
-    <Editable
       label="IP Range"
       value={network.ipRange}
       on:input={codeStore.updateNetwork("ipRange")}
-    />
-    <Editable
-      label="Description"
-      value={network.description}
-      on:input={codeStore.updateNetwork("description")}
     />
   {/if}
 </div>

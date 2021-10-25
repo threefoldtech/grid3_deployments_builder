@@ -4,15 +4,20 @@
   export let type: "number" | "text" | "password" = "text";
   export let label: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
+  export let placeholder: string = ""
   export let deployed: boolean = false
 
   let fake_span: HTMLSpanElement;
-  let width = 100;
+  let width = 150;
 
   function updateWidth() {
     if (!fake_span) return;
 
-    width = fake_span.offsetWidth;
+    if (fake_span.textContent.length){
+      width = fake_span.offsetWidth;
+    }else{
+      width = 150;
+    }
   }
 
   onMount(updateWidth);
@@ -34,6 +39,7 @@
     <input
       {type}
       {value}
+      {placeholder}
       style={`width: ${width}px`}
       on:input
       on:keydown={updateWidth}

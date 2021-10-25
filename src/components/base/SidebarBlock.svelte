@@ -1,13 +1,19 @@
 <script lang="ts">
   export let label: string;
-  export let img: string
+  export let img: string;
+  export let type:string;
+  export let level: string;
+  const marginLeft = +level;
 </script>
 
 <div
   class="block"
   draggable="true"
-  style={"border-color: var(--" + label + ");"}
-  on:dragstart={(e) => e.dataTransfer.setData("data", label)}
+  style={
+  "border-color: var(--" + type + ");" +
+  "margin-left:" + marginLeft + "rem;"
+  }
+  on:dragstart={(e) => e.dataTransfer.setData("data", type)}
   on:click
 >
   <img src= {img} alt={label} title={label} />
@@ -24,7 +30,6 @@
     justify-content: left;
     align-items: center;
     cursor: pointer;
-    width: 200px;
     height: 60px;
 
     p {

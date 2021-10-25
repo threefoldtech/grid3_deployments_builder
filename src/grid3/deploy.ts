@@ -1,22 +1,33 @@
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
-import { Worker, Machine, ZDB, Project, Machines, Kubernetes, ZDBs } from "../models";
-import codeStore from "../store/code.store";
-import { addSuccessToast, addInfoToast, addErrorToast } from "../store/toast.store";
 import {
+  Worker,
+  Machine,
+  ZDB,
+  Project,
+  Machines,
+  Kubernetes,
+  ZDBs,
+  Resource,
+} from "../models";
+import codeStore from "../store/code.store";
+import {
+  addSuccessToast,
+  addInfoToast,
+  addErrorToast,
+} from "../store/toast.store";
+import {
+  GridClient,
   NetworkModel,
   DiskModel,
   KubernetesNodeModel,
-  MachineModule,
   MachineModel,
   MachinesModel,
-  K8sModule,
   K8SModel,
   AddWorkerModel,
   AddMachineModel,
   AddZDBModel,
   ZDBModel,
   ZDBSModel,
-  ZdbsModule,
   ZdbModes,
   DeviceTypes,
 } from "grid3_client_ts";
@@ -28,26 +39,29 @@ function checkResult(result): boolean {
   return false;
 }
 
+function getNetworkModel(project: Project): NetworkModel {
+  const nw = project.network;
+  let network = new NetworkModel;
+  network.name = nw.name;
+  network.ip_range = nw.ipRange;
+  return network;
+}
+
 async function handleVMs(
   network: NetworkModel,
-  mnemStore,
-  project: Project,
-  resourceId: number
+  projectResource: Resource,
+  resourceId: number,
+  gridClient: GridClient
 ) {
-  let resource = project.resources[resourceId] as Machines;
+  let resource =   projectResource as Machines;
   // Check if deployment already deployed before, Will add new vm only.
   if (resource.isDeployed) {
     let is_changed: boolean = false; // flag to check if no change happen
-    for (let [i, vm] of (resource.machines.entries())) {
+    for (let [i, vm] of resource.machines.entries()) {
       // If vm is not deployed --> add new vm to the current deployment
       if (!vm.isDeployed) {
         is_changed = true;
-        const vmResult = await addVM(
-          mnemStore,
-          vm,
-          resource.name,
-          project.name
-        );
+        const vmResult = await addVM(vm, resource.name, gridClient);
         if (checkResult(vmResult)) {
           addSuccessToast(`${vm.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
@@ -60,12 +74,7 @@ async function handleVMs(
       addInfoToast("No new machine added, all VMs already deployed");
     }
   } else {
-    const vmResult = await deployVMs(
-      network,
-      mnemStore,
-      resource,
-      project.name
-    );
+    const vmResult = await deployVMs(network, resource, gridClient);
     if (checkResult(vmResult)) {
       addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
@@ -77,23 +86,18 @@ async function handleVMs(
 
 async function handleKubernetes(
   network: NetworkModel,
-  mnemStore,
-  project: Project,
-  resourceId: number
+  projectResource: Resource,
+  resourceId: number,
+  gridClient: GridClient
 ) {
-  let resource = project.resources[resourceId] as Kubernetes;
+  let resource = projectResource as Kubernetes;
   // Check if deployment already deployed before, Will add new workers only.
   if (resource.isDeployed) {
     let is_changed = false; // flag to check if no change happen
     for (let [i, w] of resource.workers.entries()) {
       if (!w.isDeployed) {
         is_changed = true;
-        const addWorkerResult = await addWorker(
-          mnemStore,
-          w,
-          resource.name,
-          project.name
-        );
+        const addWorkerResult = await addWorker(w, resource.name, gridClient);
         if (checkResult(addWorkerResult)) {
           addSuccessToast(`${w.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
@@ -107,10 +111,9 @@ async function handleKubernetes(
     }
   } else {
     const kubernetsResult = await deployKubernetes(
-      mnemStore,
       network,
       resource,
-      project.name
+      gridClient
     );
     if (checkResult(kubernetsResult)) {
       addSuccessToast(`${resource.name} deployed successfully`);
@@ -122,23 +125,18 @@ async function handleKubernetes(
 }
 
 async function handleZDBs(
-  mnemStore,
-  project: Project,
-  resourceId: number
+  projectResource: Resource,
+  resourceId: number,
+  gridClient: GridClient
 ) {
-  let resource = project.resources[resourceId] as ZDBs;
+  let resource = projectResource as ZDBs;
   // Check if deployment already deployed before, Will add new workers only.
   if (resource.isDeployed) {
     let is_changed = false; // flag to check if no change happen
     for (let [i, z] of resource.zdbs.entries()) {
       if (!z.isDeployed) {
         is_changed = true;
-        const addZdbResult = await addZDB(
-          mnemStore,
-          z,
-          resource.name,
-          project.name
-        );
+        const addZdbResult = await addZDB(z, resource.name, gridClient);
         if (checkResult(addZdbResult)) {
           addSuccessToast(`${z.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
@@ -151,11 +149,7 @@ async function handleZDBs(
       addInfoToast("No new zdbs added, all zdbs already deployed");
     }
   } else {
-    const zdbsResult = await deployZDBs(
-      mnemStore,
-      resource,
-      project.name
-    );
+    const zdbsResult = await deployZDBs(resource, gridClient);
     if (checkResult(zdbsResult)) {
       addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
@@ -168,14 +162,9 @@ async function handleZDBs(
 // Deploy VM Function
 async function deployVMs(
   network: NetworkModel,
-  mnemStore,
   resource: Machines,
-  projectName: string
+  gridClient: GridClient
 ) {
-  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
-  vmDeployer.fileName = projectName + "/" + vmDeployer.fileName;
   // Construct Machines
   const vmsModel = resource.machines.map((vm) => {
     let vmModel = new MachineModel();
@@ -211,20 +200,15 @@ async function deployVMs(
   vmsPayload.metadata = resource.metadata;
 
   // Deploy
-  const result = vmDeployer.deploy(vmsPayload);
+  const result = gridClient.machines.deploy(vmsPayload);
   return result;
 }
 
 async function addVM(
-  mnemStore,
   machine: Machine,
   deploymentName: string,
-  projectName: string
+  gridClient: GridClient
 ) {
-  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const vmDeployer = new MachineModule(+twinId, explorerUrl, mnemonics, rmb);
-  vmDeployer.fileName = projectName + "/" + vmDeployer.fileName;
   let addVMPayload = new AddMachineModel();
   addVMPayload.deployment_name = deploymentName;
   addVMPayload.name = machine.name;
@@ -245,21 +229,16 @@ async function addVM(
     res[key] = value;
     return res;
   }, {});
-  const result = vmDeployer.addMachine(addVMPayload);
+  const result = gridClient.machines.addMachine(addVMPayload);
   return result;
 }
 
 // Deploy Kubernetes Function
 async function deployKubernetes(
-  mnemStore,
   network: NetworkModel,
   resource: Kubernetes,
-  projectName: string
+  gridClient: GridClient
 ) {
-  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const k8sDeployer = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
-  k8sDeployer.fileName = projectName + "/" + k8sDeployer.fileName;
   const masters = resource.masters.map((m) => {
     let k = new KubernetesNodeModel();
     k.name = m.name;
@@ -294,20 +273,15 @@ async function deployKubernetes(
   kubernetesPayload.metadata = resource.metadata;
   kubernetesPayload.description = resource.description;
   kubernetesPayload.ssh_key = resource.sshKey;
-  const result = k8sDeployer.deploy(kubernetesPayload);
+  const result = gridClient.k8s.deploy(kubernetesPayload);
   return result;
 }
 
 async function addWorker(
-  mnemStore,
   worker: Worker,
   deploymentName: string,
-  projectName: string
+  gridClient: GridClient
 ) {
-  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const k8sDeployer = new K8sModule(+twinId, explorerUrl, mnemonics, rmb);
-  k8sDeployer.fileName = projectName + "/" + k8sDeployer.fileName;
   let addWorkerPayload = new AddWorkerModel();
   addWorkerPayload.deployment_name = deploymentName;
   addWorkerPayload.name = worker.name;
@@ -318,19 +292,11 @@ async function addWorker(
   addWorkerPayload.public_ip = worker.publicIp;
   addWorkerPayload.rootfs_size = worker.rootFsSize;
   addWorkerPayload.planetary = worker.planetary;
-  const result = k8sDeployer.addWorker(addWorkerPayload);
+  const result = gridClient.k8s.addWorker(addWorkerPayload);
   return result;
 }
 
-async function deployZDBs(
-  mnemStore,
-  resource: ZDBs,
-  projectName: string
-) {
-  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
-  zdbsDeployer.fileName = projectName + "/" + zdbsDeployer.fileName;
+async function deployZDBs(resource: ZDBs, gridClient: GridClient) {
   const zdbs = resource.zdbs.map((z) => {
     let zdb = new ZDBModel();
     zdb.name = z.name;
@@ -348,20 +314,16 @@ async function deployZDBs(
   zdbsPayload.zdbs = zdbs;
   zdbsPayload.description = resource.description;
   zdbsPayload.metadata = resource.metadata;
-  const data = zdbsDeployer.deploy(zdbsPayload);
+  const data = gridClient.zdbs.deploy(zdbsPayload);
   return data;
 }
 
 async function addZDB(
-  mnemStore,
   zdb: ZDB,
   deploymentName: string,
-  projectName: string
+  gridClient: GridClient
 ) {
-  const {twinId, explorerUrl, mnemonics, proxyUrl} = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const zdbsDeployer = new ZdbsModule(+twinId, explorerUrl, mnemonics, rmb);
-  zdbsDeployer.fileName = projectName + "/" + zdbsDeployer.fileName;
+  // gridClient.project_name = projectName;
   let zdbPaylaod = new AddZDBModel();
   zdbPaylaod.deployment_name = deploymentName;
   zdbPaylaod.name = zdb.name;
@@ -372,8 +334,8 @@ async function addZDB(
   zdbPaylaod.public = zdb.publicIp;
   zdbPaylaod.namespace = zdb.namespace;
   zdbPaylaod.password = zdb.password;
-  const result = zdbsDeployer.addZdb(zdbPaylaod);
+  const result = gridClient.zdbs.addZdb(zdbPaylaod);
   return result;
 }
 
-export { handleKubernetes, handleVMs, handleZDBs };
+export { getNetworkModel, handleKubernetes, handleVMs, handleZDBs };

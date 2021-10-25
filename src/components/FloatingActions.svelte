@@ -3,17 +3,20 @@
   import mnemonicsStore from "../store/mnemonics.store";
   import Toasts from "../components/base/Toasts.svelte";
   import { addToast } from "../store/toast.store";
-  import { HTTPMessageBusClient } from "ts-rmb-http-client";
-  import {NetworkModel} from "grid3_client_ts"
-  import {handleKubernetes, handleVMs, handleZDBs} from "src/grid3/index"
-  
+  import { NetworkModel } from "grid3_client_ts";
+  import { getClient, handleKubernetes, handleVMs, handleZDBs, getNetworkModel } from "src/grid3/index";
+
   $: store = $codeStore;
   $: active = store.active > -1;
 
   let mnemonicsIsNeeded = false;
+  let showResult = false
 
   const open = () => (mnemonicsIsNeeded = true);
   const close = () => (mnemonicsIsNeeded = false);
+
+  const openResult = () => (showResult = true);
+  const closeResult = () => (showResult = false);
 
   $: mnemStore = $mnemonicsStore;
   $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
@@ -21,22 +24,23 @@
   async function onDeployHandler() {
     close();
     const project = store.projects[store.active];
-    const nw = project.network;
-    const network = new NetworkModel();
-    network.name = nw.name;
-    network.ip_range = nw.ipRange;
-    let results = new Map();
+    const network = getNetworkModel(project)
+    const gridClient = getClient(mnemStore, project.name); 
     for (let [i, resource] of project.resources.entries()) {
       if (resource.type === "machines") {
-        await handleVMs(network,mnemStore, project, i)
+        await handleVMs(network, resource, i, gridClient);
       } else if (resource.type === "kubernetes") {
-        await handleKubernetes(network, mnemStore, project, i)
+        await handleKubernetes(network, resource, i, gridClient);
       } else if (resource.type === "zdbs") {
-        await handleZDBs(mnemStore, project, i)
-      }else if (resource.type === "gateways"){
-        console.log(resource)
+        await handleZDBs(resource, i, gridClient);
+      } else if (resource.type === "gateways") {
+        console.log(resource);
       }
     }
+  }
+
+  function onResultsHandler() {
+    return "I'm the result :P";
   }
 </script>
 
@@ -58,8 +62,23 @@
   </div>
 {/if}
 
+{#if showResult}
+  <div class="layout">
+    <div class="layout__mnemonics">
+      <p>{onResultsHandler()}</p>
+      <div class="layout__mnemonics__actions">
+        <button class="btn btn-sm btn-cancel" on:click={closeResult}>Close</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 <button on:click={open} class="btn btn-deploy" disabled={!active}>
-  <img src="/assets/deploy.svg" alt="configs" title="Configuration Settings" />
+  <img src="/assets/deploy.png" alt="deploy" title="Deploy" />
+</button>
+
+<button on:click={openResult} class="btn btn-results">
+  <img src="/assets/results.png" alt="results" title="Results" />
 </button>
 
 <style lang="scss" scoped>
@@ -99,8 +118,8 @@
   .btn {
     border: none;
     border-radius: 0.5rem;
-    background-color: #2196f3;
-    padding: 1.5rem 3rem;
+    background-color: transparent;
+    padding: 1.5rem;
     font-weight: bold;
     cursor: pointer;
     font-size: 1.6rem;
@@ -115,10 +134,17 @@
       right: 1.5rem;
       bottom: 1.5rem;
       z-index: 1;
-      img {
-        width: 60px;
-        height: 60px;
-      }
+    }
+
+    &-results {
+      position: fixed;
+      right: 12rem;
+      bottom: 1.5rem;
+      z-index: 1;
+    }
+    img {
+      width: 60px;
+      height: 60px;
     }
 
     &-sm {
