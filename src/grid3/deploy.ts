@@ -1,4 +1,3 @@
-import { HTTPMessageBusClient } from "ts-rmb-http-client";
 import {
   Worker,
   Machine,
@@ -28,8 +27,7 @@ import {
   AddZDBModel,
   ZDBModel,
   ZDBSModel,
-  ZdbModes,
-  DeviceTypes,
+  ZdbModes
 } from "grid3_client_ts";
 
 function checkResult(result): boolean {
@@ -303,9 +301,7 @@ async function deployZDBs(resource: ZDBs, gridClient: GridClient) {
     zdb.node_id = z.node;
     zdb.mode = z.mode as ZdbModes;
     zdb.disk_size = z.size;
-    zdb.disk_type = z.diskType as DeviceTypes;
     zdb.public = z.publicIp;
-    zdb.namespace = z.namespace;
     zdb.password = z.password;
     return zdb;
   });
@@ -330,9 +326,7 @@ async function addZDB(
   zdbPaylaod.node_id = zdb.node;
   zdbPaylaod.mode = zdb.mode as ZdbModes;
   zdbPaylaod.disk_size = zdb.size;
-  zdbPaylaod.disk_type = zdb.diskType as DeviceTypes;
   zdbPaylaod.public = zdb.publicIp;
-  zdbPaylaod.namespace = zdb.namespace;
   zdbPaylaod.password = zdb.password;
   const result = gridClient.zdbs.addZdb(zdbPaylaod);
   return result;

@@ -149,14 +149,14 @@ import { Machines } from "src/models";
       />
       <!-- --------------------- -->
       <SidebarBlock
-        label="Gateway FQDN"
+        label="Domain"
         img="../assets/gateways_fqdn.png"
         type="gatewayFQDN"
         level = 0
         on:click={add("gatewayFQDN")}
       />
       <SidebarBlock
-        label="Gateway Name"
+        label="Domain Prefix"
         img="../assets/gateways.png"
         type="gatewayName"
         level = 0

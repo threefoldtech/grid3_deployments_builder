@@ -7,8 +7,6 @@ export class ZDB {
     public node: number = 2,
     public mode: string = "seq",
     public size: number = 10,
-    public diskType: string = "hdd",
-    public namespace: string = "zdbnamespace1",
     public password: string = "zdbpasswd1",
     public publicIp: boolean = false,
     public isDeployed: boolean = false

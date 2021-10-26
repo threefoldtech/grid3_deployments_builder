@@ -40,8 +40,8 @@
     "webpack": "^5.23.0",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2",
-    "grid3_client_ts": "git+https://github.com/threefoldtech/grid3_client_ts.git#development_qsfs",
-    "ts-rmb-http-client": "^0.1.8"
+    "grid3_client_ts": "git+https://github.com/threefoldtech/grid3_client_ts.git#development",
+    "ts-rmb-http-client": "^0.1.9"
   },
   "dependencies": {
     "serve": "^11.3.2",

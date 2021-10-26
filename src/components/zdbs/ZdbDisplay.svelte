@@ -49,12 +49,6 @@
       on:input={codeStore.updateZdb(resourceIdx, idx, "size")}
       deployed = {zdb.isDeployed}
     />
-    <Selectable
-      label="Type"
-      options= {[DeviceTypes.hdd, DeviceTypes.ssd]}
-      on:change={codeStore.updateZdb(resourceIdx, idx, "diskType")}
-      deployed = {zdb.isDeployed}
-    />
     <Editable
       label="password"
       type="password"

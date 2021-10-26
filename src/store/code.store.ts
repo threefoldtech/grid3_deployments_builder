@@ -301,7 +301,7 @@ function createCodeStore() {
           if (key === "publicIp") {
             const val = (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index].publicIp; // prettier-ignore
             (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index].publicIp = !val; // prettier-ignore
-          } else if (key === "diskType" || key === "mode") {
+          } else if (key === "mode") {
             (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index][key] = e.target.options[e.target.options.selectedIndex].value; //prettier-ignore
           } else {
             const { type, value: val } = e.target;

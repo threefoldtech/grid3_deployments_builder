@@ -15,11 +15,22 @@
   import MachinesDisplay from "./machines/MachinesDisplay.svelte";
   import KubernetesDisplay from "./kubernetes/KubernetesDisplay.svelte";
   import ZdbsDisplay from "./zdbs/ZdbsDisplay.svelte";
+  import ConfirmMsg from "./base/ConfirmMsg.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
   $: project = store.projects[idx];
   $: mnemStore = $mnemonicsStore;
+  // let confirmDelete: boolean = false;
+  // const showConfirmDelete = () => {
+  //   confirmDelete = true;
+  // };
+  // const closeConfirmDelete = () => {
+  //   confirmDelete = false;
+  // };
+  // function handleRemove{
+
+  // }
 </script>
 
 {#if project}
@@ -90,7 +101,7 @@
               </Droppable>
             {/each}
 
-          <!-- ---------------- Kubernetes ---------------- -->
+            <!-- ---------------- Kubernetes ---------------- -->
           {:else if "masters" in resource}
             <KubernetesDisplay kubernetes={resource} idx={resourceIdx} />
             {#each resource.masters as master, i (master.id)}
@@ -121,7 +132,7 @@
               </Block>
             {/each}
 
-          <!-- ---------------- ZDBs ---------------- -->
+            <!-- ---------------- ZDBs ---------------- -->
           {:else if "zdbs" in resource}
             <ZdbsDisplay zdbs={resource} idx={resourceIdx} />
             {#each resource.zdbs as zdb, i (zdb.id)}
@@ -138,17 +149,23 @@
               </Block>
             {/each}
 
-          <!-- ---------------- FQDN Gateway ---------------- -->
-          {:else if "fqdn" in resource}
+            <!-- ---------------- FQDN Gateway ---------------- -->
+          {:else if "domain" in resource}
             <GatewaysFqdDisplay gatewayfq={resource} idx={resourceIdx} />
-          
-          <!-- ---------------- Name Gateway ---------------- -->
-          {:else if "nameGateway" in resource}
-           <GatewaysNameDisplay gateway={resource} idx={resourceIdx} />
+
+            <!-- ---------------- Name Gateway ---------------- -->
+          {:else if "prefix" in resource}
+            <GatewaysNameDisplay gateway={resource} idx={resourceIdx} />
           {/if}
         </Block>
       </Droppable>
     </div>
+    <!-- {#if confirmDelete}
+    <ConfirmMsg msg={"You are about to delete " + resource.name}
+    onClickConfirm={}
+    onClickCancel={closeConfirmDelete}
+    />
+    {/if} -->
   {/each}
 {:else}
   <p style="text-align: center; padding-top: 10rem; font-size: 2rem;">

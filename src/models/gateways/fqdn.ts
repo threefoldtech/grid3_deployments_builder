@@ -7,7 +7,7 @@ export class GatewayFQDN implements ResourceInterface {
     public id = v4(),
     public node: number = 2,
     public name: string = "gatewayfqdn",
-    public fqdn: string = "",
+    public domain: string = "",
     public tlsPassThrough: boolean = false,
     public backends: string[] = ["backend1"],
     public description: string = "",

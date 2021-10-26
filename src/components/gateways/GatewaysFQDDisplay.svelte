@@ -14,7 +14,7 @@
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
     <img src="/assets/gateways_fqdn.png" alt="deployment icon" width="40" />
-    <span class="keyword">FQDN</span>
+    <span class="keyword">Domain</span>
     {#if collapse}
       <p>...</p>
     {/if}
@@ -42,9 +42,9 @@
       deployed={gatewayfq.isDeployed}
     />
     <Editable
-      label="FQDN"
-      value={gatewayfq.fqdn}
-      on:input={codeStore.updateGatewayFQDN("fqdn", idx)}
+      label="Domain"
+      value={gatewayfq.domain}
+      on:input={codeStore.updateGatewayFQDN("domain", idx)}
       deployed={gatewayfq.isDeployed}
     />
     <Editable

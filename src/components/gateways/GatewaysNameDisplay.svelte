@@ -14,7 +14,7 @@
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
     <img src="/assets/gateways.png" alt="deployment icon" width="40" />
-    <span class="keyword">Name</span>
+    <span class="keyword">Prefix Domain</span>
     {#if collapse}
       <p>...</p>
     {/if}
@@ -36,9 +36,9 @@
       deployed={gateway.isDeployed}
     />
     <Editable
-      label="Gateway Name"
-      value={gateway.nameGateway}
-      on:input={codeStore.updateGatewayName("nameGateway", idx)}
+      label="Prefix"
+      value={gateway.prefix}
+      on:input={codeStore.updateGatewayName("prefix", idx)}
       deployed={gateway.isDeployed}
     />
     <Editable
