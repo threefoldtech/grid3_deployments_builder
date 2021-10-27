@@ -28,6 +28,7 @@
   {:else}
     <Editable
       label="name"
+      placeholder="Deployment name"
       value={kubernetes.name}
       on:input={codeStore.updateKubernetes("name", idx)}
       deployed={kubernetes.isDeployed}
@@ -35,6 +36,7 @@
     <Editable
       label="Secret"
       value={kubernetes.secret}
+      placeholder="Keep the secret in safe place"
       type="password"
       on:input={codeStore.updateKubernetes("secret", idx)}
       deployed={kubernetes.isDeployed}
@@ -42,12 +44,14 @@
     <Editable
       label="SSH_KEY"
       value={kubernetes.sshKey}
+      placeholder="Add ssh-key to access the cluster"
       on:input={codeStore.updateKubernetes("sshKey", idx)}
       deployed={kubernetes.isDeployed}
     />
     <Editable
       label="Description"
       value={kubernetes.description}
+      placeholder="Describe your deployment"
       type="text"
       on:input={codeStore.updateKubernetes("description", idx)}
       deployed={kubernetes.isDeployed}
@@ -56,6 +60,7 @@
       label="Metadata"
       value={kubernetes.metadata}
       type="text"
+      placeholder="Add info about your deployment"
       on:input={codeStore.updateKubernetes("metadata", idx)}
       deployed={kubernetes.isDeployed}
     />

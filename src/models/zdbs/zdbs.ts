@@ -7,7 +7,7 @@ export class ZDBs implements ResourceInterface {
   constructor(
     readonly type: string = "zdbs",
     public id: string = v4(),
-    public name: string = "zdbs_deployment",
+    public name: string = "",
     public zdbs: ZDB[] = [],
     public isDeployed: boolean = false,
     public description: string = "",

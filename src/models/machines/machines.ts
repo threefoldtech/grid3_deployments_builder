@@ -7,7 +7,7 @@ export class Machines implements ResourceInterface {
   constructor(
     readonly type: string = "machines",
     public id: string = v4(),
-    public name: string = "Machines_Deployment",
+    public name: string = "",
     public machines: Machine[] = [],
     public description: string = "",
     public metadata: string = "",

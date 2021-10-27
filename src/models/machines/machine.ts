@@ -7,7 +7,7 @@ import type { QsfsDisk } from "./qsfs_disk";
 export class Machine {
   constructor(
     public id: string = v4(),
-    public name: string = "vm",
+    public name: string = "",
     public node: number = 2,
     public flist: string = "https://hub.grid.tf/tf-official-apps/base:latest.flist",
     public cpu: number = 1,

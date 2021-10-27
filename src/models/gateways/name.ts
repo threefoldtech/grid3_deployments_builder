@@ -7,9 +7,9 @@ export class GatewayName implements ResourceInterface {
     public id: string = v4(),
     public node: number = 2,
     public name: string = "",
-    public prefix: string = "gateway",
+    public prefix: string = "",
     public tlsPassThrough: boolean = false,
-    public backends: string[] = ["backend1"],
+    public backends: string[] = [],
     public description: string = "",
     public metadata: string = "",
     public isDeployed: boolean = false

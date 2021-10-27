@@ -29,20 +29,21 @@
     <Editable
       label="Name"
       value={machines.name}
+      placeholder="Deployment name"
       on:input={codeStore.updateResource("name", idx)}
       deployed={machines.isDeployed}
     />
     <Editable
       label="Description"
       value={machines.description}
-      type="text"
+      placeholder="Describe your deployment"
       on:input={codeStore.updateResource("description", idx)}
       deployed={machines.isDeployed}
     />
     <Editable
       label="Metadata"
       value={machines.metadata}
-      type="text"
+      placeholder="Add info about your deployment"
       on:input={codeStore.updateResource("metadata", idx)}
       deployed={machines.isDeployed}
     />

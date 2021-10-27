@@ -31,6 +31,7 @@
     <Editable
       label="Name"
       value={gatewayfq.name}
+      placeholder="Deployment name"
       on:input={codeStore.updateGatewayFQDN("name", idx)}
       deployed={gatewayfq.isDeployed}
     />
@@ -44,12 +45,14 @@
     <Editable
       label="Domain"
       value={gatewayfq.domain}
+      placeholder="Full domain"
       on:input={codeStore.updateGatewayFQDN("domain", idx)}
       deployed={gatewayfq.isDeployed}
     />
     <Editable
       label="backends"
       value={gatewayfq.backends.join(", ")}
+      placeholder="Backends for the domain"
       on:input={codeStore.updateGatewayFQDN("backends", idx)}
       deployed={gatewayfq.isDeployed}
     />

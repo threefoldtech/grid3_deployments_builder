@@ -30,6 +30,7 @@
     <Editable
       label="Name"
       value={worker.name}
+      placeholder="Worker name"
       on:input={codeStore.updateWorker(resourceIdx, idx, "name")}
       deployed = {worker.isDeployed}
     />

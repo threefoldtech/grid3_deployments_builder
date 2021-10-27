@@ -6,10 +6,10 @@ export class GatewayFQDN implements ResourceInterface {
     readonly type = "fqdn",
     public id = v4(),
     public node: number = 2,
-    public name: string = "gatewayfqdn",
+    public name: string = "",
     public domain: string = "",
     public tlsPassThrough: boolean = false,
-    public backends: string[] = ["backend1"],
+    public backends: string[] = [],
     public description: string = "",
     public metadata: string = "",
     public isDeployed: boolean = false

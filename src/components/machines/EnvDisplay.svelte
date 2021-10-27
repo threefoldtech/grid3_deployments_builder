@@ -31,12 +31,14 @@
     <Editable
       label="key"
       value={env.key}
+      placeholder="Enviroment variable key"
       on:input={codeStore.updateEnv(resourceIdx, vmIdx, idx, "key")}
       deployed = {env.isDeployed}
     />
     <Editable
       label="value"
       value={env.value}
+      placeholder="Enviroment variable value"
       on:input={codeStore.updateEnv(resourceIdx, vmIdx, idx, "value")}
       deployed = {env.isDeployed}
     />

@@ -38,6 +38,7 @@
     <Editable
       label="Prefix"
       value={gateway.prefix}
+      placeholder="Domain prefix"
       on:input={codeStore.updateGatewayName("prefix", idx)}
       deployed={gateway.isDeployed}
     />
@@ -51,6 +52,7 @@
     <Editable
       label="backends"
       value={gateway.backends.join(", ")}
+      placeholder="Backends for the domain"
       on:input={codeStore.updateGatewayName("backends", idx)}
       deployed={gateway.isDeployed}
     />

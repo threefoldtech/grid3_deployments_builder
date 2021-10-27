@@ -29,6 +29,7 @@
     <Editable
       label="Name"
       value={zdbs.name}
+      placeholder="Deployment name"
       on:input={codeStore.updateResource("name", idx)}
       deployed={zdbs.isDeployed}
     />

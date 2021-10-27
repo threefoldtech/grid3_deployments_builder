@@ -4,7 +4,7 @@
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
   import Selectable from "../base/Selectable.svelte";
-  import { DeviceTypes, ZdbModes } from "grid3_client_ts";
+  import { ZdbModes } from "grid3_client_ts";
 
   export let resourceIdx: number;
   export let idx: number;

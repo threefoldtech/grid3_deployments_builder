@@ -32,6 +32,7 @@
     <Editable
       label="Name"
       value={vm.name}
+      placeholder="Machine name"
       on:input={codeStore.updateVm(resourceIdx, idx, "name")}
       deployed = {vm.isDeployed}
     />
@@ -44,7 +45,7 @@
     />
     <Editable
       label="Flist"
-      value={vm.flist}
+      value={vm.flist}  
       on:input={codeStore.updateVm(resourceIdx, idx, "flist")}
       deployed = {vm.isDeployed}
     />

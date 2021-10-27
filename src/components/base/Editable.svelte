@@ -12,12 +12,7 @@
 
   function updateWidth() {
     if (!fake_span) return;
-
-    if (fake_span.textContent.length){
-      width = fake_span.offsetWidth;
-    }else{
-      width = 150;
-    }
+    width = fake_span.offsetWidth;
   }
 
   onMount(updateWidth);
@@ -34,7 +29,7 @@
   {/if}
   {#if value !== null}
     <span class="editable__fake" bind:this={fake_span}>
-      {value}
+      {value || placeholder}
     </span>
     <input
       {type}

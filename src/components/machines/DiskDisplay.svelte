@@ -31,6 +31,7 @@
     <Editable
       label="name"
       value={disk.name}
+      placeholder="Disk name"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "name")}
       deployed = {disk.isDeployed}
     />
@@ -44,12 +45,14 @@
     <Editable
       label="mount"
       value={disk.mount}
+      placeholder="Mount point"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "mount")}
       deployed = {disk.isDeployed}
     />
     <Editable
       label="description"
       value={disk.description}
+      placeholder="Describe your disk"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "description")}
       deployed = {disk.isDeployed}
     />
