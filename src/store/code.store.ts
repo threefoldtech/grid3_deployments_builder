@@ -85,7 +85,7 @@ function createCodeStore() {
 
         switch (type) {
           case "project":
-            value.active = value.projects.push(new Project()) - 1;
+            value.active = value.projects.push(new Project(undefined,undefined,undefined,undefined,true)) - 1;
             break;
 
           case "zdbs":

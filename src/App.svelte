@@ -1,14 +1,15 @@
 <script lang="ts">
   import codeStore from "./store/code.store";
+  import FileExplorer from "./components/FileExplorer.svelte";
   import Builder from "./components/Builder.svelte";
-  import TerraForm from "./components/ProjectDisplay.svelte";
+  import ProjectDisplay from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
-  import { events } from "grid3_client_ts"
+  import { events } from "grid3_client_ts";
   import { addInfoToast } from "./store/toast.store";
 
-  events.addListener("logs", addInfoToast)
+  events.addListener("logs", addInfoToast);
 
   let type = "text";
   let explorer = 0;
@@ -18,11 +19,7 @@
 
 <aside class="sidenav">
   <div class="sidenav__actions">
-    <img
-      src="/assets/threefold.svg"
-      alt="threefold"
-      title="threefold logo"
-    />
+    <img src="/assets/threefold.svg" alt="threefold" title="threefold logo" />
     <button
       on:click={setExplorer(0)}
       class={"sidenav__actions__item " + (explorer === 0 ? "active" : "")}
@@ -48,61 +45,7 @@
   </div>
   <div class="sidenav__content">
     {#if explorer === 0}
-      <button
-        class="sidenav__content__create"
-        on:click={codeStore.add.bind(codeStore, "project")}
-      >
-        Add New Project
-      </button>
-      {#each store.projects as project, i}
-        <button
-          class={"sidenav__content__project " +
-            (store.active === i ? "active" : "")}
-          on:click={codeStore.setActiveProject.bind(codeStore, i)}
-        >
-          <strong>#{i}</strong>
-          <input
-            {type}
-            value={project.name}
-            disabled={!project.rename}
-            on:input={codeStore.renameProject(i)}
-            style="display: inline-block;"
-          />
-          <span
-            style="display: inline-block; font-size: 1.5rem; color: red;"
-            on:click={codeStore.removeProject.bind(codeStore, i)}
-          >
-            <img
-              src="/assets/notdeployed.png"
-              alt="edit"
-              title="edit project"
-              width="12"
-            />
-          </span>
-          <span
-            style="display: inline-block; margin-left: 20px; font-size: 1.5rem;"
-            on:click={() => {
-              project.rename = !project.rename;
-            }}
-          >
-            {#if !project.rename}
-              <img
-                src="/assets/edit.png"
-                alt="edit"
-                title="edit project"
-                width="12"
-              />
-            {:else}
-              <img
-                src="/assets/deployed.png"
-                alt="edit"
-                title="save project"
-                width="12"
-              />
-            {/if}
-          </span>
-        </button>
-      {/each}
+     <FileExplorer /> 
     {:else if explorer === 1}
       <Builder />
     {:else if explorer === 2}
@@ -112,7 +55,7 @@
 </aside>
 <Droppable>
   <main>
-    <TerraForm />
+    <ProjectDisplay />
   </main>
 </Droppable>
 <FloatingActions />
@@ -155,28 +98,6 @@
       height: 100%;
       overflow-x: hidden;
       overflow-y: auto;
-      &__create {
-        width: 100%;
-        padding: 2rem;
-        cursor: pointer;
-        margin-bottom: 1rem;
-      }
-      &__project {
-        width: 100%;
-        padding: 1.5rem;
-        background: none;
-        border: none;
-        border-bottom: 0.1rem solid var(--sidenav-border);
-        cursor: pointer;
-        &.active {
-          background-color: #e9e9e9;
-        }
-
-        input:disabled {
-          border: none;
-          background-color: transparent;
-        }
-      }
     }
   }
 </style>
