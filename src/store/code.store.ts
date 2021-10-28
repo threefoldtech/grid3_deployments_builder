@@ -1,15 +1,7 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
 import { addErrorToast } from "./toast.store";
-import {
-  deleteMachines,
-  deleteKubernetes,
-  deleteZdbs,
-  deleteZdb,
-  deleteWorker,
-  deleteMachine,
-  getClient,
-} from "src/grid3";
+import { deleteZdb, deleteWorker, deleteMachine, getClient } from "src/grid3";
 import {
   Project,
   Resource,
@@ -170,26 +162,58 @@ function createCodeStore() {
             break;
 
           case "disk":
-            if (resourceIdx != undefined && idx !=undefined && value.projects[value.active].resources[resourceIdx].type === 'machines'){
-              if (!value.projects[value.active].resources[resourceIdx].isDeployed){
+            if (
+              resourceIdx != undefined &&
+              idx != undefined &&
+              value.projects[value.active].resources[resourceIdx].type ===
+                "machines"
+            ) {
+              if (
+                !(
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines[idx].isDeployed
+              ) {
                 (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].disks.push(new Disk()); // prettier-ignore
-              }else{
+              } else {
                 addErrorToast(`Can't add new disk to deployed machine`);
               }
             } else {
-              addErrorToast(`Can't add new disk to ${value.projects[value.active].resources[resourceIdx].type} type`);
+              addErrorToast(
+                `Can't add new disk to ${
+                  value.projects[value.active].resources[resourceIdx].type
+                } type`
+              );
             }
             break;
 
           case "envVar":
-            if (resourceIdx != undefined && idx != undefined && value.projects[value.active].resources[resourceIdx].type === 'machines'){
-              if (!value.projects[value.active].resources[resourceIdx].isDeployed){
+            if (
+              resourceIdx != undefined &&
+              idx != undefined &&
+              value.projects[value.active].resources[resourceIdx].type ===
+                "machines"
+            ) {
+              if (
+                !(
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines[idx].isDeployed
+              ) {
                 (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].env_vars.push(new Env()); // prettier-ignore
-              }else{
-                addErrorToast(`Can't add new environment variable to deployed machine`);
+              } else {
+                addErrorToast(
+                  `Can't add new environment variable to deployed machine`
+                );
               }
-            }else{
-              addErrorToast(`Can't add new environment variable to ${value.projects[value.active].resources[resourceIdx].type} type`)
+            } else {
+              addErrorToast(
+                `Can't add new environment variable to ${
+                  value.projects[value.active].resources[resourceIdx].type
+                } type`
+              );
             }
             break;
 
@@ -401,6 +425,9 @@ function createCodeStore() {
               vm.disks.forEach((d) => {
                 d.isDeployed = true;
               });
+              vm.qsfsDisks.forEach((qd) => {
+                qd.isDeployed = true;
+              });
               vm.env_vars.forEach((env) => {
                 env.isDeployed = true;
               });
@@ -475,56 +502,22 @@ function createCodeStore() {
       });
     },
 
-    removeResource(idx: number, mnemStore) {
+    renameProject(idx: number) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          value.projects[idx].name = val;
+          return value;
+        });
+      };
+    },
+
+    removeResource(idx: number) {
       return update((value) => {
-        if (value.projects[value.active].resources[idx].isDeployed) {
-          const projectName = value.projects[value.active].name;
-          const gridClient = getClient(mnemStore, projectName);
-          const deploymentName =
-            value.projects[value.active].resources[idx].name;
-          let result: boolean;
-          switch (value.projects[value.active].resources[idx].type) {
-            case "machines":
-              deleteMachines(gridClient, deploymentName).then((res) => {
-                result = res;
-              });
-              break;
-            case "kubernetes":
-              deleteKubernetes(gridClient, deploymentName).then((res) => {
-                result = res;
-              });
-              break;
-            case "zdbs":
-              deleteZdbs(gridClient, deploymentName).then((res) => {
-                result = res;
-              });
-              break;
-            case "qsfsZdbs":
-              break;
-            case "fqdn":
-              break;
-            case "name":
-              break;
-          }
-          if (result) {
-            console.log("This is delete result",result)
-            value.projects[value.active].resources.splice(idx, 1);
-          }
-        } else {
-          value.projects[value.active].resources.splice(idx, 1);
-        }
+        value.projects[value.active].resources.splice(idx, 1);
         return value;
       });
     },
-
-    // removeFromResource(resourceIdx: number, key: "machines", idx: number) {
-    //   return () => {
-    //     return update((value) => {
-    //       value.projects[value.active].resources[resourceIdx][key].splice(idx, 1); // prettier-ignore
-    //       return value;
-    //     });
-    //   };
-    // },
 
     removeFromVm(
       resourceIdx: number,
@@ -540,16 +533,6 @@ function createCodeStore() {
       };
     },
 
-    renameProject(idx: number) {
-      return (e: any) => {
-        return update((value) => {
-          const { type, value: val } = e.target;
-          value.projects[idx].name = val;
-          return value;
-        });
-      };
-    },
-
     removeNetwork() {
       return update((value) => {
         value.projects[value.active].network = null;
@@ -557,26 +540,9 @@ function createCodeStore() {
       });
     },
 
-    removeZdb(resourceIdx: number, idx: number, mnemStore) {
+    removeZdb(resourceIdx: number, idx: number) {
       return update((value) => {
-        const zdbToRemove = (
-          value.projects[value.active].resources[resourceIdx] as ZDBs
-        ).zdbs[idx];
-        if (zdbToRemove.isDeployed) {
-          const zdbName = zdbToRemove.name;
-          const deploymentName =
-            value.projects[value.active].resources[resourceIdx].name;
-          const projectName = value.projects[value.active].name;
-          const gridClient = getClient(mnemStore, projectName);
-          const result = deleteZdb(gridClient, zdbName, deploymentName);
-          result.then((res) => {
-            if (res) {
-              (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.splice(idx,1); //prettier-ignore
-            }
-          });
-        } else {
-          (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.splice(idx,1); //prettier-ignore
-        }
+        (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.splice(idx,1); //prettier-ignore
         return value;
       });
     },
@@ -588,50 +554,16 @@ function createCodeStore() {
       });
     },
 
-    removeWorker(resourceIdx: number, idx: number, mnemStore) {
+    removeWorker(resourceIdx: number, idx: number) {
       return update((value) => {
-        const workerToRemove = (
-          value.projects[value.active].resources[resourceIdx] as Kubernetes
-        ).workers[idx];
-        if (workerToRemove.isDeployed) {
-          const workerName = workerToRemove.name;
-          const deploymentName =
-            value.projects[value.active].resources[resourceIdx].name;
-          const projectName = value.projects[value.active].name;
-          const gridClient = getClient(mnemStore, projectName);
-          const result = deleteWorker(gridClient, workerName, deploymentName);
-          result.then((res) => {
-            if (res) {
-              (value.projects[value.active].resources[resourceIdx] as Kubernetes).workers.splice(idx,1); //prettier-ignore
-            }
-          });
-        } else {
-          (value.projects[value.active].resources[resourceIdx] as Kubernetes).workers.splice(idx, 1); // prettier-ignore
-        }
+        (value.projects[value.active].resources[resourceIdx] as Kubernetes).workers.splice(idx, 1); // prettier-ignore
         return value;
       });
     },
 
-    removeVM(resourceIdx: number, idx: number, mnemStore) {
+    removeVM(resourceIdx: number, idx: number) {
       return update((value) => {
-        const vmToRemove = (
-          value.projects[value.active].resources[resourceIdx] as Machines
-        ).machines[idx];
-        if (vmToRemove.isDeployed) {
-          const machineName = vmToRemove.name;
-          const deploymentName =
-            value.projects[value.active].resources[resourceIdx].name;
-          const projectName = value.projects[value.active].name;
-          const gridClient = getClient(mnemStore, projectName);
-          const result = deleteMachine(gridClient, machineName, deploymentName);
-          result.then((res) => {
-            if (res) {
-              (value.projects[value.active].resources[resourceIdx] as Machines).machines.splice(idx,1); //prettier-ignore
-            }
-          });
-        } else {
-          (value.projects[value.active].resources[resourceIdx] as Machines).machines.splice(idx, 1); // prettier-ignore
-        }
+        (value.projects[value.active].resources[resourceIdx] as Machines).machines.splice(idx, 1); // prettier-ignore
         return value;
       });
     },

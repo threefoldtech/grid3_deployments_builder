@@ -6,7 +6,7 @@ import type { Worker } from "./worker";
 
 export class Kubernetes implements ResourceInterface {
   constructor(
-    readonly type: string = "",
+    readonly type: string = "kubernetes",
     public id = v4(),
     public name: string = "",
     public masters: Master[] = [],

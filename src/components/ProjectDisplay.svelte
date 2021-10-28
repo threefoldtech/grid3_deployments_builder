@@ -16,6 +16,8 @@
   import KubernetesDisplay from "./kubernetes/KubernetesDisplay.svelte";
   import ZdbsDisplay from "./zdbs/ZdbsDisplay.svelte";
   import ConfirmMsg from "./base/ConfirmMsg.svelte";
+  import { deleteMachine, deleteResource, deleteWorker, deleteZdb } from "src/grid3";
+import App from "src/App.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -44,11 +46,9 @@
       <Droppable {resourceIdx}>
         <Block
           color="--{resource.type}"
-          on:click={codeStore.removeResource.bind(
-            codeStore,
-            resourceIdx,
-            mnemStore
-          )}
+          on:click={() => {
+            deleteResource(mnemStore, project.name, resource, resourceIdx);
+          }}
         >
           <!-- ---------------- Machines ---------------- -->
           {#if "machines" in resource}
@@ -57,12 +57,9 @@
               <Droppable {resourceIdx} {idx}>
                 <Block
                   color="--machine"
-                  on:click={codeStore.removeVM.bind(
-                    codeStore,
-                    resourceIdx,
-                    idx,
-                    mnemStore
-                  )}
+                  on:click={()=>{
+                    deleteMachine(mnemStore, project.name, resource.name, resourceIdx, vm, idx)
+                  }}
                 >
                   <MachineDisplay {resourceIdx} {vm} {idx} />
 
@@ -101,18 +98,13 @@
               </Droppable>
             {/each}
 
-            <!-- ---------------- Kubernetes ---------------- -->
+          <!-- ---------------- Kubernetes ---------------- -->
           {:else if "masters" in resource}
             <KubernetesDisplay kubernetes={resource} idx={resourceIdx} />
             {#each resource.masters as master, i (master.id)}
               <Block
                 color="--master"
-                on:click={codeStore.removeMaster.bind(
-                  codeStore,
-                  resourceIdx,
-                  i
-                )}
-                removeable={!master.isDeployed}
+                removeable={false}
               >
                 <MasterDisplay {resourceIdx} idx={i} {master} />
               </Block>
@@ -121,39 +113,33 @@
             {#each resource.workers as worker, i (worker.id)}
               <Block
                 color="--worker"
-                on:click={codeStore.removeWorker.bind(
-                  codeStore,
-                  resourceIdx,
-                  i,
-                  mnemStore
-                )}
+                on:click={()=> {
+                  deleteWorker(mnemStore, project.name, resource.name, resourceIdx, worker, i)}
+                }
               >
                 <WorkerDisplay {resourceIdx} idx={i} {worker} />
               </Block>
             {/each}
 
-            <!-- ---------------- ZDBs ---------------- -->
+          <!-- ---------------- ZDBs ---------------- -->
           {:else if "zdbs" in resource}
             <ZdbsDisplay zdbs={resource} idx={resourceIdx} />
             {#each resource.zdbs as zdb, i (zdb.id)}
               <Block
                 color="--zdb"
-                on:click={codeStore.removeZdb.bind(
-                  codeStore,
-                  resourceIdx,
-                  i,
-                  mnemStore
-                )}
+                on:click={()=> {
+                  deleteZdb(mnemStore, project.name, resource.name, resourceIdx, zdb, i)
+                }}
               >
                 <ZdbDisplay {resourceIdx} {zdb} idx={i} />
               </Block>
             {/each}
 
-            <!-- ---------------- FQDN Gateway ---------------- -->
+          <!-- ---------------- FQDN Gateway ---------------- -->
           {:else if "domain" in resource}
             <GatewaysFqdDisplay gatewayfq={resource} idx={resourceIdx} />
 
-            <!-- ---------------- Name Gateway ---------------- -->
+          <!-- ---------------- Name Gateway ---------------- -->
           {:else if "prefix" in resource}
             <GatewaysNameDisplay gateway={resource} idx={resourceIdx} />
           {/if}

@@ -7,6 +7,7 @@ import {
   Kubernetes,
   ZDBs,
   Resource,
+  QsfsZDBs,
 } from "../models";
 import codeStore from "../store/code.store";
 import {
@@ -27,7 +28,9 @@ import {
   AddZDBModel,
   ZDBModel,
   ZDBSModel,
-  ZdbModes
+  ZdbModes,
+  QSFSZDBSModel,
+  QSFSDisk
 } from "grid3_client_ts";
 
 function checkResult(result): boolean {
@@ -182,6 +185,18 @@ async function deployVMs(
       d.mountpoint = disk.mount;
       return d;
     });
+    vmModel.qsfs_disks = vm.qsfsDisks.map((qsfsDisk) => {
+      const qd = new QSFSDisk();
+      qd.name = qsfsDisk.name;
+      qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
+      qd.prefix = qsfsDisk.prefix;
+      qd.encryption_key = qsfsDisk.encryption_key;
+      qd.cache = qsfsDisk.cache;
+      qd.minimal_shards = qsfsDisk.minimalShards;
+      qd.expected_shards = qsfsDisk.expectedShards;
+      qd.mountpoint = qsfsDisk.mountpoint;
+      return qd;
+    });
     vmModel.env = vm.env_vars.reduce((res, { key, value }) => {
       res[key] = value;
       return res;
@@ -222,6 +237,18 @@ async function addVM(
     d.size = disk.size;
     d.mountpoint = disk.mount;
     return d;
+  });
+  addVMPayload.qsfs_disks = machine.qsfsDisks.map((qsfsDisk) => {
+    const qd = new QSFSDisk();
+    qd.name = qsfsDisk.name;
+    qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
+    qd.prefix = qsfsDisk.prefix;
+    qd.encryption_key = qsfsDisk.encryption_key;
+    qd.cache = qsfsDisk.cache;
+    qd.minimal_shards = qsfsDisk.minimalShards;
+    qd.expected_shards = qsfsDisk.expectedShards;
+    qd.mountpoint = qsfsDisk.mountpoint;
+    return qd;
   });
   addVMPayload.env = machine.env_vars.reduce((res, { key, value }) => {
     res[key] = value;
@@ -301,12 +328,12 @@ async function deployZDBs(resource: ZDBs, gridClient: GridClient) {
     zdb.node_id = z.node;
     zdb.mode = z.mode as ZdbModes;
     zdb.disk_size = z.size;
-    zdb.public = z.publicIp;
+    zdb.public_ipv6 = z.publicIp;
     zdb.password = z.password;
     return zdb;
   });
   let zdbsPayload = new ZDBSModel();
-  zdbsPayload.name = resource.name + "ZDBs";
+  zdbsPayload.name = resource.name;
   zdbsPayload.zdbs = zdbs;
   zdbsPayload.description = resource.description;
   zdbsPayload.metadata = resource.metadata;
@@ -326,10 +353,24 @@ async function addZDB(
   zdbPaylaod.node_id = zdb.node;
   zdbPaylaod.mode = zdb.mode as ZdbModes;
   zdbPaylaod.disk_size = zdb.size;
-  zdbPaylaod.public = zdb.publicIp;
+  zdbPaylaod.public_ipv6 = zdb.publicIp;
   zdbPaylaod.password = zdb.password;
   const result = gridClient.zdbs.addZdb(zdbPaylaod);
   return result;
 }
 
-export { getNetworkModel, handleKubernetes, handleVMs, handleZDBs };
+async function deployQsfsZdb(resource: QsfsZDBs, gridClient: GridClient){
+  let qsfsZdbs = new QSFSZDBSModel()
+  qsfsZdbs.name = resource.name;
+  qsfsZdbs.count = resource.count;
+  qsfsZdbs.node_ids = resource.node_ids;
+  qsfsZdbs.disk_size = resource.disk_size;
+  qsfsZdbs.password = resource.password;
+  qsfsZdbs.metadata = resource.metadata;
+  qsfsZdbs.description = resource.description;
+
+  const data = gridClient.qsfs_zdbs.deploy(qsfsZdbs);
+  return data;
+}
+
+export { getNetworkModel, handleKubernetes, handleVMs, handleZDBs, deployQsfsZdb };

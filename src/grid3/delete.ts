@@ -12,7 +12,10 @@ import {
   DeleteZDBModel,
   DeleteWorkerModel,
   DeleteMachineModel,
+  QSFSZDBDeleteModel,
 } from "grid3_client_ts";
+import { Machine, Resource, Worker, ZDB } from "src/models";
+import { getClient } from ".";
 
 function checkResult(result, deploymentName): boolean {
   if (result.deleted.length || result.updated.length) {
@@ -24,79 +27,177 @@ function checkResult(result, deploymentName): boolean {
   }
 }
 
-export async function deleteMachines(
+export async function deleteResource(
+  mnemStore,
+  projectName: string,
+  resource: Resource,
+  resourceIdx: number
+) {
+  const gridClient = getClient(mnemStore, projectName);
+  if (resource.isDeployed) {
+    switch (resource.type) {
+      case "machines":
+        await deleteMachines(gridClient, resource.name, resourceIdx);
+        break;
+      case "kubernetes":
+        await deleteKubernetes(gridClient, resource.name, resourceIdx);
+        break;
+      case "zdbs":
+        await deleteZdbs(gridClient, resource.name, resourceIdx);
+        break;
+      case "fqdn":
+        break;
+      case "name":
+        break;
+      case "qsfsZdbs":
+        await deleteQsfsZdbs(gridClient, resource.name, resourceIdx)
+        break;
+    }
+  } else {
+    codeStore.removeResource(resourceIdx);
+  }
+}
+
+async function deleteMachines(
   gridClient: GridClient,
-  deploymentName: string
-): Promise<boolean> {
+  deploymentName: string,
+  resourceIdx: number
+) {
   const deleteMachines = new MachinesDeleteModel();
   deleteMachines.name = deploymentName;
   console.log(deleteMachines);
   const result = await gridClient.machines.delete(deleteMachines);
-  return checkResult(result, deploymentName);
+  if (result.deleted.length || result.updated.length) {
+    addSuccessToast(`${deploymentName} deleted successfully`);
+    codeStore.removeResource(resourceIdx);
+  } else {
+    addErrorToast(`Error happen while deleting ${deploymentName}`);
+  }
 }
 
-export async function deleteMachine(
+async function deleteKubernetes(
   gridClient: GridClient,
-  machineName: string,
-  deploymentName: string
-): Promise<boolean> {
-  const deleteVM = new DeleteMachineModel();
-  deleteVM.deployment_name = deploymentName;
-  deleteVM.name = machineName;
-  const result = gridClient.machines.deleteMachine(deleteVM);
-  return checkResult(result, machineName);
-}
-
-export async function deleteKubernetes(
-  gridClient: GridClient,
-  deploymentName: string
-): Promise<boolean> {
+  deploymentName: string,
+  resourceIdx: number
+) {
   const deleteKube = new K8SDeleteModel();
   deleteKube.name = deploymentName;
   const result = await gridClient.k8s.delete(deleteKube);
-  return checkResult(result, deploymentName);
+  if (result.deleted.length || result.updated.length) {
+    addSuccessToast(`${deploymentName} deleted successfully`);
+    codeStore.removeResource(resourceIdx);
+  } else {
+    addErrorToast(`Error happen while deleting ${deploymentName}`);
+  }
+}
+
+async function deleteZdbs(
+  gridClient: GridClient,
+  deploymentName: string,
+  resourceIdx: number
+) {
+  const deleteZdbs = new ZDBDeleteModel();
+  deleteZdbs.name = deploymentName;
+  let result = await gridClient.zdbs.delete(deleteZdbs);
+  if (result.deleted.length || result.updated.length) {
+    addSuccessToast(`${deploymentName} deleted successfully`);
+    codeStore.removeResource(resourceIdx);
+  } else {
+    addErrorToast(`Error happen while deleting ${deploymentName}`);
+  }
+}
+
+async function deleteQsfsZdbs(
+  gridClient: GridClient,
+  deploymentName: string,
+  resourceIdx: number
+) {
+  const deleteQsfsZdbs = new QSFSZDBDeleteModel();
+  deleteQsfsZdbs.name = deploymentName;
+  let result = await gridClient.qsfs_zdbs.delete(deleteQsfsZdbs);
+  if (result.deleted.length || result.updated.length) {
+    addSuccessToast(`${deploymentName} deleted successfully`);
+    codeStore.removeResource(resourceIdx);
+  } else {
+    addErrorToast(`Error happen while deleting ${deploymentName}`);
+  }
+}
+
+export async function deleteMachine(
+  mnemStore,
+  projectName: string,
+  deploymentName: string,
+  deploymentId: number,
+  machine: Machine,
+  machineId: number
+) {
+  if (machine.isDeployed) {
+    const gridClient = getClient(mnemStore, projectName);
+    const deleteVM = new DeleteMachineModel();
+    deleteVM.deployment_name = deploymentName;
+    deleteVM.name = machine.name;
+    const result = await gridClient.machines.deleteMachine(deleteVM);
+    if (result.deleted.length || result.updated.length) {
+      addSuccessToast(`${machine.name} deleted successfully`);
+      codeStore.removeVM(deploymentId, machineId);
+    } else {
+      addErrorToast(`Error happen while deleting ${machine.name}`);
+    }
+  } else {
+    codeStore.removeVM(deploymentId, machineId);
+  }
 }
 
 export async function deleteWorker(
-  gridClient: GridClient,
-  workerName: string,
+  mnemStore,
+  projectName: string,
   deploymentName: string,
-): Promise<boolean> {
-  const deleteWorkerModel = new DeleteWorkerModel();
-  deleteWorkerModel.deployment_name = deploymentName;
-  deleteWorkerModel.name = workerName;
-  const result = gridClient.k8s.deleteWorker(deleteWorkerModel);
-  return checkResult(result, workerName);
-}
-
-export async function deleteZdbs(
-  gridClient: GridClient,
-  deploymentName: string,
-): Promise<boolean> {
-  const deleteZdb = new ZDBDeleteModel();
-  deleteZdb.name = deploymentName;
-  const result = await gridClient.zdbs.delete(deleteZdb);
-  return checkResult(result, deploymentName);
+  deploymentId: number,
+  worker: Worker,
+  workerId: number
+) {
+  if (worker.isDeployed) {
+    const gridClient = getClient(mnemStore, projectName);
+    const deleteWorkerModel = new DeleteWorkerModel();
+    deleteWorkerModel.deployment_name = deploymentName;
+    deleteWorkerModel.name = worker.name;
+    const result = await gridClient.k8s.deleteWorker(deleteWorkerModel);
+    if (result.deleted.length || result.updated.length) {
+      addSuccessToast(`${worker.name} deleted successfully`);
+      codeStore.removeWorker(deploymentId, workerId);
+    } else {
+      addErrorToast(`Error happen while deleting ${worker.name}`);
+    }
+  } else {
+    codeStore.removeWorker(deploymentId, workerId);
+  }
 }
 
 export async function deleteZdb(
-  gridClient: GridClient,
-  zdbName: string,
+  mnemStore,
+  projectName: string,
   deploymentName: string,
-): Promise<boolean> {
-  const deleteZdbPayload = new DeleteZDBModel();
-  deleteZdbPayload.deployment_name = deploymentName;
-  deleteZdbPayload.name = zdbName; //prettier-ignore
-  const result = gridClient.zdbs.deleteZdb(deleteZdbPayload);
-  return checkResult(result, zdbName);
+  deploymentId: number,
+  zdb: ZDB,
+  zdbId: number
+) {
+  if (zdb.isDeployed) {
+    const gridClient = getClient(mnemStore, projectName);
+    const deleteZdbPayload = new DeleteZDBModel();
+    deleteZdbPayload.deployment_name = deploymentName;
+    deleteZdbPayload.name = zdb.name; //prettier-ignore
+    const result = await gridClient.zdbs.deleteZdb(deleteZdbPayload);
+    if (result.deleted.length || result.updated.length) {
+      addSuccessToast(`${zdb.name} deleted successfully`);
+      codeStore.removeZdb(deploymentId, zdbId);
+    } else {
+      addErrorToast(`Error happen while deleting ${zdb.name}`);
+    }
+  } else {
+    codeStore.removeZdb(deploymentId, zdbId);
+  }
 }
 // Not Implemented in grid3 client
-// export async function deleteQsfsZdbs(
-//   gridClient: GridClient,
-//   deploymentName: string,
-// ): Promise<boolean> {
-//   return false;
-// }
 
 // export async function deleteFqdnGateway(
 //   gridClient: GridClient,

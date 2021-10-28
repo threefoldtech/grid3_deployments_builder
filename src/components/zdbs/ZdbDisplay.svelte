@@ -32,6 +32,7 @@
     <Editable
       label="Name"
       value={zdb.name}
+      placeholder="Zdb name"
       on:input={codeStore.updateZdb(resourceIdx, idx, "name")}
       deployed = {zdb.isDeployed}
     />
@@ -53,6 +54,7 @@
       label="password"
       type="password"
       value={zdb.password}
+      placeholder="Enter your zdb password"
       on:input={codeStore.updateZdb(resourceIdx, idx, "password")}
       deployed = {zdb.isDeployed}
     />

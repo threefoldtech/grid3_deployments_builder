@@ -1,5 +1,4 @@
-import { v4 } from "uuid";
-import type { Machines, ZDBs, Kubernetes, GatewayFQDN, GatewayName } from ".";
+import type { Machines, ZDBs, Kubernetes, GatewayFQDN, GatewayName, QsfsZDBs } from ".";
 
 export interface ResourceInterface {
   type: string
@@ -10,4 +9,4 @@ export interface ResourceInterface {
   isDeployed: boolean
 }
 
-export type Resource =   Machines | ZDBs | Kubernetes | GatewayFQDN | GatewayName;
+export type Resource =   Machines | ZDBs | Kubernetes | GatewayFQDN | GatewayName | QsfsZDBs;

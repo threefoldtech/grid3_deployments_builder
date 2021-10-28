@@ -7,7 +7,7 @@ export class QsfsZDBs implements ResourceInterface {
     public id: string = v4(),
     public name: string = "",
     public count: number = 3,
-    public node_ids: number = 2,
+    public node_ids: number[] = [],
     public disk_size: number = 10,
     public password: string = "",
     public metadata: string = "",

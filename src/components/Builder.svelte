@@ -109,13 +109,6 @@ import { Machines } from "src/models";
       />
       {#if hasKubernetes }
         <SidebarBlock
-          label="Master"
-          img="../assets/kubernetes_master.png"
-          type="master"
-          level = 2
-          on:click={add("master")}
-        />
-        <SidebarBlock
           label="Worker"
           img="../assets/kubernetes_worker.png"
           type="worker"
