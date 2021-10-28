@@ -18,6 +18,8 @@
   import ConfirmMsg from "./base/ConfirmMsg.svelte";
   import { deleteMachine, deleteResource, deleteWorker, deleteZdb } from "src/grid3";
 import App from "src/App.svelte";
+import QsfsZdbsDisplay from "./zdbs/QsfsZdbsDisplay.svelte";
+import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -80,6 +82,23 @@ import App from "src/App.svelte";
                     </Block>
                   {/each}
 
+                  {#each vm.qsfsDisks as qsfsDisk, qsfsDiskIdx (qsfsDisk.id)}
+                    <Block
+                      color="--disk"
+                      on:click={codeStore.removeFromVm(
+                        resourceIdx,
+                        idx,
+                        "qsfsDisks",
+                        qsfsDiskIdx
+                      )}
+                      removeable={!qsfsDisk.isDeployed}
+                    >
+                      <QsfsDiskDisplay
+                        {...{ resourceIdx, vmIdx: idx, idx: qsfsDiskIdx, qsfsDisk }}
+                      />
+                    </Block>
+                  {/each}
+
                   {#each vm.env_vars as env, eIdx (env.id)}
                     <Block
                       color="--envVar"
@@ -134,6 +153,10 @@ import App from "src/App.svelte";
                 <ZdbDisplay {resourceIdx} {zdb} idx={i} />
               </Block>
             {/each}
+          
+          <!-- ---------------- Qsfs ZDBs ---------------- -->
+          {:else if "qsfsZdbsType" in resource}
+          <QsfsZdbsDisplay qsfsZdbs={resource} idx={resourceIdx} />
 
           <!-- ---------------- FQDN Gateway ---------------- -->
           {:else if "domain" in resource}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Resource, ZDBs } from "../../models";
+  import type { ZDBs } from "../../models";
   import codeStore from "../../store/code.store";
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
@@ -37,6 +37,7 @@
       label="Description"
       value={zdbs.description}
       type="text"
+      placeholder="Describe your deployment"
       on:input={codeStore.updateResource("description", idx)}
       deployed={zdbs.isDeployed}
     />
@@ -44,6 +45,7 @@
       label="Metadata"
       value={zdbs.metadata}
       type="text"
+      placeholder="Add info about your deployment"
       on:input={codeStore.updateResource("metadata", idx)}
       deployed={zdbs.isDeployed}
     />

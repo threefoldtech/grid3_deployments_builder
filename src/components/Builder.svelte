@@ -83,15 +83,13 @@ import { Machines } from "src/models";
           level = 3
           on:click={add("disk")}
         />
-        <!-- TODO: Not Implemented -->
         <SidebarBlock 
           label="Qsfs Disk" 
-          img="../assets/disk.png"
-          type="disk"
+          img="../assets/qsfsDisk.png"
+          type="qsfsDisk"
           level = 3
-          on:click={add("disk")}
+          on:click={add("qsfsDisk")}
         />
-        <!-- --------------------- -->
         <SidebarBlock
           label="Enviroment Variable"
           img="../assets/env.svg"
@@ -132,15 +130,13 @@ import { Machines } from "src/models";
           on:click={add("zdb")}
         />
       {/if}
-      <!-- TODO: Not Implemented -->
       <SidebarBlock
         label="Qsfs Zdbs"
-        img="../assets/zdbs.png"
-        type="zdbs"
+        img="../assets/qsfsZdbs.png"
+        type="qsfsZdbs"
         level = 0
-        on:click={add("zdbs")}
+        on:click={add("qsfsZdbs")}
       />
-      <!-- --------------------- -->
       <SidebarBlock
         label="Domain"
         img="../assets/gateways_fqdn.png"

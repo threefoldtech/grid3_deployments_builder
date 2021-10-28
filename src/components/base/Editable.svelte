@@ -4,8 +4,9 @@
   export let type: "number" | "text" | "password" = "text";
   export let label: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
-  export let placeholder: string = ""
-  export let deployed: boolean = false
+  export let placeholder: string = "";
+  export let deployed: boolean = false;
+  export let min: number = 0;
 
   let fake_span: HTMLSpanElement;
   let width = 150;
@@ -35,6 +36,7 @@
       {type}
       {value}
       {placeholder}
+      min={min}
       style={`width: ${width}px`}
       on:input
       on:keydown={updateWidth}

@@ -190,7 +190,7 @@ async function deployVMs(
       qd.name = qsfsDisk.name;
       qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
       qd.prefix = qsfsDisk.prefix;
-      qd.encryption_key = qsfsDisk.encryption_key;
+      qd.encryption_key = qsfsDisk.encryptionKey;
       qd.cache = qsfsDisk.cache;
       qd.minimal_shards = qsfsDisk.minimalShards;
       qd.expected_shards = qsfsDisk.expectedShards;
@@ -243,7 +243,7 @@ async function addVM(
     qd.name = qsfsDisk.name;
     qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
     qd.prefix = qsfsDisk.prefix;
-    qd.encryption_key = qsfsDisk.encryption_key;
+    qd.encryption_key = qsfsDisk.encryptionKey;
     qd.cache = qsfsDisk.cache;
     qd.minimal_shards = qsfsDisk.minimalShards;
     qd.expected_shards = qsfsDisk.expectedShards;
@@ -359,18 +359,28 @@ async function addZDB(
   return result;
 }
 
-async function deployQsfsZdb(resource: QsfsZDBs, gridClient: GridClient){
-  let qsfsZdbs = new QSFSZDBSModel()
-  qsfsZdbs.name = resource.name;
-  qsfsZdbs.count = resource.count;
-  qsfsZdbs.node_ids = resource.node_ids;
-  qsfsZdbs.disk_size = resource.disk_size;
-  qsfsZdbs.password = resource.password;
-  qsfsZdbs.metadata = resource.metadata;
-  qsfsZdbs.description = resource.description;
-
-  const data = gridClient.qsfs_zdbs.deploy(qsfsZdbs);
-  return data;
+async function deployQsfsZdb(resource: QsfsZDBs, resourceId:number, gridClient: GridClient){
+  if (!resource.isDeployed){
+    let qsfsZdbs = new QSFSZDBSModel()
+    qsfsZdbs.name = resource.name;
+    qsfsZdbs.count = resource.count;
+    qsfsZdbs.node_ids = resource.nodeIds;
+    qsfsZdbs.disk_size = resource.diskSize;
+    qsfsZdbs.password = resource.password;
+    qsfsZdbs.metadata = resource.metadata;
+    qsfsZdbs.description = resource.description;
+  
+    const data = await gridClient.qsfs_zdbs.deploy(qsfsZdbs);
+    if (checkResult(data)) {
+      addSuccessToast(`${resource.name} deployed successfully`);
+      codeStore.updateDeployAllElements(resourceId);
+    } else {
+      addErrorToast(`Error happen while deploying ${resource.name}`);
+    }
+  }else{
+    addInfoToast(`QSFS Zdbs ${resource.name} already deployed`)
+  }
+ 
 }
 
 export { getNetworkModel, handleKubernetes, handleVMs, handleZDBs, deployQsfsZdb };

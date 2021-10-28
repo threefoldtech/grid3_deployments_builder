@@ -6,10 +6,10 @@ export class QsfsDisk {
     public name: string = "",
     public qsfsZdbsName: string = "",
     public prefix: string = "",
-    public encryption_key: string = "",
-    public cache: number,
-    public minimalShards: number,
-    public expectedShards: number,
+    public encryptionKey: string = "",
+    public cache: number = 1,
+    public minimalShards: number = 1,
+    public expectedShards: number = 2,
     public mountpoint: string = "",
     public isDeployed: boolean = false
   ) {}

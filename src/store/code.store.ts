@@ -1,7 +1,6 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
 import { addErrorToast } from "./toast.store";
-import { deleteZdb, deleteWorker, deleteMachine, getClient } from "src/grid3";
 import {
   Project,
   Resource,
@@ -187,6 +186,32 @@ function createCodeStore() {
               );
             }
             break;
+            case "qsfsDisk":
+              if (
+                resourceIdx != undefined &&
+                idx != undefined &&
+                value.projects[value.active].resources[resourceIdx].type ===
+                  "machines"
+              ) {
+                if (
+                  !(
+                    value.projects[value.active].resources[
+                      resourceIdx
+                    ] as Machines
+                  ).machines[idx].isDeployed
+                ) {
+                  (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].qsfsDisks.push(new QsfsDisk()); // prettier-ignore
+                } else {
+                  addErrorToast(`Can't add new Qsfs disk to deployed machine`);
+                }
+              } else {
+                addErrorToast(
+                  `Can't add new Qsfs disk to ${
+                    value.projects[value.active].resources[resourceIdx].type
+                  } type`
+                );
+              }
+              break;
 
           case "envVar":
             if (
@@ -227,6 +252,10 @@ function createCodeStore() {
 
           case "gatewayName":
             value.projects[value.active].resources.push(new GatewayName());
+            break;
+
+          case "qsfsZdbs":
+            value.projects[value.active].resources.push(new QsfsZDBs())
             break;
         }
         return value;
@@ -312,6 +341,27 @@ function createCodeStore() {
       };
     },
 
+    updateQsfsDisk<R extends keyof QsfsDisk>(
+      resourceIdx: number,
+      vmIdx: number,
+      index: number,
+      key: R
+    ) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          if (key === "minimalShards"){
+            (value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index].minimalShards = +val;
+            if((value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index].expectedShards <= +val){
+              (value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index].expectedShards = +val + 1;
+            } // prettier-ignore
+          }
+          (value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index][key] = type === "number" ? +val : val; // prettier-ignore
+          return value;
+        });
+      };
+    },
+
     updateVm<R extends keyof Machine>(
       resourceIdx: number,
       index: number,
@@ -362,6 +412,24 @@ function createCodeStore() {
             (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
           }
 
+          return value;
+        });
+      };
+    },
+
+    updateQsfsZdbs<R extends keyof QsfsZDBs>(key: R, idx: number) {
+      return (e: any) => {
+        return update((value) => {
+          const { type, value: val } = e.target;
+          if (key === "nodeIds") {
+            (value.projects[value.active].resources[idx] as QsfsZDBs).nodeIds = val
+              .split(",")
+              .map((v) => v.trim())
+              .map((v) => +v)
+              .filter((v) => !isNaN(v));
+          } else {
+            (value.projects[value.active].resources[idx]as QsfsZDBs)[key] = type === "number" ? +val : val; // prettier-ignore
+          }
           return value;
         });
       };
@@ -452,6 +520,10 @@ function createCodeStore() {
               z.isDeployed = true;
             });
             break;
+          case "qsfsZdbs":
+          case "fqdn":
+          case "name":
+            value.projects[value.active].resources[resourceIdx].isDeployed = true;
         }
         return value;
       });
@@ -522,7 +594,7 @@ function createCodeStore() {
     removeFromVm(
       resourceIdx: number,
       vm_idx: number,
-      key: "disks" | "env_vars",
+      key: "disks" | "env_vars" | "qsfsDisks" ,
       idx: number
     ) {
       return () => {

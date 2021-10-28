@@ -19,6 +19,10 @@ export async function getZdbs(gridClient: GridClient, deploymentName: string) {
   return await gridClient.zdbs.getObj(deploymentName);
 }
 
+export async function getQsfsZdbs(gridClient: GridClient, deploymentName: string) {
+  return await gridClient.qsfs_zdbs.getZdbs(deploymentName);
+}
+
 // export async function getGatewayFqdn(gridClient: GridClient, deploymentName: string){
 //     return gridClient.gateway.getObj(deploymentName);
 // }
@@ -52,6 +56,8 @@ export async function getProjectResult(
           projectResult.zdbs.push({[resource.name]:result});
           break;
         case "qsfsZdbs":
+          result = await getQsfsZdbs(gridClient, resource.name);
+          projectResult.qsfs_zdbs.push({[resource.name]:result});
           break;
         case "fqdn":
           break;

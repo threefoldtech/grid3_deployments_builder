@@ -11,7 +11,9 @@
     handleZDBs,
     getNetworkModel,
     getProjectResult,
+    deployQsfsZdb,
   } from "src/grid3/index";
+import { QsfsZDBs } from "src/models";
 
   $: store = $codeStore;
   $: active = store.active > -1;
@@ -38,7 +40,9 @@
     const network = getNetworkModel(project);
     const gridClient = getClient(mnemStore, project.name);
     for (let [i, resource] of project.resources.entries()) {
-      if (resource.type === "machines") {
+      if (resource.type === "qsfsZdbs"){
+        await deployQsfsZdb(resource as QsfsZDBs, i, gridClient)
+      } else if (resource.type === "machines") {
         await handleVMs(network, resource, i, gridClient);
       } else if (resource.type === "kubernetes") {
         await handleKubernetes(network, resource, i, gridClient);

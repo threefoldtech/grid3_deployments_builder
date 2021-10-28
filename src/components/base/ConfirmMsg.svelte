@@ -9,11 +9,13 @@
 
 <div class="layout">
   <div class="layout__confirm">
-    {#if msg}
-    <pre id="json">{msg}</pre>
-    {:else}
-    <img src="/assets/loading.gif" alt="Loading"/>
-    {/if}
+    <div class="layout__confirm__msg">
+      {#if msg}
+        <pre id="json">{msg}</pre>
+      {:else}
+        <img src="/assets/loading.gif" alt="Loading" />
+      {/if}
+    </div>
     <div class="layout__confirm__actions">
       <button class="btn btn-sm btn-cancel" on:click={onClickCancel}
         >{cancelBtnDisplayText}
@@ -47,19 +49,24 @@
       border-radius: 0.5rem;
       min-width: 500px;
 
+      &__msg {
+        max-width: 1000px;
+        max-height: 700px;
+        overflow: auto;
+        // overflow-x: hidden;
+        pre {
+          margin-bottom: 1rem;
+        }
+
+        img {
+          width: 20%;
+          margin-left: 200px;
+        }
+      }
+
       @media (max-width: 550px) {
         min-width: 90%;
       }
-
-      pre {
-        margin-bottom: 1rem;
-      }
-
-      img {
-        width: 20%;
-        margin-left: 200px;
-      }
-
 
       &__actions {
         display: flex;
