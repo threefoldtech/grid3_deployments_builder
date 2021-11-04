@@ -32,13 +32,13 @@ import { QsfsZDBs } from "src/models";
   const closeResult = () => (showResult = false);
 
   $: mnemStore = $mnemonicsStore;
-  $: disabled = mnemStore.mnemonics.length === 0 || mnemStore.twinId.length === 0; // prettier-ignore
+  $: disabled = mnemStore.mnemonics.length === 0; // prettier-ignore
 
   async function onDeployHandler() {
     close();
     const project = store.projects[store.active];
     const network = getNetworkModel(project);
-    const gridClient = getClient(mnemStore, project.name);
+    const gridClient = await getClient(mnemStore, project.name);
     for (let [i, resource] of project.resources.entries()) {
       if (resource.type === "qsfsZdbs"){
         await deployQsfsZdb(resource as QsfsZDBs, i, gridClient)
@@ -54,10 +54,10 @@ import { QsfsZDBs } from "src/models";
     }
   }
 
-  function onResultsHandler() {
+  async function onResultsHandler() {
     projectResult = ""
     const project = store.projects[store.active];
-    const gridClient = getClient(mnemStore, project.name);
+    const gridClient = await getClient(mnemStore, project.name);
     getProjectResult(gridClient, project).then((res) => {
       projectResult = JSON.stringify(res, undefined, 2)
     });

@@ -21,14 +21,6 @@
     />
   </div>
   <div>
-    <p>TwinID</p>
-    <input
-      placeholder="twinid"
-      value={mnemStore.twinId}
-      on:input={mnemonicsStore.updateTwinid}
-    />
-  </div>
-  <div>
     <p>Mnemonics</p>
     <textarea
       placeholder="mnemonics"

@@ -1,9 +1,10 @@
 import { HTTPMessageBusClient } from "ts-rmb-http-client";
-import { GridClient } from "grid3_client_ts";
+import { GridClient } from "grid3_client";
 
-export function getClient(mnemStore, projectName): GridClient {
-  const { twinId, explorerUrl, mnemonics, proxyUrl } = mnemStore;
-  const rmb = new HTTPMessageBusClient(+twinId, proxyUrl);
-  const grid = new GridClient(+twinId, explorerUrl, mnemonics, rmb, projectName);
+export async function getClient(mnemStore, projectName): Promise<GridClient> {
+  const { explorerUrl, mnemonics, proxyUrl } = mnemStore;
+  const rmb = new HTTPMessageBusClient(0, proxyUrl);
+  const grid = new GridClient(explorerUrl, mnemonics, rmb, projectName);
+  await grid.connect()
   return grid;
 }

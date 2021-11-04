@@ -2,7 +2,6 @@ import { Updater, writable } from "svelte/store";
 
 interface IState {
   mnemonics: string;
-  twinId: string;
   proxyUrl: string;
   explorerUrl: string;
 }
@@ -18,7 +17,6 @@ function createMnemonicsStore() {
   const store = writable<IState>(
     initData || {
       mnemonics: "",
-      twinId: "",
       proxyUrl: "https://rmbproxy1.devnet.grid.tf",
       explorerUrl: "wss://tfchain.dev.threefold.io",
     }
@@ -38,13 +36,6 @@ function createMnemonicsStore() {
     updateMnemonics(e: any) {
       return update((value) => {
         value.mnemonics = e.target.value;
-        return value;
-      });
-    },
-
-    updateTwinid(e: any) {
-      return update((value) => {
-        value.twinId = e.target.value;
         return value;
       });
     },

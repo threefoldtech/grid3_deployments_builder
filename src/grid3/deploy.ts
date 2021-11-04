@@ -30,8 +30,8 @@ import {
   ZDBSModel,
   ZdbModes,
   QSFSZDBSModel,
-  QSFSDisk
-} from "grid3_client_ts";
+  QSFSDiskModel
+} from "grid3_client";
 
 function checkResult(result): boolean {
   if (result.contracts.created.length || result.contracts.updated.length) {
@@ -186,7 +186,7 @@ async function deployVMs(
       return d;
     });
     vmModel.qsfs_disks = vm.qsfsDisks.map((qsfsDisk) => {
-      const qd = new QSFSDisk();
+      const qd = new QSFSDiskModel();
       qd.name = qsfsDisk.name;
       qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
       qd.prefix = qsfsDisk.prefix;
@@ -239,7 +239,7 @@ async function addVM(
     return d;
   });
   addVMPayload.qsfs_disks = machine.qsfsDisks.map((qsfsDisk) => {
-    const qd = new QSFSDisk();
+    const qd = new QSFSDiskModel();
     qd.name = qsfsDisk.name;
     qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
     qd.prefix = qsfsDisk.prefix;
@@ -254,7 +254,7 @@ async function addVM(
     res[key] = value;
     return res;
   }, {});
-  const result = gridClient.machines.addMachine(addVMPayload);
+  const result = gridClient.machines.add_machine(addVMPayload);
   return result;
 }
 
@@ -317,7 +317,7 @@ async function addWorker(
   addWorkerPayload.public_ip = worker.publicIp;
   addWorkerPayload.rootfs_size = worker.rootFsSize;
   addWorkerPayload.planetary = worker.planetary;
-  const result = gridClient.k8s.addWorker(addWorkerPayload);
+  const result = gridClient.k8s.add_worker(addWorkerPayload);
   return result;
 }
 
@@ -355,7 +355,7 @@ async function addZDB(
   zdbPaylaod.disk_size = zdb.size;
   zdbPaylaod.public_ipv6 = zdb.publicIp;
   zdbPaylaod.password = zdb.password;
-  const result = gridClient.zdbs.addZdb(zdbPaylaod);
+  const result = gridClient.zdbs.add_zdb(zdbPaylaod);
   return result;
 }
 

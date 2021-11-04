@@ -6,7 +6,7 @@
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
-  import { events } from "grid3_client_ts";
+  import { events } from "grid3_client";
   import { addInfoToast } from "./store/toast.store";
 
   events.addListener("logs", addInfoToast);

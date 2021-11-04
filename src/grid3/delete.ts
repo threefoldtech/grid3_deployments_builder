@@ -13,7 +13,7 @@ import {
   DeleteWorkerModel,
   DeleteMachineModel,
   QSFSZDBDeleteModel,
-} from "grid3_client_ts";
+} from "grid3_client";
 import { Machine, Resource, Worker, ZDB } from "src/models";
 import { getClient } from ".";
 
@@ -33,7 +33,7 @@ export async function deleteResource(
   resource: Resource,
   resourceIdx: number
 ) {
-  const gridClient = getClient(mnemStore, projectName);
+  const gridClient = await getClient(mnemStore, projectName);
   if (resource.isDeployed) {
     switch (resource.type) {
       case "machines":
@@ -132,11 +132,11 @@ export async function deleteMachine(
   machineId: number
 ) {
   if (machine.isDeployed) {
-    const gridClient = getClient(mnemStore, projectName);
+    const gridClient = await getClient(mnemStore, projectName);
     const deleteVM = new DeleteMachineModel();
     deleteVM.deployment_name = deploymentName;
     deleteVM.name = machine.name;
-    const result = await gridClient.machines.deleteMachine(deleteVM);
+    const result = await gridClient.machines.delete_machine(deleteVM);
     if (result.deleted.length || result.updated.length) {
       addSuccessToast(`${machine.name} deleted successfully`);
       codeStore.removeVM(deploymentId, machineId);
@@ -157,11 +157,11 @@ export async function deleteWorker(
   workerId: number
 ) {
   if (worker.isDeployed) {
-    const gridClient = getClient(mnemStore, projectName);
+    const gridClient = await getClient(mnemStore, projectName);
     const deleteWorkerModel = new DeleteWorkerModel();
     deleteWorkerModel.deployment_name = deploymentName;
     deleteWorkerModel.name = worker.name;
-    const result = await gridClient.k8s.deleteWorker(deleteWorkerModel);
+    const result = await gridClient.k8s.delete_worker(deleteWorkerModel);
     if (result.deleted.length || result.updated.length) {
       addSuccessToast(`${worker.name} deleted successfully`);
       codeStore.removeWorker(deploymentId, workerId);
@@ -182,11 +182,11 @@ export async function deleteZdb(
   zdbId: number
 ) {
   if (zdb.isDeployed) {
-    const gridClient = getClient(mnemStore, projectName);
+    const gridClient = await getClient(mnemStore, projectName);
     const deleteZdbPayload = new DeleteZDBModel();
     deleteZdbPayload.deployment_name = deploymentName;
     deleteZdbPayload.name = zdb.name; //prettier-ignore
-    const result = await gridClient.zdbs.deleteZdb(deleteZdbPayload);
+    const result = await gridClient.zdbs.delete_zdb(deleteZdbPayload);
     if (result.deleted.length || result.updated.length) {
       addSuccessToast(`${zdb.name} deleted successfully`);
       codeStore.removeZdb(deploymentId, zdbId);

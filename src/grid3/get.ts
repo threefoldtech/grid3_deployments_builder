@@ -1,4 +1,4 @@
-import { GridClient } from "grid3_client_ts";
+import { GridClient } from "grid3_client";
 import { Project } from "src/models";
 
 export async function getMachines(
