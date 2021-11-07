@@ -1,9 +1,9 @@
 <script lang="ts">
-import { Machines } from "src/models";
+  import { Machines } from "src/models";
 
-  import type { Add_Types, IStore } from "../store/code.store";
-  import codeStore from "../store/code.store";
-  import SidebarBlock from "./base/SidebarBlock.svelte";
+  import type { Add_Types, IStore } from "src/store/code.store";
+  import codeStore from "src/store/code.store";
+  import SidebarBlock from "src/components/base/SidebarBlock.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -13,7 +13,6 @@ import { Machines } from "src/models";
   $: hasMachines = code && code.resources.some((r) => r.type === "machines"); //prettier-ignore
   $: hasMachine = hasMachines && code.resources.some((r) => r.type === "machines" && (r as Machines).machines.length); //prettier-ignore
   $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs"); //prettier-ignore;
-
 
   function add(key: Add_Types) {
     return () => {
@@ -55,7 +54,7 @@ import { Machines } from "src/models";
           label="Network"
           img="../assets/network.png"
           type="network"
-          level=0
+          level="0"
           on:click={add("network")}
         />
       {/if}
@@ -63,38 +62,38 @@ import { Machines } from "src/models";
         label="Machines"
         img="../assets/vms.png"
         type="machines"
-        level = 0
+        level="0"
         on:click={add("machines")}
       />
-      {#if hasMachines }
+      {#if hasMachines}
         <SidebarBlock
           label="Generic Machine"
           img="../assets/vm.png"
           type="machine"
-          level = 2
+          level="2"
           on:click={add("machine")}
         />
       {/if}
-      {#if hasMachine }
+      {#if hasMachine}
         <SidebarBlock
           label="Disk"
           img="../assets/disk.png"
           type="disk"
-          level = 3
+          level="3"
           on:click={add("disk")}
         />
-        <SidebarBlock 
-          label="Qsfs Disk" 
+        <SidebarBlock
+          label="Qsfs Disk"
           img="../assets/qsfsDisk.png"
           type="qsfsDisk"
-          level = 3
+          level="3"
           on:click={add("qsfsDisk")}
         />
         <SidebarBlock
           label="Enviroment Variable"
           img="../assets/env.svg"
           type="envVar"
-          level = 3
+          level="3"
           on:click={add("envVar")}
         />
       {/if}
@@ -102,15 +101,15 @@ import { Machines } from "src/models";
         label="Kubernetes"
         img="../assets/kubernetes.png"
         type="kubernetes"
-        level = 0
+        level="0"
         on:click={add("kubernetes")}
       />
-      {#if hasKubernetes }
+      {#if hasKubernetes}
         <SidebarBlock
           label="Worker"
           img="../assets/kubernetes_worker.png"
           type="worker"
-          level = 2
+          level="2"
           on:click={add("worker")}
         />
       {/if}
@@ -118,15 +117,15 @@ import { Machines } from "src/models";
         label="Zdbs"
         img="../assets/zdbs.png"
         type="zdbs"
-        level = 0
+        level="0"
         on:click={add("zdbs")}
       />
-      {#if hasZDBs }
+      {#if hasZDBs}
         <SidebarBlock
           label="Single Zdb"
           img="../assets/zdb.png"
           type="zdb"
-          level = 2
+          level="2"
           on:click={add("zdb")}
         />
       {/if}
@@ -134,21 +133,21 @@ import { Machines } from "src/models";
         label="Qsfs Zdbs"
         img="../assets/qsfsZdbs.png"
         type="qsfsZdbs"
-        level = 0
+        level="0"
         on:click={add("qsfsZdbs")}
       />
       <SidebarBlock
         label="Domain"
         img="../assets/gateways_fqdn.png"
         type="gatewayFQDN"
-        level = 0
+        level="0"
         on:click={add("gatewayFQDN")}
       />
       <SidebarBlock
         label="Domain Prefix"
         img="../assets/gateways.png"
         type="gatewayName"
-        level = 0
+        level="0"
         on:click={add("gatewayName")}
       />
     {/if}

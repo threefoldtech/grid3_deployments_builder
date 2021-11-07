@@ -19,22 +19,44 @@ function addToast(toast) {
 
   // If toast is dismissible, dismiss it after "timeout" amount of time.
   if (toast.timeout) setTimeout(() => dismissToast(id), toast.timeout);
-};
+}
 
 function addInfoToast(msg) {
-  return addToast({message: msg, type: "info", dismissible: true, timeout: 3000})
+  return addToast({
+    message: msg,
+    type: "info",
+    dismissible: true,
+    timeout: 3000,
+  });
 }
 
 function addSuccessToast(msg) {
-  return addToast({message: msg, type: "success", dismissible: true, timeout: 3000})
+  return addToast({
+    message: msg,
+    type: "success",
+    dismissible: true,
+    timeout: 3000,
+  });
 }
 
 function addErrorToast(msg) {
-  return addToast({message: msg, type: "error", dismissible: true, timeout: 3000})
+  return addToast({
+    message: msg,
+    type: "error",
+    dismissible: true,
+    timeout: 3000,
+  });
 }
 
 function dismissToast(id) {
   toasts.update((all) => all.filter((t) => t.id !== id));
-};
+}
 
-export {toasts, addToast, addSuccessToast, addInfoToast, addErrorToast, dismissToast}
+export {
+  toasts,
+  addToast,
+  addSuccessToast,
+  addInfoToast,
+  addErrorToast,
+  dismissToast,
+};

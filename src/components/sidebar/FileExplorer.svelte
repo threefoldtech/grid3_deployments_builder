@@ -105,6 +105,7 @@
     justify-content: center;
     text-align: center;
     padding: 0 1rem;
+    cursor: pointer;
 
     img {
       padding-top: 5px;

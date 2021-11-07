@@ -20,11 +20,11 @@
     {#if collapse}
       <p>...</p>
     {/if}
-    {#if env.isDeployed }
-      <img src="/assets/deployed.png" alt="deployed icon" width="20"/>
-      {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20"/>
-      {/if}
+    {#if env.isDeployed}
+      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+    {:else}
+      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+    {/if}
   </div>
 
   {#if !collapse}
@@ -33,14 +33,14 @@
       value={env.key}
       placeholder="Enviroment variable key"
       on:input={codeStore.updateEnv(resourceIdx, vmIdx, idx, "key")}
-      deployed = {env.isDeployed}
+      deployed={env.isDeployed}
     />
     <Editable
       label="value"
       value={env.value}
       placeholder="Enviroment variable value"
       on:input={codeStore.updateEnv(resourceIdx, vmIdx, idx, "value")}
-      deployed = {env.isDeployed}
+      deployed={env.isDeployed}
     />
   {/if}
 </div>

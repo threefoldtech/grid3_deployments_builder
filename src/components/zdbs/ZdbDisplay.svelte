@@ -21,11 +21,11 @@
     {#if collapse}
       <p>...</p>
     {/if}
-    {#if zdb.isDeployed }
-      <img src="/assets/deployed.png" alt="deployed icon" width="20"/>
-      {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20"/>
-      {/if}
+    {#if zdb.isDeployed}
+      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+    {:else}
+      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+    {/if}
   </div>
 
   {#if !collapse}
@@ -34,21 +34,21 @@
       value={zdb.name}
       placeholder="Zdb name"
       on:input={codeStore.updateZdb(resourceIdx, idx, "name")}
-      deployed = {zdb.isDeployed}
+      deployed={zdb.isDeployed}
     />
     <Editable
       label="Node"
       value={zdb.node}
       type="number"
       on:input={codeStore.updateZdb(resourceIdx, idx, "node")}
-      deployed = {zdb.isDeployed}
+      deployed={zdb.isDeployed}
     />
     <Editable
       label="Size"
       value={zdb.size}
       type="number"
       on:input={codeStore.updateZdb(resourceIdx, idx, "size")}
-      deployed = {zdb.isDeployed}
+      deployed={zdb.isDeployed}
     />
     <Editable
       label="password"
@@ -56,20 +56,20 @@
       value={zdb.password}
       placeholder="Enter your zdb password"
       on:input={codeStore.updateZdb(resourceIdx, idx, "password")}
-      deployed = {zdb.isDeployed}
+      deployed={zdb.isDeployed}
     />
     <Selectable
       label="mode"
       options={[ZdbModes.seq, ZdbModes.user]}
       on:change={codeStore.updateZdb(resourceIdx, idx, "mode")}
-      deployed = {zdb.isDeployed}
+      deployed={zdb.isDeployed}
     />
-    <Editable label="Public IP" deployed = {zdb.isDeployed}>
+    <Editable label="Public IP" deployed={zdb.isDeployed}>
       <input
         type="checkbox"
         checked={zdb.publicIp}
         on:change={codeStore.updateZdb(resourceIdx, idx, "publicIp")}
-        disabled = {zdb.isDeployed}
+        disabled={zdb.isDeployed}
       />
     </Editable>
   {/if}

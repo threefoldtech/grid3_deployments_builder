@@ -8,6 +8,8 @@ import {
   ZDBs,
   Resource,
   QsfsZDBs,
+  GatewayFQDN,
+  GatewayName,
 } from "../models";
 import codeStore from "../store/code.store";
 import {
@@ -30,7 +32,9 @@ import {
   ZDBSModel,
   ZdbModes,
   QSFSZDBSModel,
-  QSFSDiskModel
+  QSFSDiskModel,
+  GatewayFQDNModel,
+  GatewayNameModel,
 } from "grid3_client";
 
 function checkResult(result): boolean {
@@ -42,7 +46,7 @@ function checkResult(result): boolean {
 
 function getNetworkModel(project: Project): NetworkModel {
   const nw = project.network;
-  let network = new NetworkModel;
+  let network = new NetworkModel();
   network.name = nw.name;
   network.ip_range = nw.ipRange;
   return network;
@@ -54,7 +58,7 @@ async function handleVMs(
   resourceId: number,
   gridClient: GridClient
 ) {
-  let resource =   projectResource as Machines;
+  let resource = projectResource as Machines;
   // Check if deployment already deployed before, Will add new vm only.
   if (resource.isDeployed) {
     let is_changed: boolean = false; // flag to check if no change happen
@@ -359,9 +363,13 @@ async function addZDB(
   return result;
 }
 
-async function deployQsfsZdb(resource: QsfsZDBs, resourceId:number, gridClient: GridClient){
-  if (!resource.isDeployed){
-    let qsfsZdbs = new QSFSZDBSModel()
+async function deployQsfsZdb(
+  resource: QsfsZDBs,
+  resourceId: number,
+  gridClient: GridClient
+) {
+  if (!resource.isDeployed) {
+    let qsfsZdbs = new QSFSZDBSModel();
     qsfsZdbs.name = resource.name;
     qsfsZdbs.count = resource.count;
     qsfsZdbs.node_ids = resource.nodeIds;
@@ -369,7 +377,7 @@ async function deployQsfsZdb(resource: QsfsZDBs, resourceId:number, gridClient: 
     qsfsZdbs.password = resource.password;
     qsfsZdbs.metadata = resource.metadata;
     qsfsZdbs.description = resource.description;
-  
+
     const data = await gridClient.qsfs_zdbs.deploy(qsfsZdbs);
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);
@@ -377,10 +385,66 @@ async function deployQsfsZdb(resource: QsfsZDBs, resourceId:number, gridClient: 
     } else {
       addErrorToast(`Error happen while deploying ${resource.name}`);
     }
-  }else{
-    addInfoToast(`QSFS Zdbs ${resource.name} already deployed`)
+  } else {
+    addInfoToast(`QSFS Zdbs ${resource.name} already deployed`);
   }
- 
 }
 
-export { getNetworkModel, handleKubernetes, handleVMs, handleZDBs, deployQsfsZdb };
+async function deployDomain(
+  resource: GatewayFQDN,
+  resourceId: number,
+  gridClient: GridClient
+) {
+  if (!resource.isDeployed) {
+    let domain = new GatewayFQDNModel();
+    domain.name = resource.name;
+    domain.node_id = resource.node;
+    domain.fqdn = resource.domain;
+    domain.backends = resource.backends;
+    domain.tls_passthrough = resource.tlsPassThrough;
+
+    const data = await gridClient.gateway.deploy_fqdn(domain);
+    if (checkResult(data)) {
+      addSuccessToast(`${resource.name} deployed successfully`);
+      codeStore.updateDeployAllElements(resourceId);
+    } else {
+      addErrorToast(`Error happen while deploying ${resource.name}`);
+    }
+  } else {
+    addInfoToast(`Domain ${resource.name} already deployed`);
+  }
+}
+
+async function deployPrefixDomain(
+  resource: GatewayName,
+  resourceId: number,
+  gridClient: GridClient
+) {
+  if (!resource.isDeployed) {
+    let prefixDomain = new GatewayNameModel();
+    prefixDomain.name = resource.prefix;
+    prefixDomain.node_id = resource.node;
+    prefixDomain.backends = resource.backends;
+    prefixDomain.tls_passthrough = resource.tlsPassThrough;
+
+    const data = await gridClient.gateway.deploy_name(prefixDomain);
+    if (checkResult(data)) {
+      addSuccessToast(`${resource.name} deployed successfully`);
+      codeStore.updateDeployAllElements(resourceId);
+    } else {
+      addErrorToast(`Error happen while deploying ${resource.name}`);
+    }
+  } else {
+    addInfoToast(`Prefix Domain ${resource.name} already deployed`);
+  }
+}
+
+export {
+  getNetworkModel,
+  handleKubernetes,
+  handleVMs,
+  handleZDBs,
+  deployQsfsZdb,
+  deployDomain,
+  deployPrefixDomain,
+};

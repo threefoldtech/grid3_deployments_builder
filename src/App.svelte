@@ -1,17 +1,16 @@
 <script lang="ts">
   import codeStore from "./store/code.store";
-  import FileExplorer from "./components/FileExplorer.svelte";
-  import Builder from "./components/Builder.svelte";
+  import FileExplorer from "./components/sidebar/FileExplorer.svelte";
+  import Builder from "./components/sidebar/Builder.svelte";
   import ProjectDisplay from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
-  import Configurations from "./components/Configurations.svelte";
+  import Configurations from "./components/sidebar/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
   import { events } from "grid3_client";
   import { addInfoToast } from "./store/toast.store";
 
   events.addListener("logs", addInfoToast);
 
-  let type = "text";
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
   $: store = $codeStore;
@@ -45,7 +44,7 @@
   </div>
   <div class="sidenav__content">
     {#if explorer === 0}
-     <FileExplorer /> 
+      <FileExplorer />
     {:else if explorer === 1}
       <Builder />
     {:else if explorer === 2}

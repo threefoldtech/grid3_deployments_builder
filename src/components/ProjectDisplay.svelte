@@ -16,10 +16,15 @@
   import KubernetesDisplay from "./kubernetes/KubernetesDisplay.svelte";
   import ZdbsDisplay from "./zdbs/ZdbsDisplay.svelte";
   import ConfirmMsg from "./base/ConfirmMsg.svelte";
-  import { deleteMachine, deleteResource, deleteWorker, deleteZdb } from "src/grid3";
-import App from "src/App.svelte";
-import QsfsZdbsDisplay from "./zdbs/QsfsZdbsDisplay.svelte";
-import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
+  import {
+    deleteMachine,
+    deleteResource,
+    deleteWorker,
+    deleteZdb,
+  } from "src/grid3";
+  import App from "src/App.svelte";
+  import QsfsZdbsDisplay from "./zdbs/QsfsZdbsDisplay.svelte";
+  import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
@@ -59,8 +64,15 @@ import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
               <Droppable {resourceIdx} {idx}>
                 <Block
                   color="--machine"
-                  on:click={()=>{
-                    deleteMachine(mnemStore, project.name, resource.name, resourceIdx, vm, idx)
+                  on:click={() => {
+                    deleteMachine(
+                      mnemStore,
+                      project.name,
+                      resource.name,
+                      resourceIdx,
+                      vm,
+                      idx
+                    );
                   }}
                 >
                   <MachineDisplay {resourceIdx} {vm} {idx} />
@@ -94,7 +106,12 @@ import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
                       removeable={!qsfsDisk.isDeployed}
                     >
                       <QsfsDiskDisplay
-                        {...{ resourceIdx, vmIdx: idx, idx: qsfsDiskIdx, qsfsDisk }}
+                        {...{
+                          resourceIdx,
+                          vmIdx: idx,
+                          idx: qsfsDiskIdx,
+                          qsfsDisk,
+                        }}
                       />
                     </Block>
                   {/each}
@@ -117,14 +134,11 @@ import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
               </Droppable>
             {/each}
 
-          <!-- ---------------- Kubernetes ---------------- -->
+          <!-- ---------------- Kubernetes ---------------- --> 
           {:else if "masters" in resource}
             <KubernetesDisplay kubernetes={resource} idx={resourceIdx} />
             {#each resource.masters as master, i (master.id)}
-              <Block
-                color="--master"
-                removeable={false}
-              >
+              <Block color="--master" removeable={false}>
                 <MasterDisplay {resourceIdx} idx={i} {master} />
               </Block>
             {/each}
@@ -132,31 +146,45 @@ import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
             {#each resource.workers as worker, i (worker.id)}
               <Block
                 color="--worker"
-                on:click={()=> {
-                  deleteWorker(mnemStore, project.name, resource.name, resourceIdx, worker, i)}
-                }
+                on:click={() => {
+                  deleteWorker(
+                    mnemStore,
+                    project.name,
+                    resource.name,
+                    resourceIdx,
+                    worker,
+                    i
+                  );
+                }}
               >
                 <WorkerDisplay {resourceIdx} idx={i} {worker} />
               </Block>
             {/each}
 
-          <!-- ---------------- ZDBs ---------------- -->
+            <!-- ---------------- ZDBs ---------------- -->
           {:else if "zdbs" in resource}
             <ZdbsDisplay zdbs={resource} idx={resourceIdx} />
             {#each resource.zdbs as zdb, i (zdb.id)}
               <Block
                 color="--zdb"
-                on:click={()=> {
-                  deleteZdb(mnemStore, project.name, resource.name, resourceIdx, zdb, i)
+                on:click={() => {
+                  deleteZdb(
+                    mnemStore,
+                    project.name,
+                    resource.name,
+                    resourceIdx,
+                    zdb,
+                    i
+                  );
                 }}
               >
                 <ZdbDisplay {resourceIdx} {zdb} idx={i} />
               </Block>
             {/each}
-          
+
           <!-- ---------------- Qsfs ZDBs ---------------- -->
           {:else if "qsfsZdbsType" in resource}
-          <QsfsZdbsDisplay qsfsZdbs={resource} idx={resourceIdx} />
+            <QsfsZdbsDisplay qsfsZdbs={resource} idx={resourceIdx} />
 
           <!-- ---------------- FQDN Gateway ---------------- -->
           {:else if "domain" in resource}

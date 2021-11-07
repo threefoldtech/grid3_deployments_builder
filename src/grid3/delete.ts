@@ -13,19 +13,11 @@ import {
   DeleteWorkerModel,
   DeleteMachineModel,
   QSFSZDBDeleteModel,
+  GatewayFQDNDeleteModel,
+  GatewayNameDeleteModel,
 } from "grid3_client";
 import { Machine, Resource, Worker, ZDB } from "src/models";
 import { getClient } from ".";
-
-function checkResult(result, deploymentName): boolean {
-  if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
-    return true;
-  } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
-    return false;
-  }
-}
 
 export async function deleteResource(
   mnemStore,
@@ -33,8 +25,8 @@ export async function deleteResource(
   resource: Resource,
   resourceIdx: number
 ) {
-  const gridClient = await getClient(mnemStore, projectName);
   if (resource.isDeployed) {
+    const gridClient = await getClient(mnemStore, projectName);
     switch (resource.type) {
       case "machines":
         await deleteMachines(gridClient, resource.name, resourceIdx);
@@ -46,11 +38,13 @@ export async function deleteResource(
         await deleteZdbs(gridClient, resource.name, resourceIdx);
         break;
       case "fqdn":
+        await deleteDomain(gridClient, resource.name, resourceIdx);
         break;
       case "name":
+        await deletePrefixDomain(gridClient, resource.name, resourceIdx);
         break;
       case "qsfsZdbs":
-        await deleteQsfsZdbs(gridClient, resource.name, resourceIdx)
+        await deleteQsfsZdbs(gridClient, resource.name, resourceIdx);
         break;
     }
   } else {
@@ -115,6 +109,38 @@ async function deleteQsfsZdbs(
   const deleteQsfsZdbs = new QSFSZDBDeleteModel();
   deleteQsfsZdbs.name = deploymentName;
   let result = await gridClient.qsfs_zdbs.delete(deleteQsfsZdbs);
+  if (result.deleted.length || result.updated.length) {
+    addSuccessToast(`${deploymentName} deleted successfully`);
+    codeStore.removeResource(resourceIdx);
+  } else {
+    addErrorToast(`Error happen while deleting ${deploymentName}`);
+  }
+}
+
+async function deleteDomain(
+  gridClient: GridClient,
+  deploymentName: string,
+  resourceIdx: number
+) {
+  const deleteDomainModel = new GatewayFQDNDeleteModel();
+  deleteDomainModel.name = deploymentName;
+  const result = await gridClient.gateway.delete_fqdn(deleteDomainModel);
+  if (result.deleted.length || result.updated.length) {
+    addSuccessToast(`${deploymentName} deleted successfully`);
+    codeStore.removeResource(resourceIdx);
+  } else {
+    addErrorToast(`Error happen while deleting ${deploymentName}`);
+  }
+}
+
+async function deletePrefixDomain(
+  gridClient: GridClient,
+  deploymentName: string,
+  resourceIdx: number
+) {
+  const deletePrefixModel = new GatewayNameDeleteModel();
+  deletePrefixModel.name = deploymentName;
+  const result = await gridClient.gateway.delete_name(deletePrefixModel);
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -197,21 +223,3 @@ export async function deleteZdb(
     codeStore.removeZdb(deploymentId, zdbId);
   }
 }
-// Not Implemented in grid3 client
-
-// export async function deleteFqdnGateway(
-//   gridClient: GridClient,
-//   deploymentName: string,
-// ) Promise<boolean> {
-//   // const deleteZdb = new ZDBDeleteModel();
-//   // deleteZdb.name = deploymentName;
-//   // const result = await gridClient..delete(deleteZdb);
-//   // return checkResult(result, deploymentName);
-// }
-
-// export async function deleteNameGateway(
-//   gridClient: GridClient,
-//   deploymentName: string,
-// ) Promise<boolean> {
-//   return false;
-// }

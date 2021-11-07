@@ -12,8 +12,10 @@
     getNetworkModel,
     getProjectResult,
     deployQsfsZdb,
+    deployDomain,
+    deployPrefixDomain,
   } from "src/grid3/index";
-import { QsfsZDBs } from "src/models";
+  import { GatewayFQDN, GatewayName, QsfsZDBs } from "src/models";
 
   $: store = $codeStore;
   $: active = store.active > -1;
@@ -26,7 +28,7 @@ import { QsfsZDBs } from "src/models";
   const close = () => (showDeploy = false);
 
   const openResult = () => {
-    onResultsHandler()
+    onResultsHandler();
     showResult = true;
   };
   const closeResult = () => (showResult = false);
@@ -40,32 +42,34 @@ import { QsfsZDBs } from "src/models";
     const network = getNetworkModel(project);
     const gridClient = await getClient(mnemStore, project.name);
     for (let [i, resource] of project.resources.entries()) {
-      if (resource.type === "qsfsZdbs"){
-        await deployQsfsZdb(resource as QsfsZDBs, i, gridClient)
+      if (resource.type === "qsfsZdbs") {
+        await deployQsfsZdb(resource as QsfsZDBs, i, gridClient);
       } else if (resource.type === "machines") {
         await handleVMs(network, resource, i, gridClient);
       } else if (resource.type === "kubernetes") {
         await handleKubernetes(network, resource, i, gridClient);
       } else if (resource.type === "zdbs") {
         await handleZDBs(resource, i, gridClient);
-      } else if (resource.type === "fqdn" || resource.type === "name") {
-        console.log(resource);
+      } else if (resource.type === "fqdn") {
+        await deployDomain(resource as GatewayFQDN, i, gridClient);
+      } else if (resource.type === "name") {
+        await deployPrefixDomain(resource as GatewayName, i, gridClient);
       }
     }
   }
 
   async function onResultsHandler() {
-    projectResult = ""
+    projectResult = "";
     const project = store.projects[store.active];
     const gridClient = await getClient(mnemStore, project.name);
     getProjectResult(gridClient, project).then((res) => {
-      projectResult = JSON.stringify(res, undefined, 2)
+      projectResult = JSON.stringify(res, undefined, 2);
     });
   }
 
   function copyResult() {
     navigator.clipboard.writeText(projectResult);
-    addSuccessToast("Result copied to clipboard")
+    addSuccessToast("Result copied to clipboard");
     closeResult();
   }
 </script>

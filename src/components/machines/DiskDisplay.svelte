@@ -20,11 +20,11 @@
     {#if collapse}
       <p>...</p>
     {/if}
-    {#if disk.isDeployed }
-      <img src="/assets/deployed.png" alt="deployed icon" width="20"/>
-      {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20"/>
-      {/if}
+    {#if disk.isDeployed}
+      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+    {:else}
+      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+    {/if}
   </div>
 
   {#if !collapse}
@@ -33,28 +33,28 @@
       value={disk.name}
       placeholder="Disk name"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "name")}
-      deployed = {disk.isDeployed}
+      deployed={disk.isDeployed}
     />
     <Editable
       label="size"
       value={disk.size}
       type="number"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "size")}
-      deployed = {disk.isDeployed}
+      deployed={disk.isDeployed}
     />
     <Editable
       label="mount"
       value={disk.mount}
       placeholder="Mount point"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "mount")}
-      deployed = {disk.isDeployed}
+      deployed={disk.isDeployed}
     />
     <Editable
       label="description"
       value={disk.description}
       placeholder="Describe your disk"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "description")}
-      deployed = {disk.isDeployed}
+      deployed={disk.isDeployed}
     />
   {/if}
 </div>

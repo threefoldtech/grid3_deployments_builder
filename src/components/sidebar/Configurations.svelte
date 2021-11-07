@@ -1,5 +1,5 @@
 <script lang="ts">
-  import mnemonicsStore from "../store/mnemonics.store";
+  import mnemonicsStore from "src/store/mnemonics.store";
   $: mnemStore = $mnemonicsStore;
 </script>
 
