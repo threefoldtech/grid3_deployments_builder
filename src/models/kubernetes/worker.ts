@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { QsfsDisk } from "..";
 
 export class Worker {
   constructor(
@@ -10,6 +11,7 @@ export class Worker {
     public memory: number = 2048,
     public publicIp: boolean = false,
     public rootFsSize: number = 1,
+    public qsfsDisks: QsfsDisk[] = [],
     public planetary: boolean = false,
     public isDeployed: boolean = false
   ) {}

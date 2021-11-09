@@ -20,21 +20,7 @@ import {
 import {
   GridClient,
   NetworkModel,
-  DiskModel,
-  KubernetesNodeModel,
-  MachineModel,
-  MachinesModel,
-  K8SModel,
-  AddWorkerModel,
-  AddMachineModel,
-  AddZDBModel,
-  ZDBModel,
-  ZDBSModel,
-  ZdbModes,
-  QSFSZDBSModel,
-  QSFSDiskModel,
-  GatewayFQDNModel,
-  GatewayNameModel,
+  ZdbModes
 } from "grid3_client";
 
 function checkResult(result): boolean {
@@ -44,7 +30,7 @@ function checkResult(result): boolean {
   return false;
 }
 
-function getNetworkModel(project: Project): NetworkModel {
+export function getNetworkModel(project: Project): NetworkModel {
   const nw = project.network;
   let network = new NetworkModel();
   network.name = nw.name;
@@ -52,7 +38,7 @@ function getNetworkModel(project: Project): NetworkModel {
   return network;
 }
 
-async function handleVMs(
+export async function handleVMs(
   network: NetworkModel,
   projectResource: Resource,
   resourceId: number,
@@ -89,7 +75,7 @@ async function handleVMs(
   }
 }
 
-async function handleKubernetes(
+export async function handleKubernetes(
   network: NetworkModel,
   projectResource: Resource,
   resourceId: number,
@@ -129,7 +115,7 @@ async function handleKubernetes(
   }
 }
 
-async function handleZDBs(
+export async function handleZDBs(
   projectResource: Resource,
   resourceId: number,
   gridClient: GridClient
@@ -172,52 +158,50 @@ async function deployVMs(
 ) {
   // Construct Machines
   const vmsModel = resource.machines.map((vm) => {
-    let vmModel = new MachineModel();
-    vmModel.name = vm.name;
-    vmModel.node_id = vm.node;
-    vmModel.flist = vm.flist;
-    vmModel.cpu = vm.cpu;
-    vmModel.memory = vm.memory;
-    vmModel.rootfs_size = vm.rootFsSize;
-    vmModel.entrypoint = vm.entrypoint;
-    vmModel.public_ip = vm.publicIp;
-    vmModel.planetary = vm.planetary;
-    vmModel.disks = vm.disks.map((disk) => {
-      const d = new DiskModel();
-      d.name = disk.name;
-      d.size = disk.size;
-      d.mountpoint = disk.mount;
-      return d;
-    });
-    vmModel.qsfs_disks = vm.qsfsDisks.map((qsfsDisk) => {
-      const qd = new QSFSDiskModel();
-      qd.name = qsfsDisk.name;
-      qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
-      qd.prefix = qsfsDisk.prefix;
-      qd.encryption_key = qsfsDisk.encryptionKey;
-      qd.cache = qsfsDisk.cache;
-      qd.minimal_shards = qsfsDisk.minimalShards;
-      qd.expected_shards = qsfsDisk.expectedShards;
-      qd.mountpoint = qsfsDisk.mountpoint;
-      return qd;
-    });
-    vmModel.env = vm.env_vars.reduce((res, { key, value }) => {
-      res[key] = value;
-      return res;
-    }, {});
-    return vmModel;
+    return {
+      name: vm.name,
+      node_id: vm.node,
+      flist: vm.flist,
+      cpu: vm.cpu,
+      memory: vm.memory,
+      rootfs_size: vm.rootFsSize,
+      entrypoint: vm.entrypoint,
+      public_ip: vm.publicIp,
+      planetary: vm.planetary,
+      disks: vm.disks.map((disk) => {
+        return {
+          name: disk.name,
+          size: disk.size,
+          mountpoint: disk.mount,
+        };
+      }),
+      qsfs_disks: vm.qsfsDisks.map((qsfsDisk) => {
+        return {
+          name: qsfsDisk.name,
+          qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
+          prefix: qsfsDisk.prefix,
+          encryption_key: qsfsDisk.encryptionKey,
+          cache: qsfsDisk.cache,
+          minimal_shards: qsfsDisk.minimalShards,
+          expected_shards: qsfsDisk.expectedShards,
+          mountpoint: qsfsDisk.mountpoint,
+        };
+      }),
+      env: vm.env_vars.reduce((res, { key, value }) => {
+        res[key] = value;
+        return res;
+      }, {}),
+    };
   });
 
-  // Construct Machines Payload
-  const vmsPayload = new MachinesModel();
-  vmsPayload.name = resource.name;
-  vmsPayload.machines = vmsModel;
-  vmsPayload.network = network;
-  vmsPayload.description = resource.description;
-  vmsPayload.metadata = resource.metadata;
-
   // Deploy
-  const result = gridClient.machines.deploy(vmsPayload);
+  const result = gridClient.machines.deploy({
+    name: resource.name,
+    machines: vmsModel,
+    network: network,
+    description: resource.description,
+    metadata: resource.metadata,
+  });
   return result;
 }
 
@@ -226,39 +210,41 @@ async function addVM(
   deploymentName: string,
   gridClient: GridClient
 ) {
-  let addVMPayload = new AddMachineModel();
-  addVMPayload.deployment_name = deploymentName;
-  addVMPayload.name = machine.name;
-  addVMPayload.node_id = machine.node;
-  addVMPayload.cpu = machine.cpu;
-  addVMPayload.memory = machine.memory;
-  addVMPayload.public_ip = machine.publicIp;
-  addVMPayload.rootfs_size = machine.rootFsSize;
-  addVMPayload.planetary = machine.planetary;
-  addVMPayload.disks = machine.disks.map((disk) => {
-    const d = new DiskModel();
-    d.name = disk.name;
-    d.size = disk.size;
-    d.mountpoint = disk.mount;
-    return d;
+  const result = gridClient.machines.add_machine({
+    deployment_name: deploymentName,
+    name: machine.name,
+    node_id: machine.node,
+    flist: machine.flist,
+    cpu: machine.cpu,
+    memory: machine.memory,
+    rootfs_size: machine.rootFsSize,
+    entrypoint: machine.entrypoint,
+    public_ip: machine.publicIp,
+    planetary: machine.planetary,
+    disks: machine.disks.map((disk) => {
+      return {
+        name: disk.name,
+        size: disk.size,
+        mountpoint: disk.mount,
+      };
+    }),
+    qsfs_disks: machine.qsfsDisks.map((qsfsDisk) => {
+      return {
+        name: qsfsDisk.name,
+        qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
+        prefix: qsfsDisk.prefix,
+        encryption_key: qsfsDisk.encryptionKey,
+        cache: qsfsDisk.cache,
+        minimal_shards: qsfsDisk.minimalShards,
+        expected_shards: qsfsDisk.expectedShards,
+        mountpoint: qsfsDisk.mountpoint,
+      };
+    }),
+    env: machine.env_vars.reduce((res, { key, value }) => {
+      res[key] = value;
+      return res;
+    }, {}),
   });
-  addVMPayload.qsfs_disks = machine.qsfsDisks.map((qsfsDisk) => {
-    const qd = new QSFSDiskModel();
-    qd.name = qsfsDisk.name;
-    qd.qsfs_zdbs_name = qsfsDisk.qsfsZdbsName;
-    qd.prefix = qsfsDisk.prefix;
-    qd.encryption_key = qsfsDisk.encryptionKey;
-    qd.cache = qsfsDisk.cache;
-    qd.minimal_shards = qsfsDisk.minimalShards;
-    qd.expected_shards = qsfsDisk.expectedShards;
-    qd.mountpoint = qsfsDisk.mountpoint;
-    return qd;
-  });
-  addVMPayload.env = machine.env_vars.reduce((res, { key, value }) => {
-    res[key] = value;
-    return res;
-  }, {});
-  const result = gridClient.machines.add_machine(addVMPayload);
   return result;
 }
 
@@ -269,40 +255,64 @@ async function deployKubernetes(
   gridClient: GridClient
 ) {
   const masters = resource.masters.map((m) => {
-    let k = new KubernetesNodeModel();
-    k.name = m.name;
-    k.node_id = m.node;
-    k.cpu = m.cpu;
-    k.disk_size = m.diskSize;
-    k.memory = m.memory;
-    k.public_ip = m.publicIp;
-    k.rootfs_size = m.rootFsSize;
-    k.planetary = m.planetary;
-    return k;
+    return {
+      name: m.name,
+      node_id: m.node,
+      cpu: m.cpu,
+      disk_size: m.diskSize,
+      memory: m.memory,
+      public_ip: m.publicIp,
+      rootfs_size: m.rootFsSize,
+      planetary: m.planetary,
+      qsfs_disks: m.qsfsDisks.map((qsfsDisk) => {
+        return {
+          name: qsfsDisk.name,
+          qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
+          prefix: qsfsDisk.prefix,
+          encryption_key: qsfsDisk.encryptionKey,
+          cache: qsfsDisk.cache,
+          minimal_shards: qsfsDisk.minimalShards,
+          expected_shards: qsfsDisk.expectedShards,
+          mountpoint: qsfsDisk.mountpoint,
+        };
+      }),
+    };
   });
 
   const workers = resource.workers.map((w) => {
-    let k = new KubernetesNodeModel();
-    k.name = w.name;
-    k.node_id = w.node;
-    k.cpu = w.cpu;
-    k.disk_size = w.diskSize;
-    k.memory = w.memory;
-    k.public_ip = w.publicIp;
-    k.rootfs_size = w.rootFsSize;
-    k.planetary = w.planetary;
-    return k;
+    return {
+      name: w.name,
+      node_id: w.node,
+      cpu: w.cpu,
+      disk_size: w.diskSize,
+      memory: w.memory,
+      public_ip: w.publicIp,
+      rootfs_size: w.rootFsSize,
+      planetary: w.planetary,
+      qsfs_disks: w.qsfsDisks.map((qsfsDisk) => {
+        return {
+          name: qsfsDisk.name,
+          qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
+          prefix: qsfsDisk.prefix,
+          encryption_key: qsfsDisk.encryptionKey,
+          cache: qsfsDisk.cache,
+          minimal_shards: qsfsDisk.minimalShards,
+          expected_shards: qsfsDisk.expectedShards,
+          mountpoint: qsfsDisk.mountpoint,
+        };
+      }),
+    };
   });
-  let kubernetesPayload = new K8SModel();
-  kubernetesPayload.name = resource.name;
-  kubernetesPayload.secret = resource.secret;
-  kubernetesPayload.network = network;
-  kubernetesPayload.masters = masters;
-  kubernetesPayload.workers = workers;
-  kubernetesPayload.metadata = resource.metadata;
-  kubernetesPayload.description = resource.description;
-  kubernetesPayload.ssh_key = resource.sshKey;
-  const result = gridClient.k8s.deploy(kubernetesPayload);
+  const result = gridClient.k8s.deploy({
+    name: resource.name,
+    secret: resource.secret,
+    network: network,
+    masters: masters,
+    workers: workers,
+    metadata: resource.metadata,
+    description: resource.description,
+    ssh_key: resource.sshKey,
+  });
   return result;
 }
 
@@ -311,37 +321,48 @@ async function addWorker(
   deploymentName: string,
   gridClient: GridClient
 ) {
-  let addWorkerPayload = new AddWorkerModel();
-  addWorkerPayload.deployment_name = deploymentName;
-  addWorkerPayload.name = worker.name;
-  addWorkerPayload.node_id = worker.node;
-  addWorkerPayload.cpu = worker.cpu;
-  addWorkerPayload.disk_size = worker.diskSize;
-  addWorkerPayload.memory = worker.memory;
-  addWorkerPayload.public_ip = worker.publicIp;
-  addWorkerPayload.rootfs_size = worker.rootFsSize;
-  addWorkerPayload.planetary = worker.planetary;
-  const result = gridClient.k8s.add_worker(addWorkerPayload);
+  const result = gridClient.k8s.add_worker({
+    deployment_name: deploymentName,
+    name: worker.name,
+    node_id: worker.node,
+    cpu: worker.cpu,
+    disk_size: worker.diskSize,
+    memory: worker.memory,
+    public_ip: worker.publicIp,
+    rootfs_size: worker.rootFsSize,
+    planetary: worker.planetary,
+    qsfs_disks: worker.qsfsDisks.map((qsfsDisk) => {
+      return {
+        name: qsfsDisk.name,
+        qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
+        prefix: qsfsDisk.prefix,
+        encryption_key: qsfsDisk.encryptionKey,
+        cache: qsfsDisk.cache,
+        minimal_shards: qsfsDisk.minimalShards,
+        expected_shards: qsfsDisk.expectedShards,
+        mountpoint: qsfsDisk.mountpoint,
+      };
+    }),
+  });
   return result;
 }
 
 async function deployZDBs(resource: ZDBs, gridClient: GridClient) {
-  const zdbs = resource.zdbs.map((z) => {
-    let zdb = new ZDBModel();
-    zdb.name = z.name;
-    zdb.node_id = z.node;
-    zdb.mode = z.mode as ZdbModes;
-    zdb.disk_size = z.size;
-    zdb.public_ipv6 = z.publicIp;
-    zdb.password = z.password;
-    return zdb;
+  const data = gridClient.zdbs.deploy({
+    name: resource.name,
+    zdbs: resource.zdbs.map((z) => {
+      return {
+        name: z.name,
+        node_id: z.node,
+        mode: z.mode as ZdbModes,
+        disk_size: z.size,
+        public_ipv6: z.publicIp,
+        password: z.password,
+      };
+    }),
+    description: resource.description,
+    metadata: resource.metadata,
   });
-  let zdbsPayload = new ZDBSModel();
-  zdbsPayload.name = resource.name;
-  zdbsPayload.zdbs = zdbs;
-  zdbsPayload.description = resource.description;
-  zdbsPayload.metadata = resource.metadata;
-  const data = gridClient.zdbs.deploy(zdbsPayload);
   return data;
 }
 
@@ -350,35 +371,33 @@ async function addZDB(
   deploymentName: string,
   gridClient: GridClient
 ) {
-  // gridClient.project_name = projectName;
-  let zdbPaylaod = new AddZDBModel();
-  zdbPaylaod.deployment_name = deploymentName;
-  zdbPaylaod.name = zdb.name;
-  zdbPaylaod.node_id = zdb.node;
-  zdbPaylaod.mode = zdb.mode as ZdbModes;
-  zdbPaylaod.disk_size = zdb.size;
-  zdbPaylaod.public_ipv6 = zdb.publicIp;
-  zdbPaylaod.password = zdb.password;
-  const result = gridClient.zdbs.add_zdb(zdbPaylaod);
+  const result = gridClient.zdbs.add_zdb({
+    deployment_name: deploymentName,
+    name: zdb.name,
+    node_id: zdb.node,
+    mode: zdb.mode as ZdbModes,
+    disk_size: zdb.size,
+    public_ipv6: zdb.publicIp,
+    password: zdb.password,
+  });
   return result;
 }
 
-async function deployQsfsZdb(
+export async function deployQsfsZdb(
   resource: QsfsZDBs,
   resourceId: number,
   gridClient: GridClient
 ) {
   if (!resource.isDeployed) {
-    let qsfsZdbs = new QSFSZDBSModel();
-    qsfsZdbs.name = resource.name;
-    qsfsZdbs.count = resource.count;
-    qsfsZdbs.node_ids = resource.nodeIds;
-    qsfsZdbs.disk_size = resource.diskSize;
-    qsfsZdbs.password = resource.password;
-    qsfsZdbs.metadata = resource.metadata;
-    qsfsZdbs.description = resource.description;
-
-    const data = await gridClient.qsfs_zdbs.deploy(qsfsZdbs);
+    const data = await gridClient.qsfs_zdbs.deploy({
+      name: resource.name,
+      count: resource.count,
+      node_ids: resource.nodeIds,
+      disk_size: resource.diskSize,
+      password: resource.password,
+      metadata: resource.metadata,
+      description: resource.description
+    });
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
@@ -390,20 +409,19 @@ async function deployQsfsZdb(
   }
 }
 
-async function deployDomain(
+export async function deployDomain(
   resource: GatewayFQDN,
   resourceId: number,
   gridClient: GridClient
 ) {
   if (!resource.isDeployed) {
-    let domain = new GatewayFQDNModel();
-    domain.name = resource.name;
-    domain.node_id = resource.node;
-    domain.fqdn = resource.domain;
-    domain.backends = resource.backends;
-    domain.tls_passthrough = resource.tlsPassThrough;
-
-    const data = await gridClient.gateway.deploy_fqdn(domain);
+    const data = await gridClient.gateway.deploy_fqdn({
+      name: resource.name,
+      node_id: resource.node,
+      fqdn: resource.domain,
+      backends: resource.backends,
+      tls_passthrough: resource.tlsPassThrough
+    });
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
@@ -415,19 +433,18 @@ async function deployDomain(
   }
 }
 
-async function deployPrefixDomain(
+export async function deployPrefixDomain(
   resource: GatewayName,
   resourceId: number,
   gridClient: GridClient
 ) {
   if (!resource.isDeployed) {
-    let prefixDomain = new GatewayNameModel();
-    prefixDomain.name = resource.prefix;
-    prefixDomain.node_id = resource.node;
-    prefixDomain.backends = resource.backends;
-    prefixDomain.tls_passthrough = resource.tlsPassThrough;
-
-    const data = await gridClient.gateway.deploy_name(prefixDomain);
+    const data = await gridClient.gateway.deploy_name({
+      name: resource.prefix,
+      node_id: resource.node,
+      backends: resource.backends,
+      tls_passthrough: resource.tlsPassThrough
+    });
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
@@ -438,13 +455,3 @@ async function deployPrefixDomain(
     addInfoToast(`Prefix Domain ${resource.name} already deployed`);
   }
 }
-
-export {
-  getNetworkModel,
-  handleKubernetes,
-  handleVMs,
-  handleZDBs,
-  deployQsfsZdb,
-  deployDomain,
-  deployPrefixDomain,
-};

@@ -7,13 +7,14 @@
   export let placeholder: string = "";
   export let deployed: boolean = false;
   export let min: number = 0;
+  export let max_width : number = 500;
 
   let fake_span: HTMLSpanElement;
   let width = 150;
 
   function updateWidth() {
     if (!fake_span) return;
-    width = fake_span.offsetWidth;
+    width = fake_span.offsetWidth > max_width ?  max_width : fake_span.offsetWidth;
   }
 
   onMount(updateWidth);

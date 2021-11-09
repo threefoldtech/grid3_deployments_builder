@@ -4,18 +4,7 @@ import {
   addInfoToast,
   addErrorToast,
 } from "../store/toast.store";
-import {
-  GridClient,
-  MachinesDeleteModel,
-  K8SDeleteModel,
-  ZDBDeleteModel,
-  DeleteZDBModel,
-  DeleteWorkerModel,
-  DeleteMachineModel,
-  QSFSZDBDeleteModel,
-  GatewayFQDNDeleteModel,
-  GatewayNameDeleteModel,
-} from "grid3_client";
+import { GridClient } from "grid3_client";
 import { Machine, Resource, Worker, ZDB } from "src/models";
 import { getClient } from ".";
 
@@ -57,10 +46,7 @@ async function deleteMachines(
   deploymentName: string,
   resourceIdx: number
 ) {
-  const deleteMachines = new MachinesDeleteModel();
-  deleteMachines.name = deploymentName;
-  console.log(deleteMachines);
-  const result = await gridClient.machines.delete(deleteMachines);
+  const result = await gridClient.machines.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -74,9 +60,7 @@ async function deleteKubernetes(
   deploymentName: string,
   resourceIdx: number
 ) {
-  const deleteKube = new K8SDeleteModel();
-  deleteKube.name = deploymentName;
-  const result = await gridClient.k8s.delete(deleteKube);
+  const result = await gridClient.k8s.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -90,9 +74,7 @@ async function deleteZdbs(
   deploymentName: string,
   resourceIdx: number
 ) {
-  const deleteZdbs = new ZDBDeleteModel();
-  deleteZdbs.name = deploymentName;
-  let result = await gridClient.zdbs.delete(deleteZdbs);
+  let result = await gridClient.zdbs.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -106,9 +88,7 @@ async function deleteQsfsZdbs(
   deploymentName: string,
   resourceIdx: number
 ) {
-  const deleteQsfsZdbs = new QSFSZDBDeleteModel();
-  deleteQsfsZdbs.name = deploymentName;
-  let result = await gridClient.qsfs_zdbs.delete(deleteQsfsZdbs);
+  let result = await gridClient.qsfs_zdbs.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -122,9 +102,7 @@ async function deleteDomain(
   deploymentName: string,
   resourceIdx: number
 ) {
-  const deleteDomainModel = new GatewayFQDNDeleteModel();
-  deleteDomainModel.name = deploymentName;
-  const result = await gridClient.gateway.delete_fqdn(deleteDomainModel);
+  const result = await gridClient.gateway.delete_fqdn({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -138,9 +116,7 @@ async function deletePrefixDomain(
   deploymentName: string,
   resourceIdx: number
 ) {
-  const deletePrefixModel = new GatewayNameDeleteModel();
-  deletePrefixModel.name = deploymentName;
-  const result = await gridClient.gateway.delete_name(deletePrefixModel);
+  const result = await gridClient.gateway.delete_name({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
     addSuccessToast(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
@@ -159,10 +135,10 @@ export async function deleteMachine(
 ) {
   if (machine.isDeployed) {
     const gridClient = await getClient(mnemStore, projectName);
-    const deleteVM = new DeleteMachineModel();
-    deleteVM.deployment_name = deploymentName;
-    deleteVM.name = machine.name;
-    const result = await gridClient.machines.delete_machine(deleteVM);
+    const result = await gridClient.machines.delete_machine({
+      deployment_name: deploymentName,
+      name: machine.name,
+    });
     if (result.deleted.length || result.updated.length) {
       addSuccessToast(`${machine.name} deleted successfully`);
       codeStore.removeVM(deploymentId, machineId);
@@ -184,10 +160,10 @@ export async function deleteWorker(
 ) {
   if (worker.isDeployed) {
     const gridClient = await getClient(mnemStore, projectName);
-    const deleteWorkerModel = new DeleteWorkerModel();
-    deleteWorkerModel.deployment_name = deploymentName;
-    deleteWorkerModel.name = worker.name;
-    const result = await gridClient.k8s.delete_worker(deleteWorkerModel);
+    const result = await gridClient.k8s.delete_worker({
+      deployment_name: deploymentName,
+      name: worker.name,
+    });
     if (result.deleted.length || result.updated.length) {
       addSuccessToast(`${worker.name} deleted successfully`);
       codeStore.removeWorker(deploymentId, workerId);
@@ -209,10 +185,10 @@ export async function deleteZdb(
 ) {
   if (zdb.isDeployed) {
     const gridClient = await getClient(mnemStore, projectName);
-    const deleteZdbPayload = new DeleteZDBModel();
-    deleteZdbPayload.deployment_name = deploymentName;
-    deleteZdbPayload.name = zdb.name; //prettier-ignore
-    const result = await gridClient.zdbs.delete_zdb(deleteZdbPayload);
+    const result = await gridClient.zdbs.delete_zdb({
+      deployment_name: deploymentName,
+      name: zdb.name,
+    });
     if (result.deleted.length || result.updated.length) {
       addSuccessToast(`${zdb.name} deleted successfully`);
       codeStore.removeZdb(deploymentId, zdbId);

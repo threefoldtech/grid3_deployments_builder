@@ -1,10 +1,12 @@
 <script lang="ts">
   export let color: string;
   export let removeable: boolean = true;
-
+  export let height = "max-content"
   $: style = `
     border-left-color: var(${color});
     background-color: var(${color}-bg);
+    height: ${height};
+
   `;
 </script>
 
@@ -20,9 +22,12 @@
 
 <style lang="scss" scoped>
   .block {
+    display: flex;
+    flex-direction: column;
     padding: 2rem;
     padding-left: 4rem;
-    border-left: 0.5rem solid transparent;
+    border-left: 1rem solid transparent;
+    border-radius: 1rem;
     margin-bottom: 1rem;
     position: relative;
     &__remove {

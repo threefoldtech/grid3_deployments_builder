@@ -22,9 +22,10 @@
   </div>
   <div>
     <p>Mnemonics</p>
-    <textarea
+    <input
       placeholder="mnemonics"
       value={mnemStore.mnemonics}
+      type="password"
       on:input={mnemonicsStore.updateMnemonics}
     />
   </div>
@@ -39,7 +40,6 @@
     margin-bottom: 1rem;
   }
 
-  textarea,
   input {
     max-width: 100%;
     width: 100%;

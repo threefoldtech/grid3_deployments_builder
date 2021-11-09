@@ -11,7 +11,8 @@
   draggable="true"
   style={
   "border-color: var(--" + type + ");" +
-  "margin-left:" + marginLeft + "rem;"
+  "margin-left:" + marginLeft + "rem;" +
+  "background: var(--" + type + "-bg);"
   }
   on:dragstart={(e) => e.dataTransfer.setData("data", type)}
   on:click
@@ -22,8 +23,9 @@
 
 <style lang="scss" scoped>
   .block {
-    border: 3px solid;
-    border-radius: 2rem;
+    border-left: 1rem solid;
+    border-right: 1rem solid;
+    border-radius: 1rem;
     margin-bottom: 1.5rem;
     padding: 2rem 0;
     display: flex;
