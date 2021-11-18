@@ -81,13 +81,11 @@
       <NetworkDisplay network={project.network} />
     </Block>
   {/if}
-  <div class="grid__container">
     {#each project.resources as resource, resourceIdx (resource.id)}
-      <div class="grid__element">
+      <div>
         <Droppable {resourceIdx}>
           <Block
             color="--{resource.type}"
-            height="100%"
             on:click={() => {
               onShowDelete("resource", resource, resourceIdx, undefined, undefined);
             }}
@@ -226,23 +224,8 @@
         />
       {/if}
     {/each}
-  </div>
 {:else}
   <p style="text-align: center; padding-top: 10rem; font-size: 2rem;">
     Please create or select a project.
   </p>
 {/if}
-
-<style lang="scss">
-  .grid__container {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: 1fr;
-    grid-auto-flow: dense;
-  }
-
-  .grid__element {
-    width: 100%;
-    height: 100%;
-  }
-</style>
