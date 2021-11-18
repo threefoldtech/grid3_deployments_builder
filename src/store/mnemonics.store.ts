@@ -1,10 +1,9 @@
 import { Updater, writable } from "svelte/store";
-
+import {NetworkEnv} from "grid3_client"
 interface IState {
   mnemonics: string;
-  twinId: string;
-  proxyUrl: string;
-  explorerUrl: string;
+  networkEnv: NetworkEnv;
+  kvSecret: string;
 }
 
 function createMnemonicsStore() {
@@ -18,9 +17,8 @@ function createMnemonicsStore() {
   const store = writable<IState>(
     initData || {
       mnemonics: "",
-      twinId: "",
-      proxyUrl: "",
-      explorerUrl: "",
+      networkEnv: NetworkEnv.dev,
+      kvSecret: "",
     }
   );
   const { subscribe } = store;
@@ -42,23 +40,16 @@ function createMnemonicsStore() {
       });
     },
 
-    updateTwinid(e: any) {
+    updateNetworkEnv(e: any) {
       return update((value) => {
-        value.twinId = e.target.value;
+        value.networkEnv =  e.target.options[e.target.options.selectedIndex].value;;
         return value;
       });
     },
 
-    updateProxyUrl(e: any) {
+    updateKvSecret(e: any) {
       return update((value) => {
-        value.proxyUrl = e.target.value;
-        return value;
-      });
-    },
-
-    updateExplorerUrl(e: any) {
-      return update((value) => {
-        value.explorerUrl = e.target.value;
+        value.kvSecret = e.target.value;
         return value;
       });
     },
