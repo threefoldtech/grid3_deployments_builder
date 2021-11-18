@@ -16,9 +16,9 @@
   Add New Project
 </button>
 {#each store.projects as project, i}
-  <div style="display:flex; justify-content: space-between;">
+  <div class= explorer__project>
     <button
-      class={"explorer__project " + (store.active === i ? "active" : "")}
+      class={"explorer__project__name " + (store.active === i ? "active" : "")}
       on:click={codeStore.setActiveProject.bind(codeStore, i)}
     >
       <strong>#{i}</strong>
@@ -27,11 +27,10 @@
         value={project.name}
         disabled={!project.rename}
         on:input={codeStore.renameProject(i)}
-        style="display: inline-block;"
       />
     </button>
     {#if store.active === i}
-      <div class="explorer__control">
+      <div class="explorer__project__control">
         <img
           src="/assets/notdeployed.png"
           alt="delete"
@@ -69,19 +68,25 @@
     cursor: pointer;
     margin-bottom: 1rem;
   }
-
   .explorer__project {
-    width: 100%;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    border-bottom: 0.1rem solid var(--sidenav-border);
+  }
+  .explorer__project__name {
+    width: 80%;
     padding: 1rem;
     background: none;
-    border: none;
-    border-bottom: 0.1rem solid var(--sidenav-border);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border: none;
+    
     cursor: pointer;
 
     input {
+      width:80%;
       font-size: 15px;
     }
 
@@ -99,7 +104,7 @@
     }
   }
 
-  .explorer__control {
+  .explorer__project__control {
     display: flex;
     flex-direction: column;
     justify-content: center;

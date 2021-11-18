@@ -1,32 +1,37 @@
 <script lang="ts">
   import mnemonicsStore from "src/store/mnemonics.store";
+  import Selectable from "../base/Selectable.svelte";
+  import { NetworkEnv } from "grid3_client";
   $: mnemStore = $mnemonicsStore;
+
+  export const networkEnvOptions = Object.values(NetworkEnv);
 </script>
 
 <section class="container">
   <div>
-    <p>Explorer URL</p>
-    <input
-      placeholder="Explorer url"
-      value={mnemStore.explorerUrl}
-      on:input={mnemonicsStore.updateExplorerUrl}
-    />
-  </div>
-  <div>
-    <p>RMB Proxy URL</p>
-    <input
-      placeholder="rmb proxy"
-      value={mnemStore.proxyUrl}
-      on:input={mnemonicsStore.updateProxyUrl}
+    <p>Network Environment</p>
+    <Selectable
+      options={networkEnvOptions}
+      on:change={mnemonicsStore.updateNetworkEnv}
+      style=""
     />
   </div>
   <div>
     <p>Mnemonics</p>
     <input
-      placeholder="mnemonics"
-      value={mnemStore.mnemonics}
+    placeholder="Enter your mnemonics"
+    value={mnemStore.mnemonics}
+    type="password"
+    on:input={mnemonicsStore.updateMnemonics}
+    />
+  </div>
+  <div>
+    <p>KV Secret</p>
+    <input
+      placeholder="Enter your KV secret"
+      value={mnemStore.kvSecret}
       type="password"
-      on:input={mnemonicsStore.updateMnemonics}
+      on:input={mnemonicsStore.updateKvSecret}
     />
   </div>
 </section>

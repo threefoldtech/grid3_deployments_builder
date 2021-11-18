@@ -186,32 +186,33 @@ function createCodeStore() {
               );
             }
             break;
-            case "qsfsDisk":
+
+          case "qsfsDisk":
+            if (
+              resourceIdx != undefined &&
+              idx != undefined &&
+              value.projects[value.active].resources[resourceIdx].type ===
+                "machines"
+            ) {
               if (
-                resourceIdx != undefined &&
-                idx != undefined &&
-                value.projects[value.active].resources[resourceIdx].type ===
-                  "machines"
+                !(
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines[idx].isDeployed
               ) {
-                if (
-                  !(
-                    value.projects[value.active].resources[
-                      resourceIdx
-                    ] as Machines
-                  ).machines[idx].isDeployed
-                ) {
-                  (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].qsfsDisks.push(new QsfsDisk()); // prettier-ignore
-                } else {
-                  addErrorToast(`Can't add new Qsfs disk to deployed machine`);
-                }
+                (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].qsfsDisks.push(new QsfsDisk()); // prettier-ignore
               } else {
-                addErrorToast(
-                  `Can't add new Qsfs disk to ${
-                    value.projects[value.active].resources[resourceIdx].type
-                  } type`
-                );
+                addErrorToast(`Can't add new Qsfs disk to deployed machine`);
               }
-              break;
+            } else {
+              addErrorToast(
+                `Can't add new Qsfs disk to ${
+                  value.projects[value.active].resources[resourceIdx].type
+                } type`
+              );
+            }
+            break;
 
           case "envVar":
             if (
@@ -255,7 +256,7 @@ function createCodeStore() {
             break;
 
           case "qsfsZdbs":
-            value.projects[value.active].resources.push(new QsfsZDBs())
+            value.projects[value.active].resources.unshift(new QsfsZDBs());
             break;
         }
         return value;
@@ -350,8 +351,10 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          if (key === "minimalShards"){
-            (value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index].minimalShards = +val;
+          if (key === "minimalShards") {
+            (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[vmIdx].qsfsDisks[index].minimalShards = +val;
             if((value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index].expectedShards <= +val){
               (value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].qsfsDisks[index].expectedShards = +val + 1;
             } // prettier-ignore
@@ -422,11 +425,12 @@ function createCodeStore() {
         return update((value) => {
           const { type, value: val } = e.target;
           if (key === "nodeIds") {
-            (value.projects[value.active].resources[idx] as QsfsZDBs).nodeIds = val
-              .split(",")
-              .map((v) => v.trim())
-              .map((v) => +v)
-              .filter((v) => !isNaN(v));
+            (value.projects[value.active].resources[idx] as QsfsZDBs).nodeIds =
+              val
+                .split(",")
+                .map((v) => v.trim())
+                .map((v) => +v)
+                .filter((v) => !isNaN(v));
           } else {
             (value.projects[value.active].resources[idx]as QsfsZDBs)[key] = type === "number" ? +val : val; // prettier-ignore
           }
@@ -523,7 +527,8 @@ function createCodeStore() {
           case "qsfsZdbs":
           case "fqdn":
           case "name":
-            value.projects[value.active].resources[resourceIdx].isDeployed = true;
+            value.projects[value.active].resources[resourceIdx].isDeployed =
+              true;
         }
         return value;
       });
@@ -594,7 +599,7 @@ function createCodeStore() {
     removeFromVm(
       resourceIdx: number,
       vm_idx: number,
-      key: "disks" | "env_vars" | "qsfsDisks" ,
+      key: "disks" | "env_vars" | "qsfsDisks",
       idx: number
     ) {
       return () => {

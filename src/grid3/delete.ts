@@ -36,6 +36,7 @@ export async function deleteResource(
         await deleteQsfsZdbs(gridClient, resource.name, resourceIdx);
         break;
     }
+    gridClient.disconnect();
   } else {
     codeStore.removeResource(resourceIdx);
   }
@@ -145,6 +146,7 @@ export async function deleteMachine(
     } else {
       addErrorToast(`Error happen while deleting ${machine.name}`);
     }
+    gridClient.disconnect();
   } else {
     codeStore.removeVM(deploymentId, machineId);
   }
@@ -170,6 +172,7 @@ export async function deleteWorker(
     } else {
       addErrorToast(`Error happen while deleting ${worker.name}`);
     }
+    gridClient.disconnect();
   } else {
     codeStore.removeWorker(deploymentId, workerId);
   }
@@ -195,6 +198,7 @@ export async function deleteZdb(
     } else {
       addErrorToast(`Error happen while deleting ${zdb.name}`);
     }
+    gridClient.disconnect();
   } else {
     codeStore.removeZdb(deploymentId, zdbId);
   }

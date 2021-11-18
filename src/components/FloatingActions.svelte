@@ -56,6 +56,7 @@
         await deployPrefixDomain(resource as GatewayName, i, gridClient);
       }
     }
+    gridClient.disconnect();
   }
 
   async function onResultsHandler() {
@@ -64,6 +65,7 @@
     const gridClient = await getClient(mnemStore, project.name);
     getProjectResult(gridClient, project).then((res) => {
       projectResult = JSON.stringify(res, undefined, 2);
+      gridClient.disconnect();
     });
   }
 

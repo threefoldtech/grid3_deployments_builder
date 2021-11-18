@@ -51,7 +51,7 @@
       deployed={zdb.isDeployed}
     />
     <Editable
-      label="password"
+      label="Password"
       type="password"
       value={zdb.password}
       placeholder="Enter your zdb password"
@@ -59,7 +59,7 @@
       deployed={zdb.isDeployed}
     />
     <Selectable
-      label="mode"
+      label="Mode"
       options={[ZdbModes.seq, ZdbModes.user]}
       on:change={codeStore.updateZdb(resourceIdx, idx, "mode")}
       deployed={zdb.isDeployed}

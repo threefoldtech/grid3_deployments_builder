@@ -25,6 +25,7 @@
     const gridClient = await getClient(mnemStore, project.name);
     getQsfsZdbs(gridClient, qsfsZdbs.name).then((res) => {
       result = JSON.stringify(res, undefined, 2);
+      gridClient.disconnect();
     });
     showResult = true;
   };

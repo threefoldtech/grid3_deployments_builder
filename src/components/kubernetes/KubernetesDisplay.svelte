@@ -24,6 +24,7 @@
     const gridClient = await getClient(mnemStore, project.name);
     getKubernetes(gridClient, kubernetes.name).then((res) => {
       result = JSON.stringify(res, undefined, 2);
+      gridClient.disconnect();
     });
     showResult = true;
   };

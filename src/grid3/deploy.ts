@@ -356,7 +356,7 @@ async function deployZDBs(resource: ZDBs, gridClient: GridClient) {
         node_id: z.node,
         mode: z.mode as ZdbModes,
         disk_size: z.size,
-        public_ipv6: z.publicIp,
+        publicNamespace: z.publicIp,
         password: z.password,
       };
     }),
@@ -377,7 +377,7 @@ async function addZDB(
     node_id: zdb.node,
     mode: zdb.mode as ZdbModes,
     disk_size: zdb.size,
-    public_ipv6: zdb.publicIp,
+    publicNamespace: zdb.publicIp,
     password: zdb.password,
   });
   return result;
