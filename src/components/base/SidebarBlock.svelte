@@ -11,8 +11,7 @@
   draggable="true"
   style={
   "border-color: var(--" + type + ");" +
-  "margin-left:" + marginLeft + "rem;" +
-  "background: var(--" + type + "-bg);"
+  "margin-left:" + marginLeft + "rem;"
   }
   on:dragstart={(e) => e.dataTransfer.setData("data", type)}
   on:click

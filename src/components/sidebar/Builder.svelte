@@ -152,7 +152,7 @@
       />
     {/if}
   </div>
-  <div class="sidenav__actions">
+  <!-- <div class="sidenav__actions">
     <button>
       <img src="/assets/import.png" alt="import icon" width="40" />
       <input
@@ -168,7 +168,7 @@
       <img src="/assets/export.png" alt="export icon" width="40" />
       <a download="store.json" href={exportAsJson(store)}>Export</a>
     </button>
-  </div>
+  </div> -->
 </aside>
 
 <style lang="scss" scoped>
@@ -179,37 +179,37 @@
     display: flex;
     flex-direction: column;
 
-    &__actions {
-      padding-top: 100px;
-      margin-top: auto;
+    // &__actions {
+    //   padding-top: 100px;
+    //   margin-top: auto;
 
-      > button {
-        border: 3px solid;
-        border-radius: 2rem;
-        display: flex;
-        height: 60px;
-        margin: 1rem 0;
+    //   > button {
+    //     border: 3px solid;
+    //     border-radius: 2rem;
+    //     display: flex;
+    //     height: 60px;
+    //     margin: 1rem 0;
 
-        &[disabled] {
-          pointer-events: none !important;
-        }
+    //     &[disabled] {
+    //       pointer-events: none !important;
+    //     }
 
-        a,
-        label {
-          display: flex;
-          height: 100%;
-          width: 100%;
-          cursor: pointer;
-          text-transform: capitalize;
-          padding: 1.5rem;
-          font-size: 2rem;
-          font-weight: bold;
-        }
-        img {
-          width: 50px;
-          display: flex;
-        }
-      }
-    }
+    //     a,
+    //     label {
+    //       display: flex;
+    //       height: 100%;
+    //       width: 100%;
+    //       cursor: pointer;
+    //       text-transform: capitalize;
+    //       padding: 1.5rem;
+    //       font-size: 2rem;
+    //       font-weight: bold;
+    //     }
+    //     img {
+    //       width: 50px;
+    //       display: flex;
+    //     }
+    //   }
+    // }
   }
 </style>
