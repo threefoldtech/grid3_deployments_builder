@@ -1,5 +1,5 @@
 <script lang="ts">
-  import codeStore from "./store/code.store";
+  import { fade } from "svelte/transition";
   import FileExplorer from "./components/sidebar/FileExplorer.svelte";
   import Builder from "./components/sidebar/Builder.svelte";
   import ProjectDisplay from "./components/ProjectDisplay.svelte";
@@ -7,13 +7,24 @@
   import Configurations from "./components/sidebar/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
   import { events } from "grid3_client";
-  import { addInfoToast } from "./store/toast.store";
 
-  events.addListener("logs", addInfoToast);
+  export let show_info: boolean = false;
+  export let info_msg: string = "";
+  const timeout = 5000;
+
+  const open_info = (msg) => {
+    show_info = true;
+    console.log("Inside Open Info functions!");
+    info_msg = msg;
+    setTimeout(hide_info, timeout)
+  };
+  const hide_info = () =>{
+    show_info = false;
+  }
+  events.addListener("logs", open_info);
 
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
-  $: store = $codeStore;
 </script>
 
 <aside class="sidenav">
@@ -59,10 +70,34 @@
 </Droppable>
 <FloatingActions />
 
+{#if show_info}
+<div class="event_info_msg" transition:fade>
+  <img src="/assets/deploying.gif" alt="deploying" title="deploying" />
+  <p>{info_msg}</p>
+</div>
+{/if}
+
 <style lang="scss" scoped>
   main {
     padding-left: var(--sidenav-width);
     height: 100%;
+  }
+  .event_info_msg {
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    align-items: center;
+    top: 1.5rem;
+    right: 1.5rem;
+    height: 60px;
+    width: auto;
+    background: SkyBlue;
+    border-radius: 0.5rem;
+
+    img{
+      width: 30px;
+    }
   }
   .sidenav {
     position: fixed;

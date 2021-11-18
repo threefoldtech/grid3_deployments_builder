@@ -1,9 +1,5 @@
 <script lang="ts">
   import codeStore from "src/store/code.store";
-  import { events } from "grid3_client";
-  import { addInfoToast } from "src/store/toast.store";
-
-  events.addListener("logs", addInfoToast);
 
   let type = "text";
   $: store = $codeStore;

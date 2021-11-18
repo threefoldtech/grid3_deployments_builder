@@ -46,20 +46,17 @@
     deleteDeployment = dep;
     deleteDeploymentId = depId;
     if (deleteType == "resource"){
-      deleteMsg = "You are about to delete " + dep.name;
+      deleteMsg = "You are about to delete deployment#" + depId + ": " + dep.name;
     }else{
-      deleteMsg = "You are about to delete " + element.name + " in " + dep.name;
-      console.log(deleteMsg)
+      deleteMsg = "You are about to delete element#" + elementId + ": " + element.name + " in deployment#" + depId + ": " + dep.name;
     }
     onDelete = true;
   }
   const confirmDeleteResource = (projectName) => {
-    console.log(projectName, deleteDeployment.name, deleteDeploymentId, deleteElement, deleteElementId)
     if (deleteType == "resource"){
       deleteResource(mnemStore, projectName, deleteDeployment, deleteDeploymentId)
     }else{
       if (deleteDeployment.type == "machines") {
-        console.log("delete machine", projectName, deleteDeployment.name, deleteDeploymentId, deleteElement.name, deleteElementId)
         deleteMachine(mnemStore, projectName, deleteDeployment.name, deleteDeploymentId, deleteElement as Machine, deleteElementId)
       }else if (deleteDeployment.type == "kubernetes"){
         deleteWorker(mnemStore, projectName, deleteDeployment.name, deleteDeploymentId, deleteElement as Worker, deleteElementId)
