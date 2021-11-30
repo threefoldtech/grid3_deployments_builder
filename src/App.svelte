@@ -14,7 +14,6 @@
 
   const open_info = (msg) => {
     show_info = true;
-    console.log("Inside Open Info functions!");
     info_msg = msg;
     setTimeout(hide_info, timeout)
   };
