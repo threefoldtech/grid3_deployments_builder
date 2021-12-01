@@ -17,11 +17,8 @@ import {
   addInfoToast,
   addErrorToast,
 } from "../store/toast.store";
-import {
-  GridClient,
-  NetworkModel,
-  ZdbModes
-} from "grid3_client";
+import type { GridClient, ZdbModes } from "grid3_client";
+import { NetworkModel } from "grid3_client";
 
 function checkResult(result): boolean {
   if (result.contracts.created.length || result.contracts.updated.length) {
@@ -32,7 +29,7 @@ function checkResult(result): boolean {
 
 export function getNetworkModel(project: Project): NetworkModel {
   const nw = project.network;
-  let network = new NetworkModel();
+  const network = new NetworkModel();
   network.name = nw.name;
   network.ip_range = nw.ipRange;
   return network;
@@ -396,7 +393,7 @@ export async function deployQsfsZdb(
       disk_size: resource.diskSize,
       password: resource.password,
       metadata: resource.metadata,
-      description: resource.description
+      description: resource.description,
     });
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);
@@ -420,7 +417,7 @@ export async function deployDomain(
       node_id: resource.node,
       fqdn: resource.domain,
       backends: resource.backends,
-      tls_passthrough: resource.tlsPassThrough
+      tls_passthrough: resource.tlsPassThrough,
     });
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);
@@ -443,7 +440,7 @@ export async function deployPrefixDomain(
       name: resource.prefix,
       node_id: resource.node,
       backends: resource.backends,
-      tls_passthrough: resource.tlsPassThrough
+      tls_passthrough: resource.tlsPassThrough,
     });
     if (checkResult(data)) {
       addSuccessToast(`${resource.name} deployed successfully`);

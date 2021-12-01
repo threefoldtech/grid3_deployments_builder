@@ -12,6 +12,7 @@
     <p>Network Environment</p>
     <Selectable
       options={networkEnvOptions}
+      lastSelected={mnemStore.networkEnv}
       on:change={mnemonicsStore.updateNetworkEnv}
       style=""
     />

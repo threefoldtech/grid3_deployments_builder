@@ -4,9 +4,9 @@ import {
   addInfoToast,
   addErrorToast,
 } from "../store/toast.store";
-import { GridClient } from "grid3_client";
+import type { GridClient } from "grid3_client";
 import { Machine, Resource, Worker, ZDB } from "src/models";
-import { getClient } from ".";
+import { getClient } from "./get";
 
 export async function deleteResource(
   mnemStore,

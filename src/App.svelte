@@ -1,25 +1,24 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import FileExplorer from "./components/sidebar/FileExplorer.svelte";
   import Builder from "./components/sidebar/Builder.svelte";
   import ProjectDisplay from "./components/ProjectDisplay.svelte";
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/sidebar/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
+  import NotificationMsg from "./components/base/NotificationMsg.svelte";
   import { events } from "grid3_client";
 
   export let show_info: boolean = false;
   export let info_msg: string = "";
   const timeout = 5000;
-
   const open_info = (msg) => {
     show_info = true;
     info_msg = msg;
-    setTimeout(hide_info, timeout)
+    setTimeout(hide_info, timeout);
   };
-  const hide_info = () =>{
+  const hide_info = () => {
     show_info = false;
-  }
+  };
   events.addListener("logs", open_info);
 
   let explorer = 0;
@@ -28,19 +27,23 @@
 
 <aside class="sidenav">
   <div class="sidenav__actions">
+    <!-- Threefold Image -->
     <img src="/assets/threefold.svg" alt="threefold" title="threefold logo" />
+    <!-- Project Explorer -->
     <button
       on:click={setExplorer(0)}
       class={"sidenav__actions__item " + (explorer === 0 ? "active" : "")}
     >
       <img src="/assets/file.svg" alt="explorer" title="File Explorer" />
     </button>
+    <!-- Deployment Components -->
     <button
       on:click={setExplorer(1)}
       class={"sidenav__actions__item " + (explorer === 1 ? "active" : "")}
     >
       <img src="/assets/tools.svg" alt="builder" title="Resource Builder" />
     </button>
+    <!-- Profile Manager -->
     <button
       on:click={setExplorer(2)}
       class={"sidenav__actions__item " + (explorer === 2 ? "active" : "")}
@@ -70,33 +73,13 @@
 <FloatingActions />
 
 {#if show_info}
-<div class="event_info_msg" transition:fade>
-  <img src="/assets/deploying.gif" alt="deploying" title="deploying" />
-  <p>{info_msg}</p>
-</div>
+  <NotificationMsg msg={info_msg} type="loading" />
 {/if}
 
 <style lang="scss" scoped>
   main {
     padding-left: var(--sidenav-width);
     height: 100%;
-  }
-  .event_info_msg {
-    position: fixed;
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    align-items: center;
-    top: 1.5rem;
-    right: 1.5rem;
-    height: 60px;
-    width: auto;
-    background: SkyBlue;
-    border-radius: 0.5rem;
-
-    img{
-      width: 30px;
-    }
   }
   .sidenav {
     position: fixed;
