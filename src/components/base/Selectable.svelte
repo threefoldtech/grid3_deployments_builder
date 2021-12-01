@@ -13,7 +13,7 @@
   <div class="select-dropdown">
     <select on:change disabled={deployed}>
       {#each options as option}
-        <option value={option}> {option} </option>
+        <option value={option}>{option}</option>
       {/each}
     </select>
   </div>

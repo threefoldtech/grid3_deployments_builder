@@ -552,6 +552,9 @@ function createCodeStore() {
             vm.env_vars.forEach((env) => {
               env.isDeployed = val;
             });
+            vm.qsfsDisks.forEach((qd) => {
+              qd.isDeployed = val;
+            });
             (
               value.projects[value.active].resources[resourceIdx] as Machines
             ).machines[idx] = vm;
