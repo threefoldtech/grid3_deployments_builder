@@ -64,7 +64,7 @@ const config: Configuration = {
 		extensions: ['.mjs', '.js', '.ts', '.svelte'],
 		mainFields: ['svelte', 'browser', 'module', 'main'],
 		fallback: {
-			fs: path.resolve(__dirname, 'src/polyfills/fs')
+			fs: false
 		}
 	},
 	output: {
