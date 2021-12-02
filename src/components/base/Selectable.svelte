@@ -2,6 +2,7 @@
   export let options: string[];
   export let label: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
+  export let lastSelected: string = options[0]
   export let deployed: boolean = false;
 </script>
 
@@ -11,9 +12,9 @@
     <span>&nbsp; <span class="keyword">=</span> &nbsp;</span>
   {/if}
   <div class="select-dropdown">
-    <select on:change disabled={deployed}>
+    <select on:change disabled={deployed} bind:value={lastSelected}>
       {#each options as option}
-        <option value={option}> {option} </option>
+        <option value={option}>{option}</option>
       {/each}
     </select>
   </div>

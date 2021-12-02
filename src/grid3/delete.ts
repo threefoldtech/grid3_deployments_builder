@@ -1,12 +1,11 @@
 import codeStore from "../store/code.store";
 import {
-  addSuccessToast,
-  addInfoToast,
-  addErrorToast,
-} from "../store/toast.store";
-import { GridClient } from "grid3_client";
+  addSuccessNotification,
+  addErrorNotification,
+} from "../store/notification.store";
+import type { GridClient } from "grid3_client";
 import { Machine, Resource, Worker, ZDB } from "src/models";
-import { getClient } from ".";
+import { getClient } from "./get";
 
 export async function deleteResource(
   mnemStore,
@@ -49,10 +48,10 @@ async function deleteMachines(
 ) {
   const result = await gridClient.machines.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
+    addSuccessNotification(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
   } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
+    addErrorNotification(`Error happen while deleting ${deploymentName}`);
   }
 }
 
@@ -63,10 +62,10 @@ async function deleteKubernetes(
 ) {
   const result = await gridClient.k8s.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
+    addSuccessNotification(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
   } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
+    addErrorNotification(`Error happen while deleting ${deploymentName}`);
   }
 }
 
@@ -77,10 +76,10 @@ async function deleteZdbs(
 ) {
   let result = await gridClient.zdbs.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
+    addSuccessNotification(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
   } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
+    addErrorNotification(`Error happen while deleting ${deploymentName}`);
   }
 }
 
@@ -91,10 +90,10 @@ async function deleteQsfsZdbs(
 ) {
   let result = await gridClient.qsfs_zdbs.delete({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
+    addSuccessNotification(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
   } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
+    addErrorNotification(`Error happen while deleting ${deploymentName}`);
   }
 }
 
@@ -105,10 +104,10 @@ async function deleteDomain(
 ) {
   const result = await gridClient.gateway.delete_fqdn({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
+    addSuccessNotification(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
   } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
+    addErrorNotification(`Error happen while deleting ${deploymentName}`);
   }
 }
 
@@ -119,10 +118,10 @@ async function deletePrefixDomain(
 ) {
   const result = await gridClient.gateway.delete_name({ name: deploymentName });
   if (result.deleted.length || result.updated.length) {
-    addSuccessToast(`${deploymentName} deleted successfully`);
+    addSuccessNotification(`${deploymentName} deleted successfully`);
     codeStore.removeResource(resourceIdx);
   } else {
-    addErrorToast(`Error happen while deleting ${deploymentName}`);
+    addErrorNotification(`Error happen while deleting ${deploymentName}`);
   }
 }
 
@@ -141,10 +140,10 @@ export async function deleteMachine(
       name: machine.name,
     });
     if (result.deleted.length || result.updated.length) {
-      addSuccessToast(`${machine.name} deleted successfully`);
+      addSuccessNotification(`${machine.name} deleted successfully`);
       codeStore.removeVM(deploymentId, machineId);
     } else {
-      addErrorToast(`Error happen while deleting ${machine.name}`);
+      addErrorNotification(`Error happen while deleting ${machine.name}`);
     }
     gridClient.disconnect();
   } else {
@@ -167,10 +166,10 @@ export async function deleteWorker(
       name: worker.name,
     });
     if (result.deleted.length || result.updated.length) {
-      addSuccessToast(`${worker.name} deleted successfully`);
+      addSuccessNotification(`${worker.name} deleted successfully`);
       codeStore.removeWorker(deploymentId, workerId);
     } else {
-      addErrorToast(`Error happen while deleting ${worker.name}`);
+      addErrorNotification(`Error happen while deleting ${worker.name}`);
     }
     gridClient.disconnect();
   } else {
@@ -193,10 +192,10 @@ export async function deleteZdb(
       name: zdb.name,
     });
     if (result.deleted.length || result.updated.length) {
-      addSuccessToast(`${zdb.name} deleted successfully`);
+      addSuccessNotification(`${zdb.name} deleted successfully`);
       codeStore.removeZdb(deploymentId, zdbId);
     } else {
-      addErrorToast(`Error happen while deleting ${zdb.name}`);
+      addErrorNotification(`Error happen while deleting ${zdb.name}`);
     }
     gridClient.disconnect();
   } else {

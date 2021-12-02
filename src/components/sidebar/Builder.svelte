@@ -83,7 +83,7 @@
           on:click={add("disk")}
         />
         <SidebarBlock
-          label="Qsfs Disk"
+          label="QSFS Disk"
           img="../assets/qsfsDisk.png"
           type="qsfsDisk"
           level="3"
@@ -130,7 +130,7 @@
         />
       {/if}
       <SidebarBlock
-        label="Qsfs Zdbs"
+        label="QSFS Zdbs"
         img="../assets/qsfsZdbs.png"
         type="qsfsZdbs"
         level="0"

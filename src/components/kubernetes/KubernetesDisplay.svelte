@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getClient, getKubernetes } from "src/grid3";
   import mnemonicsStore from "src/store/mnemonics.store";
-  import { addSuccessToast } from "src/store/toast.store";
+  import { addSuccessNotification } from "src/store/notification.store";
 
   import type { Kubernetes } from "../../models";
   import codeStore from "../../store/code.store";
@@ -33,7 +33,7 @@
 
   function copy() {
     navigator.clipboard.writeText(result);
-    addSuccessToast("Result copied to clipboard");
+    addSuccessNotification("Result copied to clipboard");
     closeResult();
   }
 

@@ -1,8 +1,7 @@
 import { Updater, writable } from "svelte/store";
-import {NetworkEnv} from "grid3_client"
 interface IState {
   mnemonics: string;
-  networkEnv: NetworkEnv;
+  networkEnv: string;
   kvSecret: string;
 }
 
@@ -17,7 +16,7 @@ function createMnemonicsStore() {
   const store = writable<IState>(
     initData || {
       mnemonics: "",
-      networkEnv: NetworkEnv.dev,
+      networkEnv: "dev",
       kvSecret: "",
     }
   );

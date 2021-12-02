@@ -4,7 +4,7 @@
   import { NetworkEnv } from "grid3_client";
   $: mnemStore = $mnemonicsStore;
 
-  export const networkEnvOptions = Object.values(NetworkEnv);
+  export const networkEnvOptions = Object.values(NetworkEnv).filter((value) => typeof value === "string").map((value) => (value as string));
 </script>
 
 <section class="container">
@@ -12,6 +12,7 @@
     <p>Network Environment</p>
     <Selectable
       options={networkEnvOptions}
+      lastSelected={mnemStore.networkEnv}
       on:change={mnemonicsStore.updateNetworkEnv}
       style=""
     />
