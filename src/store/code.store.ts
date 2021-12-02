@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import { writable } from "svelte/store";
-import { addErrorToast } from "./toast.store";
+import { addErrorNotification } from "./notification.store";
 import {
   Project,
   Resource,
@@ -99,7 +99,7 @@ function createCodeStore() {
               if (value.projects[value.active].resources[resourceIdx].type === 'zdbs')
                 (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.push(new ZDB()); // prettier-ignore
               else
-                addErrorToast(`Can't add new zdb to ${value.projects[value.active].resources[resourceIdx].type} type`)
+                addErrorNotification(`Can't add new zdb to ${value.projects[value.active].resources[resourceIdx].type} type`)
             break;
 
           case "kubernetes":
@@ -120,12 +120,12 @@ function createCodeStore() {
                 "kubernetes"
               ) {
                 //prettier-ignore
-                addErrorToast(`Can't add new master to ${value.projects[value.active].resources[resourceIdx].type} type`); //prettier-ignore
+                addErrorNotification(`Can't add new master to ${value.projects[value.active].resources[resourceIdx].type} type`); //prettier-ignore
               } else if (
                 value.projects[value.active].resources[resourceIdx].isDeployed
               ) {
                 //prettier-ignore
-                addErrorToast(`Can't add new master to deployed kubernetes`);
+                addErrorNotification(`Can't add new master to deployed kubernetes`);
               } else if (
                 (
                   value.projects[value.active].resources[
@@ -134,7 +134,7 @@ function createCodeStore() {
                 ).masters.length > 0
               ) {
                 //prettier-ignore
-                addErrorToast(`Multi Masters not supported`);
+                addErrorNotification(`Multi Masters not supported`);
               } else {
                 (value.projects[value.active].resources[resourceIdx] as Kubernetes).masters.push(new Master()); // prettier-ignore
               }
@@ -145,7 +145,7 @@ function createCodeStore() {
               if (value.projects[value.active].resources[resourceIdx].type === 'kubernetes')
                 (value.projects[value.active].resources[resourceIdx] as Kubernetes).workers.push(new Worker()); // prettier-ignore
               else
-                addErrorToast(`Can't add new worker to ${value.projects[value.active].resources[resourceIdx].type} type`); //prettier-ignore
+                addErrorNotification(`Can't add new worker to ${value.projects[value.active].resources[resourceIdx].type} type`); //prettier-ignore
             break;
 
           case "machines":
@@ -157,7 +157,7 @@ function createCodeStore() {
               if (value.projects[value.active].resources[resourceIdx].type === 'machines')
                 (value.projects[value.active].resources[resourceIdx] as Machines).machines.push(new Machine()); // prettier-ignore
               else
-                addErrorToast(`Can't add new machine to ${value.projects[value.active].resources[resourceIdx].type} type`);
+                addErrorNotification(`Can't add new machine to ${value.projects[value.active].resources[resourceIdx].type} type`);
             break;
 
           case "disk":
@@ -176,10 +176,10 @@ function createCodeStore() {
               ) {
                 (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].disks.push(new Disk()); // prettier-ignore
               } else {
-                addErrorToast(`Can't add new disk to deployed machine`);
+                addErrorNotification(`Can't add new disk to deployed machine`);
               }
             } else {
-              addErrorToast(
+              addErrorNotification(
                 `Can't add new disk to ${
                   value.projects[value.active].resources[resourceIdx].type
                 } type`
@@ -203,10 +203,10 @@ function createCodeStore() {
               ) {
                 (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].qsfsDisks.push(new QsfsDisk()); // prettier-ignore
               } else {
-                addErrorToast(`Can't add new Qsfs disk to deployed machine`);
+                addErrorNotification(`Can't add new Qsfs disk to deployed machine`);
               }
             } else {
-              addErrorToast(
+              addErrorNotification(
                 `Can't add new Qsfs disk to ${
                   value.projects[value.active].resources[resourceIdx].type
                 } type`
@@ -230,12 +230,12 @@ function createCodeStore() {
               ) {
                 (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].env_vars.push(new Env()); // prettier-ignore
               } else {
-                addErrorToast(
+                addErrorNotification(
                   `Can't add new environment variable to deployed machine`
                 );
               }
             } else {
-              addErrorToast(
+              addErrorNotification(
                 `Can't add new environment variable to ${
                   value.projects[value.active].resources[resourceIdx].type
                 } type`

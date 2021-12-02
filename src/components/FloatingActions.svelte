@@ -1,9 +1,9 @@
 <script lang="ts">
   import codeStore from "../store/code.store";
   import mnemonicsStore from "../store/mnemonics.store";
-  import Toasts from "../components/base/Toasts.svelte";
+  import Notifications from "./base/Notifications.svelte";
   import ConfirmMsg from "./base/ConfirmMsg.svelte";
-  import { addSuccessToast } from "../store/toast.store";
+  import { addSuccessNotification } from "../store/notification.store";
   import {
     getClient,
     handleKubernetes,
@@ -71,12 +71,12 @@
 
   function copyResult() {
     navigator.clipboard.writeText(projectResult);
-    addSuccessToast("Result copied to clipboard");
+    addSuccessNotification("Result copied to clipboard");
     closeResult();
   }
 </script>
 
-<Toasts />
+<Notifications />
 
 {#if showDeploy}
   <ConfirmMsg

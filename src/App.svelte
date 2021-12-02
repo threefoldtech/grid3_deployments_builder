@@ -5,21 +5,11 @@
   import FloatingActions from "./components/FloatingActions.svelte";
   import Configurations from "./components/sidebar/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
-  import NotificationMsg from "./components/base/NotificationMsg.svelte";
   import { events } from "grid3_client";
+  import { updateLastNotification } from "./store/notification.store"
+  import Notifications from "./components/base/Notifications.svelte";
 
-  export let show_info: boolean = false;
-  export let info_msg: string = "";
-  const timeout = 5000;
-  const open_info = (msg) => {
-    show_info = true;
-    info_msg = msg;
-    setTimeout(hide_info, timeout);
-  };
-  const hide_info = () => {
-    show_info = false;
-  };
-  events.addListener("logs", open_info);
+  events.addListener("logs", updateLastNotification);
 
   let explorer = 0;
   const setExplorer = (x: number) => () => (explorer = x);
@@ -71,10 +61,7 @@
   </main>
 </Droppable>
 <FloatingActions />
-
-{#if show_info}
-  <NotificationMsg msg={info_msg} type="loading" />
-{/if}
+<Notifications />
 
 <style lang="scss" scoped>
   main {

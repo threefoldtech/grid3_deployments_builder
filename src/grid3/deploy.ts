@@ -13,10 +13,10 @@ import {
 } from "../models";
 import codeStore from "../store/code.store";
 import {
-  addSuccessToast,
-  addInfoToast,
-  addErrorToast,
-} from "../store/toast.store";
+  addSuccessNotification,
+  addInfoNotification,
+  addErrorNotification,
+} from "../store/notification.store";
 import type { GridClient, ZdbModes } from "grid3_client";
 import { NetworkModel } from "grid3_client";
 
@@ -51,23 +51,23 @@ export async function handleVMs(
         is_changed = true;
         const vmResult = await addVM(vm, resource.name, gridClient);
         if (checkResult(vmResult)) {
-          addSuccessToast(`${vm.name} added successfully`);
+          addSuccessNotification(`${vm.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
         } else {
-          addErrorToast(`Error happen while adding ${vm.name}`);
+          addErrorNotification(`Error happen while adding ${vm.name}`);
         }
       }
     }
     if (!is_changed) {
-      addInfoToast("No new machine added, all VMs already deployed");
+      addInfoNotification("No new machine added, all VMs already deployed");
     }
   } else {
     const vmResult = await deployVMs(network, resource, gridClient);
     if (checkResult(vmResult)) {
-      addSuccessToast(`${resource.name} deployed successfully`);
+      addSuccessNotification(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addErrorToast(`Error happen while deploying ${resource.name}`);
+      addErrorNotification(`Error happen while deploying ${resource.name}`);
     }
   }
 }
@@ -87,15 +87,15 @@ export async function handleKubernetes(
         is_changed = true;
         const addWorkerResult = await addWorker(w, resource.name, gridClient);
         if (checkResult(addWorkerResult)) {
-          addSuccessToast(`${w.name} added successfully`);
+          addSuccessNotification(`${w.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
         } else {
-          addErrorToast(`Error happen while adding ${w.name}`);
+          addErrorNotification(`Error happen while adding ${w.name}`);
         }
       }
     }
     if (!is_changed) {
-      addInfoToast("No new workers added, all workers already deployed");
+      addInfoNotification("No new workers added, all workers already deployed");
     }
   } else {
     const kubernetsResult = await deployKubernetes(
@@ -104,10 +104,10 @@ export async function handleKubernetes(
       gridClient
     );
     if (checkResult(kubernetsResult)) {
-      addSuccessToast(`${resource.name} deployed successfully`);
+      addSuccessNotification(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addErrorToast(`Error happen while deploying ${resource.name}`);
+      addErrorNotification(`Error happen while deploying ${resource.name}`);
     }
   }
 }
@@ -126,23 +126,23 @@ export async function handleZDBs(
         is_changed = true;
         const addZdbResult = await addZDB(z, resource.name, gridClient);
         if (checkResult(addZdbResult)) {
-          addSuccessToast(`${z.name} added successfully`);
+          addSuccessNotification(`${z.name} added successfully`);
           codeStore.updateDeployOneElement(resourceId, i);
         } else {
-          addErrorToast(`Error happen while adding ${z.name}`);
+          addErrorNotification(`Error happen while adding ${z.name}`);
         }
       }
     }
     if (!is_changed) {
-      addInfoToast("No new zdbs added, all zdbs already deployed");
+      addInfoNotification("No new zdbs added, all zdbs already deployed");
     }
   } else {
     const zdbsResult = await deployZDBs(resource, gridClient);
     if (checkResult(zdbsResult)) {
-      addSuccessToast(`${resource.name} deployed successfully`);
+      addSuccessNotification(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addErrorToast(`Error happen while deploying ${resource.name}`);
+      addErrorNotification(`Error happen while deploying ${resource.name}`);
     }
   }
 }
@@ -396,13 +396,13 @@ export async function deployQsfsZdb(
       description: resource.description,
     });
     if (checkResult(data)) {
-      addSuccessToast(`${resource.name} deployed successfully`);
+      addSuccessNotification(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addErrorToast(`Error happen while deploying ${resource.name}`);
+      addErrorNotification(`Error happen while deploying ${resource.name}`);
     }
   } else {
-    addInfoToast(`QSFS Zdbs ${resource.name} already deployed`);
+    addInfoNotification(`QSFS Zdbs ${resource.name} already deployed`);
   }
 }
 
@@ -420,13 +420,13 @@ export async function deployDomain(
       tls_passthrough: resource.tlsPassThrough,
     });
     if (checkResult(data)) {
-      addSuccessToast(`${resource.name} deployed successfully`);
+      addSuccessNotification(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addErrorToast(`Error happen while deploying ${resource.name}`);
+      addErrorNotification(`Error happen while deploying ${resource.name}`);
     }
   } else {
-    addInfoToast(`Domain ${resource.name} already deployed`);
+    addInfoNotification(`Domain ${resource.name} already deployed`);
   }
 }
 
@@ -443,12 +443,12 @@ export async function deployPrefixDomain(
       tls_passthrough: resource.tlsPassThrough,
     });
     if (checkResult(data)) {
-      addSuccessToast(`${resource.name} deployed successfully`);
+      addSuccessNotification(`${resource.name} deployed successfully`);
       codeStore.updateDeployAllElements(resourceId);
     } else {
-      addErrorToast(`Error happen while deploying ${resource.name}`);
+      addErrorNotification(`Error happen while deploying ${resource.name}`);
     }
   } else {
-    addInfoToast(`Prefix Domain ${resource.name} already deployed`);
+    addInfoNotification(`Prefix Domain ${resource.name} already deployed`);
   }
 }
