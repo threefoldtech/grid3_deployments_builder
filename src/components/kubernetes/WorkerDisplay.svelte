@@ -31,49 +31,49 @@
       label="Name"
       value={worker.name}
       placeholder="Worker name"
-      on:input={codeStore.updateWorker(resourceIdx, idx, "name")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "name")}
       deployed={worker.isDeployed}
     />
     <Editable
       label="Node"
       value={worker.node}
       type="number"
-      on:input={codeStore.updateWorker(resourceIdx, idx, "node")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "node")}
       deployed={worker.isDeployed}
     />
     <Editable
       label="CPU"
       value={worker.cpu}
       type="number"
-      on:input={codeStore.updateWorker(resourceIdx, idx, "cpu")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "cpu")}
       deployed={worker.isDeployed}
     />
     <Editable
       label="Memory"
       value={worker.memory}
       type="number"
-      on:input={codeStore.updateWorker(resourceIdx, idx, "memory")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "memory")}
       deployed={worker.isDeployed}
     />
     <Editable
       label="Root FS Size"
       value={worker.rootFsSize}
       type="number"
-      on:input={codeStore.updateWorker(resourceIdx, idx, "rootFsSize")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "rootFsSize")}
       deployed={worker.isDeployed}
     />
     <Editable
       label="Disk Size"
       type="number"
       value={worker.diskSize}
-      on:input={codeStore.updateWorker(resourceIdx, idx, "diskSize")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
       deployed={worker.isDeployed}
     />
     <Editable label="Public IP" deployed={worker.isDeployed}>
       <input
         type="checkbox"
         checked={worker.publicIp}
-        on:change={codeStore.updateWorker(resourceIdx, idx, "publicIp")}
+        on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
         disabled={worker.isDeployed}
       />
     </Editable>
@@ -81,7 +81,7 @@
       <input
         type="checkbox"
         checked={worker.planetary}
-        on:change={codeStore.updateWorker(resourceIdx, idx, "planetary")}
+        on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
         disabled={worker.isDeployed}
       />
     </Editable>

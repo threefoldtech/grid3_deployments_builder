@@ -82,7 +82,7 @@ export async function handleKubernetes(
   // Check if deployment already deployed before, Will add new workers only.
   if (resource.isDeployed) {
     let is_changed = false; // flag to check if no change happen
-    for (let [i, w] of resource.workers.entries()) {
+    for (let [i, w] of resource.kubeNodes.entries()) {
       if (!w.isDeployed) {
         is_changed = true;
         const addWorkerResult = await addWorker(w, resource.name, gridClient);
@@ -251,17 +251,20 @@ async function deployKubernetes(
   resource: Kubernetes,
   gridClient: GridClient
 ) {
-  const masters = resource.masters.map((m) => {
-    return {
-      name: m.name,
-      node_id: m.node,
-      cpu: m.cpu,
-      disk_size: m.diskSize,
-      memory: m.memory,
-      public_ip: m.publicIp,
-      rootfs_size: m.rootFsSize,
-      planetary: m.planetary,
-      qsfs_disks: m.qsfsDisks.map((qsfsDisk) => {
+  let masters = [];
+  let workers = [];
+  for (let i = 0; i < resource.kubeNodes.length; i++){
+    let kNode = resource.kubeNodes[i];
+    let kMap = {
+      name: kNode.name,
+      node_id: kNode.node,
+      cpu: kNode.cpu,
+      disk_size: kNode.diskSize,
+      memory: kNode.memory,
+      public_ip: kNode.publicIp,
+      rootfs_size: kNode.rootFsSize,
+      planetary: kNode.planetary,
+      qsfs_disks: kNode.qsfsDisks.map((qsfsDisk) => {
         return {
           name: qsfsDisk.name,
           qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
@@ -274,32 +277,12 @@ async function deployKubernetes(
         };
       }),
     };
-  });
-
-  const workers = resource.workers.map((w) => {
-    return {
-      name: w.name,
-      node_id: w.node,
-      cpu: w.cpu,
-      disk_size: w.diskSize,
-      memory: w.memory,
-      public_ip: w.publicIp,
-      rootfs_size: w.rootFsSize,
-      planetary: w.planetary,
-      qsfs_disks: w.qsfsDisks.map((qsfsDisk) => {
-        return {
-          name: qsfsDisk.name,
-          qsfs_zdbs_name: qsfsDisk.qsfsZdbsName,
-          prefix: qsfsDisk.prefix,
-          encryption_key: qsfsDisk.encryptionKey,
-          cache: qsfsDisk.cache,
-          minimal_shards: qsfsDisk.minimalShards,
-          expected_shards: qsfsDisk.expectedShards,
-          mountpoint: qsfsDisk.mountpoint,
-        };
-      }),
-    };
-  });
+    if (i === 0){
+      masters.push(kMap);
+    }else{
+      workers.push(kMap);
+    }
+  }
   const result = gridClient.k8s.deploy({
     name: resource.name,
     secret: resource.secret,

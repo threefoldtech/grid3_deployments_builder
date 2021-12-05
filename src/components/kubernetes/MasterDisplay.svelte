@@ -31,49 +31,49 @@
       label="Name"
       value={master.name}
       placeholder="Master name"
-      on:input={codeStore.updateMaster(resourceIdx, idx, "name")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "name")}
       deployed={master.isDeployed}
     />
     <Editable
       label="Node"
       value={master.node}
       type="number"
-      on:input={codeStore.updateMaster(resourceIdx, idx, "node")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "node")}
       deployed={master.isDeployed}
     />
     <Editable
       label="CPU"
       value={master.cpu}
       type="number"
-      on:input={codeStore.updateMaster(resourceIdx, idx, "cpu")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "cpu")}
       deployed={master.isDeployed}
     />
     <Editable
       label="Memory"
       value={master.memory}
       type="number"
-      on:input={codeStore.updateMaster(resourceIdx, idx, "memory")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "memory")}
       deployed={master.isDeployed}
     />
     <Editable
       label="Root FS Size"
       value={master.rootFsSize}
       type="number"
-      on:input={codeStore.updateMaster(resourceIdx, idx, "rootFsSize")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "rootFsSize")}
       deployed={master.isDeployed}
     />
     <Editable
       label="Disk Size"
       type="number"
       value={master.diskSize}
-      on:input={codeStore.updateMaster(resourceIdx, idx, "diskSize")}
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
       deployed={master.isDeployed}
     />
     <Editable label="Public IP" deployed={master.isDeployed}>
       <input
         type="checkbox"
         checked={master.publicIp}
-        on:change={codeStore.updateMaster(resourceIdx, idx, "publicIp")}
+        on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
         disabled={master.isDeployed}
       />
     </Editable>
@@ -81,7 +81,7 @@
       <input
         type="checkbox"
         checked={master.planetary}
-        on:change={codeStore.updateMaster(resourceIdx, idx, "planetary")}
+        on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
         disabled={master.isDeployed}
       />
     </Editable>
