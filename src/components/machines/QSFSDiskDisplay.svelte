@@ -5,7 +5,7 @@
   import Editable from "../base/Editable.svelte";
 
   export let resourceIdx: number;
-  export let vmIdx: number;
+  export let elementIdx: number;
   export let idx: number;
   export let qsfsDisk: QsfsDisk;
 
@@ -32,7 +32,7 @@
       label="name"
       value={qsfsDisk.name}
       placeholder="Qsfs Disk name"
-      on:input={codeStore.updateQsfsDisk(resourceIdx, vmIdx, idx, "name")}
+      on:input={codeStore.updateQsfsDisk(resourceIdx, elementIdx, idx, "name")}
       deployed={qsfsDisk.isDeployed}
     />
     <Editable
@@ -41,7 +41,7 @@
       placeholder="Qsfs Zdbs deployment name, if you don't have one, deploy QSFS Zdbs first"
       on:input={codeStore.updateQsfsDisk(
         resourceIdx,
-        vmIdx,
+        elementIdx,
         idx,
         "qsfsZdbsName"
       )}
@@ -51,7 +51,7 @@
       label="Prefix"
       value={qsfsDisk.prefix}
       placeholder="Enter a prefix"
-      on:input={codeStore.updateQsfsDisk(resourceIdx, vmIdx, idx, "prefix")}
+      on:input={codeStore.updateQsfsDisk(resourceIdx, elementIdx, idx, "prefix")}
       deployed={qsfsDisk.isDeployed}
     />
     <Editable
@@ -61,7 +61,7 @@
       placeholder="Enter your encryption key"
       on:input={codeStore.updateQsfsDisk(
         resourceIdx,
-        vmIdx,
+        elementIdx,
         idx,
         "encryptionKey"
       )}
@@ -71,7 +71,7 @@
       label="Cache"
       value={qsfsDisk.cache}
       type="number"
-      on:input={codeStore.updateQsfsDisk(resourceIdx, vmIdx, idx, "cache")}
+      on:input={codeStore.updateQsfsDisk(resourceIdx, elementIdx, idx, "cache")}
       deployed={qsfsDisk.isDeployed}
     />
     <Editable
@@ -80,7 +80,7 @@
       type="number"
       on:input={codeStore.updateQsfsDisk(
         resourceIdx,
-        vmIdx,
+        elementIdx,
         idx,
         "minimalShards"
       )}
@@ -93,7 +93,7 @@
       min={qsfsDisk.minimalShards + 1}
       on:input={codeStore.updateQsfsDisk(
         resourceIdx,
-        vmIdx,
+        elementIdx,
         idx,
         "expectedShards"
       )}
@@ -103,7 +103,7 @@
       label="Mountpoint"
       value={qsfsDisk.mountpoint}
       placeholder="Mount point"
-      on:input={codeStore.updateQsfsDisk(resourceIdx, vmIdx, idx, "mountpoint")}
+      on:input={codeStore.updateQsfsDisk(resourceIdx, elementIdx, idx, "mountpoint")}
       deployed={qsfsDisk.isDeployed}
     />
   {/if}

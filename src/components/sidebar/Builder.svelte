@@ -112,6 +112,13 @@
           level="2"
           on:click={add("worker")}
         />
+        <SidebarBlock
+          label="QSFS Disk"
+          img="../assets/qsfsDisk.png"
+          type="qsfsDisk"
+          level="2"
+          on:click={add("qsfsDisk")}
+        />
       {/if}
       <SidebarBlock
         label="Zdbs"
