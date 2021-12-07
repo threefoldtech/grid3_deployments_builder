@@ -458,37 +458,41 @@ function createCodeStore() {
             (
               value.projects[value.active].resources[resourceIdx] as Machines
             ).machines.forEach((vm) => {
-              vm.isDeployed = true;
+              vm.isDeployed = val;
               vm.disks.forEach((d) => {
-                d.isDeployed = true;
+                d.isDeployed = val;
               });
               vm.qsfsDisks.forEach((qd) => {
-                qd.isDeployed = true;
+                qd.isDeployed = val;
               });
               vm.env_vars.forEach((env) => {
-                env.isDeployed = true;
+                env.isDeployed = val;
               });
             });
             break;
           case "kubernetes":
             (
               value.projects[value.active].resources[resourceIdx] as Kubernetes
-            ).kubeNodes.forEach((m) => {
-              m.isDeployed = true;
+            ).kubeNodes.forEach((kNode) => {
+              kNode.isDeployed = val;
+              kNode.qsfsDisks.forEach((qd) => {
+                qd.isDeployed = val;
+              });
             });
+            
             break;
           case "zdbs":
             (
               value.projects[value.active].resources[resourceIdx] as ZDBs
             ).zdbs.forEach((z) => {
-              z.isDeployed = true;
+              z.isDeployed = val;
             });
             break;
           case "qsfsZdbs":
           case "fqdn":
           case "name":
             value.projects[value.active].resources[resourceIdx].isDeployed =
-              true;
+              val;
         }
         return value;
       });
