@@ -1,33 +1,25 @@
 :root {
   --white: white;
   --black: #333;
-  --sidenav-width: 33rem;
+  --sidenav-width: 40rem;
   --sidenav-border: #cccccc;
   --ground-bg: rgba(241, 241, 241, 0.5);
-  --keyword: #ec44ff;
+  --keyword: purple;
 
-  /* --resource: #4caf50;
-  --resource-bg: #dff5df; */
-  --machines: #4caf50;
-  --machines-bg: #e6f5e6;
-  --disk: #2196f3;
-  --disk-bg: #d8eeff;
+  --machines: #004d40;
   --machine: #009688;
-  --machine-bg: #c5f1ed;
-  --envVar: #ff8c00;
-  --envVar-bg: #fff5ee;
-  --zdbs: red;
-  --zdbs-bg: #ffe4e1;
-  --zdb: gold;
-  --zdb-bg: rgb(253, 246, 204);
-  --network: black;
-  --network-bg: white;
-  --master: steelblue;
-  --master-bg: rgb(209, 223, 238);
-  --worker: #808080;
-  --worker-bg: #ecebeb;
-  --kubernetes: purple;
-  --kubernetes-bg: rgb(244, 244, 255);
+  --disk: #2196f3;
+  --envVar: #76ff03;
+  --zdbs: #b71c1c;
+  --zdb: #ef9a9a;
+  --network: #6a1b9a;
+  --master: #2196f3;
+  --worker: #90caf9;
+  --kubernetes: #0d47a1;
+  --qsfsZdbs: #e65100;
+  --qsfsDisk: #f57c00;
+  --fqdn: #ffca28;
+  --name: #c79a00;
 }
 
 * {
@@ -60,8 +52,6 @@ a {
 }
 
 .keyword {
-  background-color: var(--ground-bg);
-  padding: 0.5rem;
   border-radius: 0.5rem;
   color: var(--keyword);
   margin: 0 1rem;

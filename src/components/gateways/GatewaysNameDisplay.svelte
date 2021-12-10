@@ -8,6 +8,7 @@
   import Collapse from "../base/Collapse.svelte";
   import ConfirmMsg from "../base/ConfirmMsg.svelte";
   import Editable from "../base/Editable.svelte";
+  import CheckBox from "../base/CheckBox.svelte";
 
   export let idx: number;
   export let gateway: GatewayName;
@@ -41,18 +42,18 @@
 <div>
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/gateways.png" alt="deployment icon" width="40" />
+    <img src="/assets/domainPrefix.png" alt="deployment icon" width="40" />
     <span class="keyword">Prefix Domain</span>
     {#if collapse}
       <p>...</p>
     {/if}
     {#if gateway.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
       <button class="btn_result">
         <img src="/assets/info.png" alt="Result" on:click={openResult} />
       </button>
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
 
@@ -87,14 +88,13 @@
       on:input={codeStore.updateGatewayName("backends", idx)}
       deployed={gateway.isDeployed}
     />
-    <Editable label="TlsPassThrough" deployed={gateway.isDeployed}>
-      <input
-        type="checkbox"
-        checked={gateway.tlsPassThrough}
-        on:change={codeStore.updateGatewayName("tlsPassThrough", idx)}
-        disabled={gateway.isDeployed}
+    <CheckBox 
+      label="TlsPassThrough" 
+      deployed={gateway.isDeployed}
+      checked={gateway.tlsPassThrough}
+      color={"--name"}
+      on:change={codeStore.updateGatewayName("tlsPassThrough", idx)}
       />
-    </Editable>
   {/if}
 </div>
 

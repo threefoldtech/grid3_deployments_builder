@@ -3,7 +3,7 @@
   export let img: string;
   export let type:string;
   export let level: string;
-  const marginLeft = +level;
+  const marginLeft = +level * 2;
 </script>
 
 <div
@@ -22,9 +22,8 @@
 
 <style lang="scss" scoped>
   .block {
-    border-left: 1rem solid;
-    border-right: 1rem solid;
-    border-radius: 1rem;
+    border-left: 0.5rem solid;
+    border-radius: 0.5rem;
     margin-bottom: 1.5rem;
     padding: 2rem 0;
     display: flex;

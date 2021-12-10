@@ -34,8 +34,8 @@ export type Add_Types =
   | "worker"
   | "network"
   | "kubernetes"
-  | "gatewayFQDN"
-  | "gatewayName";
+  | "fqdn"
+  | "name";
 
 export interface IStore {
   active: number;
@@ -217,11 +217,11 @@ function createCodeStore() {
             value.projects[value.active].network = new Network();
             break;
 
-          case "gatewayFQDN":
+          case "fqdn":
             value.projects[value.active].resources.push(new GatewayFQDN());
             break;
 
-          case "gatewayName":
+          case "name":
             value.projects[value.active].resources.push(new GatewayName());
             break;
 

@@ -12,7 +12,7 @@
       image = "/assets/deploying.gif";
       break;
     case "info":
-      image = "/assets/info_white.png";
+      image = "/assets/infoWhite.png";
       break;
     case "success":
       image = "/assets/success.png";
@@ -70,7 +70,7 @@
     line-height: 1;
     font-size: 1rem;
     img {
-      width: 10px;
+      width: 20px;
     }
   }
   img {

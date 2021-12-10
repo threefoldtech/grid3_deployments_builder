@@ -3,6 +3,7 @@
   import codeStore from "../../store/code.store";
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
+  import CheckBox from "../base/CheckBox.svelte";
 
   export let resourceIdx: number;
   export let idx: number;
@@ -14,15 +15,15 @@
 <div>
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/vm.png" alt="deployment icon" width="40" />
+    <img src="/assets/machine.png" alt="deployment icon" width="40" />
     <span class="keyword">Generic Machine</span>
     {#if collapse}
       <p>...</p>
     {/if}
     {#if vm.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
 
@@ -76,21 +77,19 @@
       on:input={codeStore.updateVm(resourceIdx, idx, "entrypoint")}
       deployed={vm.isDeployed}
     />
-    <Editable label="Public IP" deployed={vm.isDeployed}>
-      <input
-        type="checkbox"
-        checked={vm.publicIp}
-        on:change={codeStore.updateVm(resourceIdx, idx, "publicIp")}
-        disabled={vm.isDeployed}
-      />
-    </Editable>
-    <Editable label="Planetary" deployed={vm.isDeployed}>
-      <input
-        type="checkbox"
-        checked={vm.planetary}
-        on:change={codeStore.updateVm(resourceIdx, idx, "planetary")}
-        disabled={vm.isDeployed}
-      />
-    </Editable>
+    <CheckBox
+      label="Public IP"
+      deployed={vm.isDeployed}
+      checked={vm.publicIp}
+      color={"--machine"}
+      on:change={codeStore.updateVm(resourceIdx, idx, "publicIp")}
+    />
+    <CheckBox 
+      label="Planetary" 
+      deployed={vm.isDeployed}
+      checked={vm.planetary}
+      color={"--machine"}
+      on:change={codeStore.updateVm(resourceIdx, idx, "planetary")}
+    />
   {/if}
 </div>

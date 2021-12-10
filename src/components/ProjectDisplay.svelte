@@ -145,7 +145,7 @@
 
                   {#each vm.qsfsDisks as qsfsDisk, qsfsDiskIdx (qsfsDisk.id)}
                     <Block
-                      color="--disk"
+                      color="--qsfsDisk"
                       on:click={codeStore.removeFromVm(
                         resourceIdx,
                         idx,
@@ -222,7 +222,7 @@
                     <WorkerDisplay {resourceIdx} idx={i} worker={node} />
                     {#each node.qsfsDisks as qsfsDisk, qsfsDiskIdx (qsfsDisk.id)}
                       <Block
-                        color="--disk"
+                        color="--qsfsDisk"
                         on:click={codeStore.removeFromKubeNode(
                           resourceIdx,
                           i,
@@ -244,39 +244,6 @@
                 {/if}
               </Droppable>
             {/each}
-
-            <!-- {#each resource.workers as worker, i (worker.id)}
-              <Droppable {resourceIdx} idx={i}>
-                <Block
-                  color="--worker"
-                  on:click={() => {
-                    onShowDelete("element", resource, resourceIdx, worker, i);
-                  }}
-                >
-                  <WorkerDisplay {resourceIdx} idx={i} {worker} />
-                  {#each worker.qsfsDisks as qsfsDisk, qsfsDiskIdx (qsfsDisk.id)}
-                  <Block
-                    color="--disk"
-                    on:click={codeStore.removeFromWorker(
-                      resourceIdx,
-                      i,
-                      qsfsDiskIdx
-                    )}
-                    removeable={!qsfsDisk.isDeployed}
-                  >
-                    <QsfsDiskDisplay
-                      {...{
-                        resourceIdx,
-                        elementIdx: i,
-                        idx: qsfsDiskIdx,
-                        qsfsDisk,
-                      }}
-                    />
-                  </Block>
-                {/each}
-                </Block>
-              </Droppable>
-            {/each} -->
 
             <!-- ---------------- ZDBs ---------------- -->
           {:else if "zdbs" in resource}

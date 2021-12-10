@@ -3,8 +3,8 @@
   export let removeable: boolean = true;
   $: style = `
     border-left-color: var(${color});
-    background-color: var(${color}-bg);
-  `;
+    // background-color: var(${color}-bg);
+    `;
 </script>
 
 <div class="block" {style}>
@@ -21,8 +21,8 @@
   .block {
     padding: 2rem;
     padding-left: 4rem;
-    border-left: 1rem solid transparent;
-    border-radius: 1rem;
+    border-left: 0.5rem solid transparent;
+    border-radius: 0.5rem;
     margin-bottom: 1rem;
     position: relative;
     &__remove {
