@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Master } from "../../models";
   import codeStore from "../../store/code.store";
+  import CheckBox from "../base/CheckBox.svelte";
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
 
@@ -20,9 +21,9 @@
       <p>...</p>
     {/if}
     {#if master.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
 
@@ -69,21 +70,19 @@
       on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
       deployed={master.isDeployed}
     />
-    <Editable label="Public IP" deployed={master.isDeployed}>
-      <input
-        type="checkbox"
-        checked={master.publicIp}
-        on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
-        disabled={master.isDeployed}
-      />
-    </Editable>
-    <Editable label="Planetary" deployed={master.isDeployed}>
-      <input
-        type="checkbox"
-        checked={master.planetary}
-        on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
-        disabled={master.isDeployed}
-      />
-    </Editable>
+    <CheckBox
+      label="Public IP"
+      deployed={master.isDeployed}
+      checked={master.publicIp}
+      color={"--master"}
+      on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
+    />
+    <CheckBox 
+      label="Planetary" 
+      deployed={master.isDeployed}
+      checked={master.planetary}
+      color={"--master"}
+      on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
+    />
   {/if}
 </div>

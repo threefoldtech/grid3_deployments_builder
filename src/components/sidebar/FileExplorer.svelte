@@ -28,7 +28,7 @@
     {#if store.active === i}
       <div class="explorer__project__control">
         <img
-          src="/assets/notdeployed.png"
+          src="/assets/delete.png"
           alt="delete"
           title="delete project"
           on:click={codeStore.removeProject.bind(codeStore, i)}
@@ -44,7 +44,7 @@
           />
         {:else}
           <img
-            src="/assets/deployed.png"
+            src="/assets/save.png"
             alt="save"
             title="save project name"
             on:click={() => {
@@ -101,17 +101,19 @@
   }
 
   .explorer__project__control {
+    width: 20%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    padding: 0 1rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem;
     cursor: pointer;
 
     img {
-      padding-top: 5px;
-      padding-bottom: 5px;
-      width: 15px;
+      // padding-top: 5px;
+      // padding-bottom: 5px;
+      width: 30px;
+      height: 30px;
     }
   }
 </style>

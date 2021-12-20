@@ -7,10 +7,10 @@
   export let placeholder: string = "";
   export let deployed: boolean = false;
   export let min: number = 0;
-  export let max_width : number = 500;
+  let max_width : number = 500;
 
   let fake_span: HTMLSpanElement;
-  let width = 150;
+  let width = 100;
 
   function updateWidth() {
     if (!fake_span) return;
@@ -26,12 +26,11 @@
 
 <div class="editable" {style}>
   {#if label}
-    <span class="editable__label">{label}</span>
-    <span>&nbsp; <span class="keyword">=</span> &nbsp;</span>
+    <span class="editable__label">{label + ":"}</span>
   {/if}
   {#if value !== null}
     <span class="editable__fake" bind:this={fake_span}>
-      {value || placeholder}
+      {value || placeholder} 
     </span>
     <input
       {type}
@@ -58,6 +57,7 @@
     &__label {
       font-size: 1.8rem;
       text-transform: capitalize;
+      padding-right: 1rem;
     }
 
     &__fake {

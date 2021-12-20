@@ -44,17 +44,17 @@
 <div class="zdbs">
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/zdbs.png" alt="zdbs icon" width="40" />
+    <img src="/assets/storaged.png" alt="zdbs icon" width="40" />
     <span class="keyword">Zdbs Deployment</span>
     {#if collapse}
       <p>...</p>
     {:else if zdbs.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
       <button class="btn_result">
         <img src="/assets/info.png" alt="Result" on:click={openResult} />
       </button>
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
   {#if collapse}

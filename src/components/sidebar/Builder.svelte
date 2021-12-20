@@ -60,7 +60,7 @@
       {/if}
       <SidebarBlock
         label="Machines"
-        img="../assets/vms.png"
+        img="../assets/machines.png"
         type="machines"
         level="0"
         on:click={add("machines")}
@@ -68,7 +68,7 @@
       {#if hasMachines}
         <SidebarBlock
           label="Generic Machine"
-          img="../assets/vm.png"
+          img="../assets/machine.png"
           type="machine"
           level="2"
           on:click={add("machine")}
@@ -84,14 +84,14 @@
         />
         <SidebarBlock
           label="QSFS Disk"
-          img="../assets/qsfsDisk.png"
+          img="../assets/diskQsfs.png"
           type="qsfsDisk"
           level="3"
           on:click={add("qsfsDisk")}
         />
         <SidebarBlock
           label="Enviroment Variable"
-          img="../assets/env.svg"
+          img="../assets/env.png"
           type="envVar"
           level="3"
           on:click={add("envVar")}
@@ -99,7 +99,7 @@
       {/if}
       <SidebarBlock
         label="Kubernetes"
-        img="../assets/kubernetes.png"
+        img="../assets/kubernetesd.png"
         type="kubernetes"
         level="0"
         on:click={add("kubernetes")}
@@ -114,7 +114,7 @@
         />
         <SidebarBlock
           label="QSFS Disk"
-          img="../assets/qsfsDisk.png"
+          img="../assets/diskQsfs.png"
           type="qsfsDisk"
           level="2"
           on:click={add("qsfsDisk")}
@@ -122,7 +122,7 @@
       {/if}
       <SidebarBlock
         label="Zdbs"
-        img="../assets/zdbs.png"
+        img="../assets/storaged.png"
         type="zdbs"
         level="0"
         on:click={add("zdbs")}
@@ -130,7 +130,7 @@
       {#if hasZDBs}
         <SidebarBlock
           label="Single Zdb"
-          img="../assets/zdb.png"
+          img="../assets/storage.png"
           type="zdb"
           level="2"
           on:click={add("zdb")}
@@ -138,24 +138,24 @@
       {/if}
       <SidebarBlock
         label="QSFS Zdbs"
-        img="../assets/qsfsZdbs.png"
+        img="../assets/storageQsfsd.png"
         type="qsfsZdbs"
         level="0"
         on:click={add("qsfsZdbs")}
       />
       <SidebarBlock
         label="Domain"
-        img="../assets/gateways_fqdn.png"
-        type="gatewayFQDN"
+        img="../assets/domain.png"
+        type="fqdn"
         level="0"
-        on:click={add("gatewayFQDN")}
+        on:click={add("fqdn")}
       />
       <SidebarBlock
         label="Domain Prefix"
-        img="../assets/gateways.png"
-        type="gatewayName"
+        img="../assets/domainPrefix.png"
+        type="name"
         level="0"
-        on:click={add("gatewayName")}
+        on:click={add("name")}
       />
     {/if}
   </div>

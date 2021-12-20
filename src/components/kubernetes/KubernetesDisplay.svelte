@@ -43,17 +43,17 @@
 <div class="resource">
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/kubernetes.png" alt="kubernetes icon" width="40" />
+    <img src="/assets/kubernetesd.png" alt="kubernetes icon" width="40" />
     <span class="keyword">Kubernetes Deployment</span>
     {#if collapse}
       <p>...</p>
     {:else if kubernetes.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
       <button class="btn_result">
         <img src="/assets/info.png" alt="Result" on:click={openResult} />
       </button>
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
   {#if collapse}

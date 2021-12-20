@@ -5,6 +5,7 @@
   import Editable from "../base/Editable.svelte";
   import Selectable from "../base/Selectable.svelte";
   import { ZdbModes } from "grid3_client";
+  import CheckBox from "../base/CheckBox.svelte";
 
   export let resourceIdx: number;
   export let idx: number;
@@ -16,15 +17,15 @@
 <div>
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/zdb.png" alt="deployment icon" width="40" />
+    <img src="/assets/storage.png" alt="deployment icon" width="40" />
     <span class="keyword">Zdb</span>
     {#if collapse}
       <p>...</p>
     {/if}
     {#if zdb.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
 
@@ -64,13 +65,12 @@
       on:change={codeStore.updateZdb(resourceIdx, idx, "mode")}
       deployed={zdb.isDeployed}
     />
-    <Editable label="Public IP" deployed={zdb.isDeployed}>
-      <input
-        type="checkbox"
-        checked={zdb.publicIp}
-        on:change={codeStore.updateZdb(resourceIdx, idx, "publicIp")}
-        disabled={zdb.isDeployed}
+    <CheckBox 
+      label="Public IP" 
+      deployed={zdb.isDeployed}
+      checked={zdb.publicIp}
+      color={"--zdb"}
+      on:change={codeStore.updateZdb(resourceIdx, idx, "publicIp")}
       />
-    </Editable>
   {/if}
 </div>

@@ -15,15 +15,15 @@
 <div>
   <Collapse on:collapse={(e) => (collapse = e.detail)} />
   <div class="header">
-    <img src="/assets/qsfsDisk.png" alt="deployment icon" width="40" />
+    <img src="/assets/diskQsfs.png" alt="deployment icon" width="40" />
     <span class="keyword">QSFS Disk</span>
     {#if collapse}
       <p>...</p>
     {/if}
     {#if qsfsDisk.isDeployed}
-      <img src="/assets/deployed.png" alt="deployed icon" width="20" />
+      <img src="/assets/verfied.png" alt="deployed icon" width="20" />
     {:else}
-      <img src="/assets/notdeployed.png" alt="not deployed icon" width="20" />
+      <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
 

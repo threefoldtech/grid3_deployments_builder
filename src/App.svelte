@@ -18,20 +18,20 @@
 <aside class="sidenav">
   <div class="sidenav__actions">
     <!-- Threefold Image -->
-    <img src="/assets/threefold.svg" alt="threefold" title="threefold logo" />
+    <img src="/assets/threefold-favicon-black.png" alt="threefold" title="threefold logo" />
     <!-- Project Explorer -->
     <button
       on:click={setExplorer(0)}
       class={"sidenav__actions__item " + (explorer === 0 ? "active" : "")}
     >
-      <img src="/assets/file.svg" alt="explorer" title="File Explorer" />
+      <img src="/assets/explorer.png" alt="explorer" title="File Explorer" />
     </button>
     <!-- Deployment Components -->
     <button
       on:click={setExplorer(1)}
       class={"sidenav__actions__item " + (explorer === 1 ? "active" : "")}
     >
-      <img src="/assets/tools.svg" alt="builder" title="Resource Builder" />
+      <img src="/assets/build.png" alt="builder" title="Resource Builder" />
     </button>
     <!-- Profile Manager -->
     <button
@@ -39,7 +39,7 @@
       class={"sidenav__actions__item " + (explorer === 2 ? "active" : "")}
     >
       <img
-        src="/assets/settings.svg"
+        src="/assets/account.png"
         alt="configs"
         title="Configuration Settings"
       />
@@ -80,6 +80,10 @@
     &__actions {
       width: 6rem;
       border: 0.1rem solid var(--sidenav-border);
+
+      img{
+        width:6rem
+      }
       &__item {
         width: 6rem;
         height: 6rem;

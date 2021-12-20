@@ -1,17 +1,28 @@
 <script lang="ts">
   export let options: string[];
   export let label: string | null = null;
-  export let style: string | undefined = "margin-left: 2.5rem;";
+  export let style: string | undefined = `margin-left: 2.5rem;`;
   export let lastSelected: string = options[0]
   export let deployed: boolean = false;
+
+  let customStyle:string = "";
+  if (label){
+    customStyle = `width: auto;
+    border-bottom: 1px solid gray;
+    `
+  }else{
+    customStyle = `width: 100%;
+    border: 1px solid gray;
+    border-radius: 8px;
+    `
+  }
 </script>
 
 <div class="selectable" {style}>
   {#if label}
-    <span class="selectable__label">{label}</span>
-    <span>&nbsp; <span class="keyword">=</span> &nbsp;</span>
+    <span class="selectable__label">{label}:</span>
   {/if}
-  <div class="select-dropdown">
+  <div class="select-dropdown" style={customStyle}>
     <select on:change disabled={deployed} bind:value={lastSelected}>
       {#each options as option}
         <option value={option}>{option}</option>
@@ -20,7 +31,7 @@
   </div>
 </div>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .selectable {
     display: flex;
     margin: 1rem 0;
@@ -33,9 +44,6 @@
     .select-dropdown {
       position: relative;
       display: block;
-      max-width: 400px;
-      width: 100%;  
-      border-bottom: 2px solid black;
       background-color: transparent;
       z-index: 10;
     }
