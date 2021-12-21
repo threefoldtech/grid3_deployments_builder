@@ -9,10 +9,10 @@
   $: idx = store.active;
   $: code = store.projects[idx];
   $: hasNetwork = code && code.network;
-  $: hasKubernetes = code && code.resources.some((r) => r.type === "kubernetes"); //prettier-ignore
-  $: hasMachines = code && code.resources.some((r) => r.type === "machines"); //prettier-ignore
-  $: hasMachine = hasMachines && code.resources.some((r) => r.type === "machines" && (r as Machines).machines.length); //prettier-ignore
-  $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs"); //prettier-ignore;
+  $: hasKubernetes = code && code.resources.some((r) => r.type === "kubernetes"); 
+  $: hasMachines = code && code.resources.some((r) => r.type === "machines"); 
+  $: hasMachine = hasMachines && code.resources.some((r) => r.type === "machines" && (r as Machines).machines.length); 
+  $: hasZDBs = code && code.resources.some((r) => r.type === "zdbs"); ;
 
   function add(key: Add_Types) {
     return () => {

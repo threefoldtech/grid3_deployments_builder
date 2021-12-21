@@ -4,16 +4,24 @@ This project is a simple UI to deploy different deployments on Grid3 like `Machi
 
 Lets start :rocket:
 
-
 ## Get started
 
 - Install the dependencies...
+
+```bash
+npm install
+```
 
 ```bash
 yarn
 ```
 
 - Run a localhost instance
+
+```bash
+npm run dev
+```
+
 ```bash
 yarn dev
 ```
@@ -24,5 +32,4 @@ Navigate to [localhost:8080](http://localhost:8080). You should see your live in
 
 - Drag & Drop
 - Easy configurations
-- Data saved in `localstorage`
 - No backend - all running from browser

@@ -18,7 +18,8 @@ function addNotification(notification) {
   notifications.update((all) => [{ ...defaults, ...notification }, ...all]);
 
   // If notification is dismissible, dismiss it after "timeout" amount of time.
-  if (notification.timeout) setTimeout(() => dismissNotification(id), notification.timeout);
+  if (notification.timeout)
+    setTimeout(() => dismissNotification(id), notification.timeout);
 }
 
 function addInfoNotification(msg) {
@@ -61,13 +62,14 @@ function updateLastNotification(msg) {
       type: "",
       dismissible: true,
       timeout: 3000,
-    }
+    };
     const lastNotification = all.splice(0, 1);
     newNotification.type = lastNotification["type"] || "loading";
     all.unshift(newNotification);
-    if (newNotification.timeout) setTimeout(() => dismissNotification(id), newNotification.timeout);
-    return all
-  })
+    if (newNotification.timeout)
+      setTimeout(() => dismissNotification(id), newNotification.timeout);
+    return all;
+  });
 }
 
 export {
@@ -77,5 +79,5 @@ export {
   addInfoNotification,
   addErrorNotification,
   dismissNotification,
-  updateLastNotification
+  updateLastNotification,
 };

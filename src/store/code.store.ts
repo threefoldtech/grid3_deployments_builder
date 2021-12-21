@@ -19,6 +19,7 @@ import {
   GatewayFQDN,
   GatewayName,
 } from "../models";
+import { GridClient } from "grid3_client";
 
 export type Add_Types =
   | "project"
@@ -62,7 +63,15 @@ function createCodeStore() {
   function update(updater: Updater<IStore>): void {
     store.update((value) => {
       const newValue = updater(value);
-      localStorage.setItem("store", JSON.stringify(newValue));
+      localStorage.setItem(
+        "store",
+        JSON.stringify(newValue, (_, value) => {
+          if (value instanceof GridClient) {
+            return undefined;
+          }
+          return value;
+        })
+      );
       return newValue;
     });
   }
@@ -77,9 +86,16 @@ function createCodeStore() {
     },
     add(type: Add_Types, resourceIdx?: number, idx?: number) {
       return update((value) => {
-        // prettier-ignore
-        if (type == "machine" || type == "master" || type == "worker" || type == "zdb")
-          if (resourceIdx == undefined && value.projects[value.active].resources.length === 1)
+        if (
+          type == "machine" ||
+          type == "master" ||
+          type == "worker" ||
+          type == "zdb"
+        )
+          if (
+            resourceIdx == undefined &&
+            value.projects[value.active].resources.length === 1
+          )
             resourceIdx = 0;
 
         switch (type) {
@@ -91,25 +107,34 @@ function createCodeStore() {
             break;
 
           case "zdbs":
-            value.projects[value.active].resources.push(new ZDBs(undefined,undefined, undefined, [new ZDB()])); // prettier-ignore
+            value.projects[value.active].resources.push(
+              new ZDBs(undefined, undefined, undefined, [new ZDB()])
+            );
             break;
 
           case "zdb":
             if (resourceIdx != undefined)
-              if (value.projects[value.active].resources[resourceIdx].type === 'zdbs')
-                (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.push(new ZDB()); // prettier-ignore
+              if (
+                value.projects[value.active].resources[resourceIdx].type ===
+                "zdbs"
+              )
+                (
+                  value.projects[value.active].resources[resourceIdx] as ZDBs
+                ).zdbs.push(new ZDB());
               else
-                addErrorNotification(`Can't add new zdb to ${value.projects[value.active].resources[resourceIdx].type} type`)
+                addErrorNotification(
+                  `Can't add new zdb to ${
+                    value.projects[value.active].resources[resourceIdx].type
+                  } type`
+                );
             break;
 
           case "kubernetes":
             value.projects[value.active].resources.push(
-              new Kubernetes(
-                undefined,
-                undefined,
-                undefined,
-                [new Master(), new Worker()]
-              )
+              new Kubernetes(undefined, undefined, undefined, [
+                new Master(),
+                new Worker(),
+              ])
             );
             break;
           case "master":
@@ -118,10 +143,21 @@ function createCodeStore() {
 
           case "worker":
             if (resourceIdx != undefined)
-              if (value.projects[value.active].resources[resourceIdx].type === 'kubernetes')
-                (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes.push(new Worker()); // prettier-ignore
+              if (
+                value.projects[value.active].resources[resourceIdx].type ===
+                "kubernetes"
+              )
+                (
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Kubernetes
+                ).kubeNodes.push(new Worker());
               else
-                addErrorNotification(`Can't add worker to ${value.projects[value.active].resources[resourceIdx].type} type`); //prettier-ignore
+                addErrorNotification(
+                  `Can't add worker to ${
+                    value.projects[value.active].resources[resourceIdx].type
+                  } type`
+                );
             break;
 
           case "machines":
@@ -130,10 +166,21 @@ function createCodeStore() {
 
           case "machine":
             if (resourceIdx != undefined)
-              if (value.projects[value.active].resources[resourceIdx].type === 'machines')
-                (value.projects[value.active].resources[resourceIdx] as Machines).machines.push(new Machine()); // prettier-ignore
+              if (
+                value.projects[value.active].resources[resourceIdx].type ===
+                "machines"
+              )
+                (
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines.push(new Machine());
               else
-                addErrorNotification(`Can't add machine to ${value.projects[value.active].resources[resourceIdx].type} type`);
+                addErrorNotification(
+                  `Can't add machine to ${
+                    value.projects[value.active].resources[resourceIdx].type
+                  } type`
+                );
             break;
 
           case "disk":
@@ -150,37 +197,72 @@ function createCodeStore() {
                   ] as Machines
                 ).machines[idx].isDeployed
               ) {
-                (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].disks.push(new Disk()); // prettier-ignore
+                (
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines[idx].disks.push(new Disk());
               } else {
                 addErrorNotification(`Can't add new disk to deployed machine`);
               }
             } else {
               addErrorNotification(
-                `Can't add disk to ${value.projects[value.active].resources[resourceIdx].type} type`
+                `Can't add disk to ${
+                  value.projects[value.active].resources[resourceIdx].type
+                } type`
               );
             }
             break;
 
           case "qsfsDisk":
             if (resourceIdx != undefined && idx != undefined) {
-              switch(value.projects[value.active].resources[resourceIdx].type){
+              switch (
+                value.projects[value.active].resources[resourceIdx].type
+              ) {
                 case "machines":
-                  if (!((value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].isDeployed)){
-                    (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].qsfsDisks.push(new QsfsDisk()); // prettier-ignore
-                  }else{
-                    addErrorNotification(`Can't add new QSFS disk to deployed machine`);
+                  if (
+                    !(
+                      value.projects[value.active].resources[
+                        resourceIdx
+                      ] as Machines
+                    ).machines[idx].isDeployed
+                  ) {
+                    (
+                      value.projects[value.active].resources[
+                        resourceIdx
+                      ] as Machines
+                    ).machines[idx].qsfsDisks.push(new QsfsDisk());
+                  } else {
+                    addErrorNotification(
+                      `Can't add new QSFS disk to deployed machine`
+                    );
                   }
                   break;
                 case "kubernetes":
-                  console.log("Resource Id:: ",resourceIdx, "Worker id:: ",idx)
-                  if (!((value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[idx].isDeployed)){
-                    (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[idx].qsfsDisks.push(new QsfsDisk()); // prettier-ignore
-                  }else{
-                    addErrorNotification(`Can't add new QSFS disk to deployed worker`);
+                  if (
+                    !(
+                      value.projects[value.active].resources[
+                        resourceIdx
+                      ] as Kubernetes
+                    ).kubeNodes[idx].isDeployed
+                  ) {
+                    (
+                      value.projects[value.active].resources[
+                        resourceIdx
+                      ] as Kubernetes
+                    ).kubeNodes[idx].qsfsDisks.push(new QsfsDisk());
+                  } else {
+                    addErrorNotification(
+                      `Can't add new QSFS disk to deployed worker`
+                    );
                   }
                   break;
                 default:
-                  addErrorNotification(`Can't add QSFSs disk to ${value.projects[value.active].resources[resourceIdx].type} type`); // prettier-ignore
+                  addErrorNotification(
+                    `Can't add QSFSs disk to ${
+                      value.projects[value.active].resources[resourceIdx].type
+                    } type`
+                  );
                   break;
               }
             }
@@ -200,7 +282,11 @@ function createCodeStore() {
                   ] as Machines
                 ).machines[idx].isDeployed
               ) {
-                (value.projects[value.active].resources[resourceIdx] as Machines).machines[idx].env_vars.push(new Env()); // prettier-ignore
+                (
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines[idx].env_vars.push(new Env());
               } else {
                 addErrorNotification(
                   `Can't add new environment variable to deployed machine`
@@ -208,7 +294,9 @@ function createCodeStore() {
               }
             } else {
               addErrorNotification(
-                `Can't add environment variable to ${value.projects[value.active].resources[resourceIdx].type} type`
+                `Can't add environment variable to ${
+                  value.projects[value.active].resources[resourceIdx].type
+                } type`
               );
             }
             break;
@@ -237,7 +325,8 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          value.projects[value.active].resources[idx][key] = type === "number" ? +val : val; // prettier-ignore
+          value.projects[value.active].resources[idx][key] =
+            type === "number" ? +val : val;
           return value;
         });
       };
@@ -247,7 +336,8 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          (value.projects[value.active].resources[idx] as Kubernetes)[key] = type === "number" ? +val : val; // prettier-ignore
+          (value.projects[value.active].resources[idx] as Kubernetes)[key] =
+            type === "number" ? +val : val;
           return value;
         });
       };
@@ -261,14 +351,24 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           if (key === "publicIp") {
-            const val = (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[index].publicIp; // prettier-ignore
-            (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[index].publicIp = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[index].publicIp;
+            (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[index].publicIp = !val;
           } else if (key === "planetary") {
-            const val = (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[index].planetary; // prettier-ignore
-            (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[index].planetary = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[index].planetary;
+            (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[index].planetary = !val;
           } else {
             const { type, value: val } = e.target;
-            (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[index][key] = type === "number" ? +val : val; // prettier-ignore
+            (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[index][key] = type === "number" ? +val : val;
           }
           return value;
         });
@@ -284,7 +384,9 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          (value.projects[value.active].resources[resourceIdx] as Machines).machines[vmIdx].disks[index][key] = type === "number" ? +val : val; // prettier-ignore
+          (
+            value.projects[value.active].resources[resourceIdx] as Machines
+          ).machines[vmIdx].disks[index][key] = type === "number" ? +val : val;
           return value;
         });
       };
@@ -299,29 +401,66 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          switch(value.projects[value.active].resources[resourceIdx].type){
+          switch (value.projects[value.active].resources[resourceIdx].type) {
             case "machines":
               if (key === "minimalShards") {
                 (
-                  value.projects[value.active].resources[resourceIdx] as Machines
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
                 ).machines[elementIdx].qsfsDisks[index].minimalShards = +val;
-                if((value.projects[value.active].resources[resourceIdx] as Machines).machines[elementIdx].qsfsDisks[index].expectedShards <= +val){
-                  (value.projects[value.active].resources[resourceIdx] as Machines).machines[elementIdx].qsfsDisks[index].expectedShards = +val + 1;
-                } // prettier-ignore
-              }else{
-                (value.projects[value.active].resources[resourceIdx] as Machines).machines[elementIdx].qsfsDisks[index][key] = type === "number" ? +val : val; // prettier-ignore
+                if (
+                  (
+                    value.projects[value.active].resources[
+                      resourceIdx
+                    ] as Machines
+                  ).machines[elementIdx].qsfsDisks[index].expectedShards <= +val
+                ) {
+                  (
+                    value.projects[value.active].resources[
+                      resourceIdx
+                    ] as Machines
+                  ).machines[elementIdx].qsfsDisks[index].expectedShards =
+                    +val + 1;
+                }
+              } else {
+                (
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Machines
+                ).machines[elementIdx].qsfsDisks[index][key] =
+                  type === "number" ? +val : val;
               }
               break;
             case "kubernetes":
               if (key === "minimalShards") {
                 (
-                  value.projects[value.active].resources[resourceIdx] as Kubernetes
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Kubernetes
                 ).kubeNodes[elementIdx].qsfsDisks[index].minimalShards = +val;
-                if((value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[elementIdx].qsfsDisks[index].expectedShards <= +val){
-                  (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[elementIdx].qsfsDisks[index].expectedShards = +val + 1;
-                } // prettier-ignore
-              }else{
-                (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[elementIdx].qsfsDisks[index][key] = type === "number" ? +val : val; // prettier-ignore
+                if (
+                  (
+                    value.projects[value.active].resources[
+                      resourceIdx
+                    ] as Kubernetes
+                  ).kubeNodes[elementIdx].qsfsDisks[index].expectedShards <=
+                  +val
+                ) {
+                  (
+                    value.projects[value.active].resources[
+                      resourceIdx
+                    ] as Kubernetes
+                  ).kubeNodes[elementIdx].qsfsDisks[index].expectedShards =
+                    +val + 1;
+                }
+              } else {
+                (
+                  value.projects[value.active].resources[
+                    resourceIdx
+                  ] as Kubernetes
+                ).kubeNodes[elementIdx].qsfsDisks[index][key] =
+                  type === "number" ? +val : val;
               }
               break;
           }
@@ -338,14 +477,30 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           if (key === "publicIp") {
-            const val = (value.projects[value.active].resources[resourceIdx] as Machines).machines[index].publicIp; // prettier-ignore
-            (value.projects[value.active].resources[resourceIdx] as Machines).machines[index].publicIp = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[index].publicIp;
+            (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[index].publicIp = !val;
           } else if (key === "planetary") {
-            const val = (value.projects[value.active].resources[resourceIdx] as Machines).machines[index].planetary; // prettier-ignore
-            (value.projects[value.active].resources[resourceIdx] as Machines).machines[index].planetary = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[index].planetary;
+            (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[index].planetary = !val;
+          } else if (key === "node") {
+            let nodeVal =
+              +e.target.options[e.target.options.selectedIndex].value;
+            (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[index].node = nodeVal;
           } else {
             const { type, value: val } = e.target;
-            (value.projects[value.active].resources[resourceIdx] as Machines).machines[index][key] = type === "number" ? +val : val; // prettier-ignore
+            (
+              value.projects[value.active].resources[resourceIdx] as Machines
+            ).machines[index][key] = type === "number" ? +val : val;
           }
           return value;
         });
@@ -361,7 +516,10 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          (value.projects[value.active].resources[resourceIdx] as Machines).machines[vm_index].env_vars[index][key] = type === "number" ? +val : val; // prettier-ignore
+          (
+            value.projects[value.active].resources[resourceIdx] as Machines
+          ).machines[vm_index].env_vars[index][key] =
+            type === "number" ? +val : val;
           return value;
         });
       };
@@ -371,13 +529,21 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           if (key === "publicIp") {
-            const val = (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index].publicIp; // prettier-ignore
-            (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index].publicIp = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[resourceIdx] as ZDBs
+            ).zdbs[index].publicIp;
+            (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs[
+              index
+            ].publicIp = !val;
           } else if (key === "mode") {
-            (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index][key] = e.target.options[e.target.options.selectedIndex].value; //prettier-ignore
+            (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs[
+              index
+            ][key] = e.target.options[e.target.options.selectedIndex].value;
           } else {
             const { type, value: val } = e.target;
-            (value.projects[value.active].resources[resourceIdx]as ZDBs).zdbs[index][key] = type === "number" ? +val : val; // prettier-ignore
+            (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs[
+              index
+            ][key] = type === "number" ? +val : val;
           }
 
           return value;
@@ -397,7 +563,8 @@ function createCodeStore() {
                 .map((v) => +v)
                 .filter((v) => !isNaN(v));
           } else {
-            (value.projects[value.active].resources[idx]as QsfsZDBs)[key] = type === "number" ? +val : val; // prettier-ignore
+            (value.projects[value.active].resources[idx] as QsfsZDBs)[key] =
+              type === "number" ? +val : val;
           }
           return value;
         });
@@ -408,7 +575,8 @@ function createCodeStore() {
       return (e: any) => {
         return update((value) => {
           const { type, value: val } = e.target;
-          value.projects[value.active].network[key] = type === "number" ? +val : val; // prettier-ignore
+          value.projects[value.active].network[key] =
+            type === "number" ? +val : val;
           return value;
         });
       };
@@ -419,12 +587,19 @@ function createCodeStore() {
         return update((value) => {
           const { type, value: val } = e.target;
           if (key === "tlsPassThrough") {
-            const val = (value.projects[value.active].resources[idx] as GatewayFQDN).tlsPassThrough; // prettier-ignore
-            (value.projects[value.active].resources[idx] as GatewayFQDN).tlsPassThrough = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[idx] as GatewayFQDN
+            ).tlsPassThrough;
+            (
+              value.projects[value.active].resources[idx] as GatewayFQDN
+            ).tlsPassThrough = !val;
           } else if (key === "backends") {
-            (value.projects[value.active].resources[idx] as GatewayFQDN).backends = val.split(",").map((v) => v.trim()); // prettier-ignore
+            (
+              value.projects[value.active].resources[idx] as GatewayFQDN
+            ).backends = val.split(",").map((v) => v.trim());
           } else {
-            (value.projects[value.active].resources[idx] as GatewayFQDN)[key] = type === "number" ? +val : val; // prettier-ignore
+            (value.projects[value.active].resources[idx] as GatewayFQDN)[key] =
+              type === "number" ? +val : val;
           }
           return value;
         });
@@ -436,14 +611,19 @@ function createCodeStore() {
         return update((value) => {
           const { type, value: val } = e.target;
           if (key === "tlsPassThrough") {
-            const val = (value.projects[value.active].resources[idx] as GatewayName).tlsPassThrough; // prettier-ignore
-            (value.projects[value.active].resources[idx] as GatewayName).tlsPassThrough = !val; // prettier-ignore
+            const val = (
+              value.projects[value.active].resources[idx] as GatewayName
+            ).tlsPassThrough;
+            (
+              value.projects[value.active].resources[idx] as GatewayName
+            ).tlsPassThrough = !val;
           } else if (key === "backends") {
             (
               value.projects[value.active].resources[idx] as GatewayName
             ).backends = val.split(",").map((v) => v.trim());
           } else {
-            (value.projects[value.active].resources[idx] as GatewayName)[key] = type === "number" ? +val : val; // prettier-ignore
+            (value.projects[value.active].resources[idx] as GatewayName)[key] =
+              type === "number" ? +val : val;
           }
           return value;
         });
@@ -479,7 +659,7 @@ function createCodeStore() {
                 qd.isDeployed = val;
               });
             });
-            
+
             break;
           case "zdbs":
             (
@@ -524,7 +704,9 @@ function createCodeStore() {
             ).machines[idx] = vm;
             break;
           case "kubernetes":
-            let kNode = (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[idx];
+            let kNode = (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[idx];
             kNode.isDeployed = val;
             kNode.qsfsDisks.forEach((qd) => {
               qd.isDeployed = val;
@@ -558,6 +740,14 @@ function createCodeStore() {
       };
     },
 
+    updateProjectRename(idx: number) {
+      return update((value) => {
+        let lastRename = value.projects[idx].rename;
+        value.projects[idx].rename = !lastRename;
+        return value;
+      });
+    },
+
     removeResource(idx: number) {
       return update((value) => {
         value.projects[value.active].resources.splice(idx, 1);
@@ -573,20 +763,20 @@ function createCodeStore() {
     ) {
       return () => {
         return update((value) => {
-          (value.projects[value.active].resources[resourceIdx] as Machines).machines[vm_idx][key].splice(idx, 1); // prettier-ignore
+          (
+            value.projects[value.active].resources[resourceIdx] as Machines
+          ).machines[vm_idx][key].splice(idx, 1);
           return value;
         });
       };
     },
 
-    removeFromKubeNode(
-      resourceIdx: number,
-      kNode_idx: number,
-      idx: number
-    ) {
+    removeFromKubeNode(resourceIdx: number, kNode_idx: number, idx: number) {
       return () => {
         return update((value) => {
-          (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes[kNode_idx].qsfsDisks.splice(idx, 1); // prettier-ignore
+          (
+            value.projects[value.active].resources[resourceIdx] as Kubernetes
+          ).kubeNodes[kNode_idx].qsfsDisks.splice(idx, 1);
           return value;
         });
       };
@@ -601,21 +791,27 @@ function createCodeStore() {
 
     removeZdb(resourceIdx: number, idx: number) {
       return update((value) => {
-        (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs.splice(idx,1); //prettier-ignore
+        (
+          value.projects[value.active].resources[resourceIdx] as ZDBs
+        ).zdbs.splice(idx, 1);
         return value;
       });
     },
 
     removeWorker(resourceIdx: number, idx: number) {
       return update((value) => {
-        (value.projects[value.active].resources[resourceIdx] as Kubernetes).kubeNodes.splice(idx, 1); // prettier-ignore
+        (
+          value.projects[value.active].resources[resourceIdx] as Kubernetes
+        ).kubeNodes.splice(idx, 1);
         return value;
       });
     },
 
     removeVM(resourceIdx: number, idx: number) {
       return update((value) => {
-        (value.projects[value.active].resources[resourceIdx] as Machines).machines.splice(idx, 1); // prettier-ignore
+        (
+          value.projects[value.active].resources[resourceIdx] as Machines
+        ).machines.splice(idx, 1);
         return value;
       });
     },

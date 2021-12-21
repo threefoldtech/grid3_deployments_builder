@@ -4,7 +4,8 @@
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "webpack serve",
     "start": "serve public --listen 8080",
-    "validate": "svelte-check"
+    "validate": "svelte-check",
+    "pretty": "prettier --write ."
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
@@ -22,11 +23,12 @@
     "cross-env": "^7.0.3",
     "css-loader": "^5.0.2",
     "css-minimizer-webpack-plugin": "^3.0.0",
-    "grid3_client": "^0.0.32",
+    "grid3_client": "^0.0.35",
     "mini-css-extract-plugin": "^1.3.8",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "postcss": "8.3",
     "postcss-loader": "^5.0.0",
+    "prettier": "^2.5.1",
     "regenerator-runtime": "^0.13.7",
     "require-json5": "^1.1.0",
     "sass": "^1.32.8",

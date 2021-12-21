@@ -5,7 +5,14 @@ import { Project } from "src/models";
 export async function getClient(mnemStore, projectName): Promise<GridClient> {
   const { networkEnv, mnemonics, kvSecret } = mnemStore;
   const rmb = new HTTPMessageBusClient(0, "");
-  const grid = new GridClient(networkEnv, mnemonics, kvSecret, rmb, projectName, BackendStorageType.tfkvstore);
+  const grid = new GridClient(
+    networkEnv,
+    mnemonics,
+    kvSecret,
+    rmb,
+    projectName,
+    BackendStorageType.tfkvstore
+  );
   await grid.connect();
   return grid;
 }
