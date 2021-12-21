@@ -71,6 +71,7 @@
       label="Cache"
       value={qsfsDisk.cache}
       type="number"
+      unit="GB"
       on:input={codeStore.updateQsfsDisk(resourceIdx, elementIdx, idx, "cache")}
       deployed={qsfsDisk.isDeployed}
     />

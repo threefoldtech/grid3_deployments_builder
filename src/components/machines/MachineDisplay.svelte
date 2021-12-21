@@ -1,10 +1,12 @@
 <script lang="ts">
-  import type { Machine } from "../../models";
+  import type { Machine, Project } from "../../models";
   import codeStore from "../../store/code.store";
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
   import CheckBox from "../base/CheckBox.svelte";
+  import Node from "../base/Node.svelte";
 
+  export let project: Project;
   export let resourceIdx: number;
   export let idx: number;
   export let vm: Machine;
@@ -38,13 +40,6 @@
       deployed={vm.isDeployed}
     />
     <Editable
-      label="Node"
-      value={vm.node}
-      type="number"
-      on:input={codeStore.updateVm(resourceIdx, idx, "node")}
-      deployed={vm.isDeployed}
-    />
-    <Editable
       label="Flist"
       value={vm.flist}
       on:input={codeStore.updateVm(resourceIdx, idx, "flist")}
@@ -54,6 +49,7 @@
       label="CPU"
       value={vm.cpu}
       type="number"
+      unit="Core"
       on:input={codeStore.updateVm(resourceIdx, idx, "cpu")}
       deployed={vm.isDeployed}
     />
@@ -61,6 +57,7 @@
       label="Memory"
       value={vm.memory}
       type="number"
+      unit="MB"
       on:input={codeStore.updateVm(resourceIdx, idx, "memory")}
       deployed={vm.isDeployed}
     />
@@ -68,6 +65,7 @@
       label="Root FS Size"
       value={vm.rootFsSize}
       type="number"
+      unit="GB"
       on:input={codeStore.updateVm(resourceIdx, idx, "rootFsSize")}
       deployed={vm.isDeployed}
     />
@@ -84,12 +82,24 @@
       color={"--machine"}
       on:change={codeStore.updateVm(resourceIdx, idx, "publicIp")}
     />
-    <CheckBox 
-      label="Planetary" 
+    <CheckBox
+      label="Planetary"
       deployed={vm.isDeployed}
       checked={vm.planetary}
       color={"--machine"}
       on:change={codeStore.updateVm(resourceIdx, idx, "planetary")}
     />
+    <!-- TODO: COMPLETE IT -->
+    {#if project.gridClient}
+      <Node
+        {project}
+        lastSelected={vm.node}
+        on:change={codeStore.updateVm(resourceIdx, idx, "node")}
+        deployed={vm.isDeployed}
+        resources={{ cru: vm.cpu, mru: vm.memory, sru: vm.rootFsSize}}
+      />
+    {:else}
+      <p style="font-size:1.8rem">loading..</p>
+    {/if}
   {/if}
 </div>

@@ -1,10 +1,12 @@
 <script lang="ts">
-  import type { Master } from "../../models";
+  import type { Master, Project } from "../../models";
   import codeStore from "../../store/code.store";
   import CheckBox from "../base/CheckBox.svelte";
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
+  import Node from "../base/Node.svelte";
 
+  export let project: Project
   export let resourceIdx: number;
   export let idx: number;
   export let master: Master;
@@ -36,53 +38,56 @@
       deployed={master.isDeployed}
     />
     <Editable
-      label="Node"
-      value={master.node}
-      type="number"
-      on:input={codeStore.updateKubeNode(resourceIdx, idx, "node")}
-      deployed={master.isDeployed}
-    />
-    <Editable
-      label="CPU"
+    label="CPU"
       value={master.cpu}
       type="number"
+      unit="Core"
       on:input={codeStore.updateKubeNode(resourceIdx, idx, "cpu")}
       deployed={master.isDeployed}
-    />
-    <Editable
+      />
+      <Editable
       label="Memory"
       value={master.memory}
       type="number"
+      unit="MB"
       on:input={codeStore.updateKubeNode(resourceIdx, idx, "memory")}
       deployed={master.isDeployed}
-    />
-    <Editable
+      />
+      <Editable
       label="Root FS Size"
       value={master.rootFsSize}
       type="number"
+      unit="GB"
       on:input={codeStore.updateKubeNode(resourceIdx, idx, "rootFsSize")}
       deployed={master.isDeployed}
     />
     <Editable
-      label="Disk Size"
-      type="number"
-      value={master.diskSize}
-      on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
-      deployed={master.isDeployed}
+    label="Disk Size"
+    type="number"
+    value={master.diskSize}
+    unit="GB"
+    on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
+    deployed={master.isDeployed}
     />
     <CheckBox
-      label="Public IP"
-      deployed={master.isDeployed}
-      checked={master.publicIp}
-      color={"--master"}
-      on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
+    label="Public IP"
+    deployed={master.isDeployed}
+    checked={master.publicIp}
+    color={"--master"}
+    on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
     />
     <CheckBox 
-      label="Planetary" 
-      deployed={master.isDeployed}
-      checked={master.planetary}
-      color={"--master"}
-      on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
+    label="Planetary" 
+    deployed={master.isDeployed}
+    checked={master.planetary}
+    color={"--master"}
+    on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
     />
+    <!-- <Node
+      nodes={[]}
+      lastSelected={master.node}
+      on:change={codeStore.updateKubeNode(resourceIdx, idx, "node")}
+      deployed={master.isDeployed}
+    /> -->
   {/if}
 </div>

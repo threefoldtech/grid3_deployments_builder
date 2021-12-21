@@ -3,6 +3,7 @@
   export let value: string | number | null = null;
   export let type: "number" | "text" | "password" = "text";
   export let label: string | null = null;
+  export let unit: string | null = null;
   export let style: string | undefined = "margin-left: 2.5rem;";
   export let placeholder: string = "";
   export let deployed: boolean = false;
@@ -46,6 +47,9 @@
   {:else}
     <slot />
   {/if}
+  {#if unit}
+    <span class="editable__unit">{unit}</span>
+  {/if}
 </div>
 
 <style lang="scss" scoped>
@@ -58,6 +62,12 @@
       font-size: 1.8rem;
       text-transform: capitalize;
       padding-right: 1rem;
+    }
+
+    &__unit {
+      font-size: 1.8rem;
+      padding-left: 1rem;
+      color: gray;
     }
 
     &__fake {

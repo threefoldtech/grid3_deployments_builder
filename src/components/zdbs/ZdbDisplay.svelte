@@ -1,12 +1,14 @@
 <script lang="ts">
-  import type { ZDB } from "../../models";
+  import type { Project, ZDB } from "../../models";
   import codeStore from "../../store/code.store";
   import Collapse from "../base/Collapse.svelte";
   import Editable from "../base/Editable.svelte";
   import Selectable from "../base/Selectable.svelte";
   import { ZdbModes } from "grid3_client";
   import CheckBox from "../base/CheckBox.svelte";
+  import Node from "../base/Node.svelte";
 
+  export let project: Project;
   export let resourceIdx: number;
   export let idx: number;
   export let zdb: ZDB;
@@ -38,16 +40,10 @@
       deployed={zdb.isDeployed}
     />
     <Editable
-      label="Node"
-      value={zdb.node}
-      type="number"
-      on:input={codeStore.updateZdb(resourceIdx, idx, "node")}
-      deployed={zdb.isDeployed}
-    />
-    <Editable
       label="Size"
       value={zdb.size}
       type="number"
+      unit="GB"
       on:input={codeStore.updateZdb(resourceIdx, idx, "size")}
       deployed={zdb.isDeployed}
     />
@@ -65,12 +61,18 @@
       on:change={codeStore.updateZdb(resourceIdx, idx, "mode")}
       deployed={zdb.isDeployed}
     />
-    <CheckBox 
-      label="Public IP" 
+    <CheckBox
+      label="Public IP"
       deployed={zdb.isDeployed}
       checked={zdb.publicIp}
       color={"--zdb"}
       on:change={codeStore.updateZdb(resourceIdx, idx, "publicIp")}
-      />
+    />
+    <!-- <Node
+      nodes={[]}
+      lastSelected={zdb.node}
+      on:change={codeStore.updateZdb(resourceIdx, idx, "node")}
+      deployed={zdb.isDeployed}
+    /> -->
   {/if}
 </div>
