@@ -4,7 +4,7 @@ export class ZDB {
   constructor(
     public id = v4(),
     public name: string = "",
-    public node: number = 2,
+    public node: number = 0,
     public mode: string = "seq",
     public size: number = 10,
     public password: string = "",

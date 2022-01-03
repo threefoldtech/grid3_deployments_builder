@@ -89,14 +89,21 @@
       color={"--machine"}
       on:change={codeStore.updateVm(resourceIdx, idx, "planetary")}
     />
-    <!-- TODO: COMPLETE IT -->
     {#if project.gridClient}
       <Node
         {project}
-        lastSelected={vm.node}
+        lastSelectedValue={vm.node}
         on:change={codeStore.updateVm(resourceIdx, idx, "node")}
+        on:select={codeStore.updateVm(resourceIdx, idx, "node")}
         deployed={vm.isDeployed}
-        resources={{ cru: vm.cpu, mru: vm.memory, sru: vm.rootFsSize}}
+        resources={{
+          cru: vm.cpu,
+          mru: vm.memory,
+          sru: vm.disks.reduce((sum, v) => sum + v.size, vm.rootFsSize),
+          publicIPs: vm.publicIp,
+          hru: 0,
+          gateway: false,
+        }}
       />
     {:else}
       <p style="font-size:1.8rem">loading..</p>

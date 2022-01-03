@@ -31,7 +31,7 @@
   {/if}
   {#if value !== null}
     <span class="editable__fake" bind:this={fake_span}>
-      {value || placeholder} 
+      {value || placeholder}
     </span>
     <input
       {type}

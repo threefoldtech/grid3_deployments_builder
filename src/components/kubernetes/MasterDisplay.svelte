@@ -6,7 +6,7 @@
   import Editable from "../base/Editable.svelte";
   import Node from "../base/Node.svelte";
 
-  export let project: Project
+  export let project: Project;
   export let resourceIdx: number;
   export let idx: number;
   export let master: Master;
@@ -38,22 +38,22 @@
       deployed={master.isDeployed}
     />
     <Editable
-    label="CPU"
+      label="CPU"
       value={master.cpu}
       type="number"
       unit="Core"
       on:input={codeStore.updateKubeNode(resourceIdx, idx, "cpu")}
       deployed={master.isDeployed}
-      />
-      <Editable
+    />
+    <Editable
       label="Memory"
       value={master.memory}
       type="number"
       unit="MB"
       on:input={codeStore.updateKubeNode(resourceIdx, idx, "memory")}
       deployed={master.isDeployed}
-      />
-      <Editable
+    />
+    <Editable
       label="Root FS Size"
       value={master.rootFsSize}
       type="number"
@@ -62,32 +62,44 @@
       deployed={master.isDeployed}
     />
     <Editable
-    label="Disk Size"
-    type="number"
-    value={master.diskSize}
-    unit="GB"
-    on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
-    deployed={master.isDeployed}
+      label="Disk Size"
+      type="number"
+      value={master.diskSize}
+      unit="GB"
+      on:input={codeStore.updateKubeNode(resourceIdx, idx, "diskSize")}
+      deployed={master.isDeployed}
     />
     <CheckBox
-    label="Public IP"
-    deployed={master.isDeployed}
-    checked={master.publicIp}
-    color={"--master"}
-    on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
-    />
-    <CheckBox 
-    label="Planetary" 
-    deployed={master.isDeployed}
-    checked={master.planetary}
-    color={"--master"}
-    on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
-    />
-    <!-- <Node
-      nodes={[]}
-      lastSelected={master.node}
-      on:change={codeStore.updateKubeNode(resourceIdx, idx, "node")}
+      label="Public IP"
       deployed={master.isDeployed}
-    /> -->
+      checked={master.publicIp}
+      color={"--master"}
+      on:change={codeStore.updateKubeNode(resourceIdx, idx, "publicIp")}
+    />
+    <CheckBox
+      label="Planetary"
+      deployed={master.isDeployed}
+      checked={master.planetary}
+      color={"--master"}
+      on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
+    />
+    {#if project.gridClient}
+      <Node
+        {project}
+        lastSelectedValue={master.node}
+        on:select={codeStore.updateKubeNode(resourceIdx, idx, "node")}
+        deployed={master.isDeployed}
+        resources={{
+          cru: master.cpu,
+          mru: master.memory,
+          sru: master.diskSize + master.rootFsSize,
+          publicIPs: master.publicIp,
+          hru: 0,
+          gateway: false,
+        }}
+      />
+    {:else}
+      <p style="font-size:1.8rem">loading..</p>
+    {/if}
   {/if}
 </div>

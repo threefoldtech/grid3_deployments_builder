@@ -364,6 +364,12 @@ function createCodeStore() {
             (
               value.projects[value.active].resources[resourceIdx] as Kubernetes
             ).kubeNodes[index].planetary = !val;
+          } else if (key === "node") {
+            const selectVal = e.detail.value;
+            (
+              value.projects[value.active].resources[resourceIdx] as Kubernetes
+            ).kubeNodes[index].node =
+              typeof selectVal === "string" ? +selectVal : selectVal;
           } else {
             const { type, value: val } = e.target;
             (
@@ -491,11 +497,11 @@ function createCodeStore() {
               value.projects[value.active].resources[resourceIdx] as Machines
             ).machines[index].planetary = !val;
           } else if (key === "node") {
-            let nodeVal =
-              +e.target.options[e.target.options.selectedIndex].value;
+            const selectVal = e.detail.value;
             (
               value.projects[value.active].resources[resourceIdx] as Machines
-            ).machines[index].node = nodeVal;
+            ).machines[index].node =
+              typeof selectVal === "string" ? +selectVal : selectVal;
           } else {
             const { type, value: val } = e.target;
             (
@@ -538,7 +544,12 @@ function createCodeStore() {
           } else if (key === "mode") {
             (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs[
               index
-            ][key] = e.target.options[e.target.options.selectedIndex].value;
+            ][key] = e.detail.value;
+          } else if (key === "node") {
+            const selectVal = e.detail.value;
+            (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs[
+              index
+            ].node = typeof selectVal === "string" ? +selectVal : selectVal;
           } else {
             const { type, value: val } = e.target;
             (value.projects[value.active].resources[resourceIdx] as ZDBs).zdbs[
@@ -554,15 +565,15 @@ function createCodeStore() {
     updateQsfsZdbs<R extends keyof QsfsZDBs>(key: R, idx: number) {
       return (e: any) => {
         return update((value) => {
-          const { type, value: val } = e.target;
           if (key === "nodeIds") {
             (value.projects[value.active].resources[idx] as QsfsZDBs).nodeIds =
-              val
-                .split(",")
-                .map((v) => v.trim())
-                .map((v) => +v)
-                .filter((v) => !isNaN(v));
+              e.detail
+                ? e.detail.map((d) =>
+                    typeof d.value === "string" ? +d.value : d.value
+                  )
+                : [];
           } else {
+            const { type, value: val } = e.target;
             (value.projects[value.active].resources[idx] as QsfsZDBs)[key] =
               type === "number" ? +val : val;
           }
@@ -585,21 +596,28 @@ function createCodeStore() {
     updateGatewayFQDN<R extends keyof GatewayFQDN>(key: R, idx: number) {
       return (e: any) => {
         return update((value) => {
-          const { type, value: val } = e.target;
-          if (key === "tlsPassThrough") {
-            const val = (
-              value.projects[value.active].resources[idx] as GatewayFQDN
-            ).tlsPassThrough;
-            (
-              value.projects[value.active].resources[idx] as GatewayFQDN
-            ).tlsPassThrough = !val;
-          } else if (key === "backends") {
-            (
-              value.projects[value.active].resources[idx] as GatewayFQDN
-            ).backends = val.split(",").map((v) => v.trim());
+          if (key === "node") {
+            const selectVal = e.detail.value;
+            (value.projects[value.active].resources[idx] as GatewayFQDN).node =
+              typeof selectVal === "string" ? +selectVal : selectVal;
           } else {
-            (value.projects[value.active].resources[idx] as GatewayFQDN)[key] =
-              type === "number" ? +val : val;
+            const { type, value: val } = e.target;
+            if (key === "tlsPassThrough") {
+              const val = (
+                value.projects[value.active].resources[idx] as GatewayFQDN
+              ).tlsPassThrough;
+              (
+                value.projects[value.active].resources[idx] as GatewayFQDN
+              ).tlsPassThrough = !val;
+            } else if (key === "backends") {
+              (
+                value.projects[value.active].resources[idx] as GatewayFQDN
+              ).backends = val.split(",").map((v) => v.trim());
+            } else {
+              (value.projects[value.active].resources[idx] as GatewayFQDN)[
+                key
+              ] = type === "number" ? +val : val;
+            }
           }
           return value;
         });
@@ -609,21 +627,28 @@ function createCodeStore() {
     updateGatewayName<R extends keyof GatewayName>(key: R, idx: number) {
       return (e: any) => {
         return update((value) => {
-          const { type, value: val } = e.target;
-          if (key === "tlsPassThrough") {
-            const val = (
-              value.projects[value.active].resources[idx] as GatewayName
-            ).tlsPassThrough;
-            (
-              value.projects[value.active].resources[idx] as GatewayName
-            ).tlsPassThrough = !val;
-          } else if (key === "backends") {
-            (
-              value.projects[value.active].resources[idx] as GatewayName
-            ).backends = val.split(",").map((v) => v.trim());
+          if (key === "node") {
+            const selectVal = e.detail.value;
+            (value.projects[value.active].resources[idx] as GatewayName).node =
+              typeof selectVal === "string" ? +selectVal : selectVal;
           } else {
-            (value.projects[value.active].resources[idx] as GatewayName)[key] =
-              type === "number" ? +val : val;
+            const { type, value: val } = e.target;
+            if (key === "tlsPassThrough") {
+              const val = (
+                value.projects[value.active].resources[idx] as GatewayName
+              ).tlsPassThrough;
+              (
+                value.projects[value.active].resources[idx] as GatewayName
+              ).tlsPassThrough = !val;
+            } else if (key === "backends") {
+              (
+                value.projects[value.active].resources[idx] as GatewayName
+              ).backends = val.split(",").map((v) => v.trim());
+            } else {
+              (value.projects[value.active].resources[idx] as GatewayName)[
+                key
+              ] = type === "number" ? +val : val;
+            }
           }
           return value;
         });

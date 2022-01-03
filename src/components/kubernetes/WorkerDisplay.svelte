@@ -83,10 +83,23 @@
       color={"--worker"}
       on:change={codeStore.updateKubeNode(resourceIdx, idx, "planetary")}
     />
-    <!-- <Node
-      lastSelected={worker.node}
-      on:change={codeStore.updateKubeNode(resourceIdx, idx, "node")}
-      deployed={worker.isDeployed}
-    /> -->
+    {#if project.gridClient}
+      <Node
+        {project}
+        lastSelectedValue={worker.node}
+        on:select={codeStore.updateKubeNode(resourceIdx, idx, "node")}
+        deployed={worker.isDeployed}
+        resources={{
+          cru: worker.cpu,
+          mru: worker.memory,
+          sru: worker.diskSize + worker.rootFsSize,
+          publicIPs: worker.publicIp,
+          hru: 0,
+          gateway: false,
+        }}
+      />
+    {:else}
+      <p style="font-size:1.8rem">loading..</p>
+    {/if}
   {/if}
 </div>

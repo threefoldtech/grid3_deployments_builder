@@ -78,7 +78,6 @@ const config: Configuration = {
 			// Rule: Svelte
 			{
 				test: /\.svelte$/,
-				exclude: /node_modules/,
 				use: {
 					loader: 'svelte-loader',
 					options: {

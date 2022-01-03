@@ -41,8 +41,8 @@ function createMnemonicsStore() {
 
     updateNetworkEnv(e: any) {
       return update((value) => {
-        value.networkEnv =
-          e.target.options[e.target.options.selectedIndex].value;
+        console.log(e.detail);
+        value.networkEnv = e.detail.value;
         return value;
       });
     },

@@ -9,6 +9,7 @@
   import Collapse from "../base/Collapse.svelte";
   import ConfirmMsg from "../base/ConfirmMsg.svelte";
   import Editable from "../base/Editable.svelte";
+  import Node from "../base/Node.svelte";
 
   export let project: Project;
   export let qsfsZdbs: QsfsZDBs;
@@ -75,13 +76,6 @@
       on:input={codeStore.updateQsfsZdbs("count", idx)}
     />
     <Editable
-      label="Node Ids"
-      value={qsfsZdbs.nodeIds.join(", ")}
-      placeholder="Choose nodes you want to deploy QSFS Zdbs on"
-      on:input={codeStore.updateQsfsZdbs("nodeIds", idx)}
-      deployed={qsfsZdbs.isDeployed}
-    />
-    <Editable
       label="Disk Size"
       type="number"
       unit="GB"
@@ -112,6 +106,25 @@
       on:input={codeStore.updateQsfsZdbs("metadata", idx)}
       deployed={qsfsZdbs.isDeployed}
     />
+    {#if project.gridClient}
+      <Node
+        {project}
+        on:select={codeStore.updateQsfsZdbs("nodeIds", idx)}
+        deployed={qsfsZdbs.isDeployed}
+        isMulti={true}
+        resources={{
+          cru: 0,
+          mru: 0,
+          sru: 0,
+          publicIPs: false,
+          hru: qsfsZdbs.diskSize * qsfsZdbs.count,
+          gateway: false,
+        }}
+        lastSelectedValue={qsfsZdbs.nodeIds}
+      />
+    {:else}
+      <p style="font-size:1.8rem">loading..</p>
+    {/if}
   {/if}
 </div>
 

@@ -8,7 +8,7 @@ export class Machine {
   constructor(
     public id: string = v4(),
     public name: string = "",
-    public node: number = 2,
+    public node: number = 0,
     public flist: string = "https://hub.grid.tf/tf-official-apps/base:latest.flist",
     public cpu: number = 1,
     public memory: number = 1024,
