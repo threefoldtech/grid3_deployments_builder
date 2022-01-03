@@ -6,7 +6,7 @@
   import Configurations from "./components/sidebar/Configurations.svelte";
   import Droppable from "./components/base/Droppable.svelte";
   import { events } from "grid3_client";
-  import { updateLastNotification } from "./store/notification.store"
+  import { updateLastNotification } from "./store/notification.store";
   import Notifications from "./components/base/Notifications.svelte";
 
   events.addListener("logs", updateLastNotification);
@@ -18,7 +18,11 @@
 <aside class="sidenav">
   <div class="sidenav__actions">
     <!-- Threefold Image -->
-    <img src="/assets/threefold-favicon-black.png" alt="threefold" title="threefold logo" />
+    <img
+      src="/assets/threefold-favicon-black.png"
+      alt="threefold"
+      title="threefold logo"
+    />
     <!-- Project Explorer -->
     <button
       on:click={setExplorer(0)}
@@ -81,8 +85,8 @@
       width: 6rem;
       border: 0.1rem solid var(--sidenav-border);
 
-      img{
-        width:6rem
+      img {
+        width: 6rem;
       }
       &__item {
         width: 6rem;

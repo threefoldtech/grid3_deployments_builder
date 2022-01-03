@@ -12,7 +12,7 @@
   Add New Project
 </button>
 {#each store.projects as project, i}
-  <div class= explorer__project>
+  <div class="explorer__project">
     <button
       class={"explorer__project__name " + (store.active === i ? "active" : "")}
       on:click={codeStore.setActiveProject.bind(codeStore, i)}
@@ -38,18 +38,14 @@
             src="/assets/edit.png"
             alt="edit"
             title="edit project"
-            on:click={() => {
-              project.rename = !project.rename;
-            }}
+            on:click={codeStore.updateProjectRename.bind(codeStore, i)}
           />
         {:else}
           <img
             src="/assets/save.png"
             alt="save"
             title="save project name"
-            on:click={() => {
-              project.rename = !project.rename;
-            }}
+            on:click={codeStore.updateProjectRename.bind(codeStore, i)}
           />
         {/if}
       </div>
@@ -65,8 +61,8 @@
     margin-bottom: 1rem;
   }
   .explorer__project {
-    display:flex;
-    flex-direction:row;
+    display: flex;
+    flex-direction: row;
     justify-content: space-between;
     border-bottom: 0.1rem solid var(--sidenav-border);
   }
@@ -78,11 +74,10 @@
     flex-direction: row;
     justify-content: space-between;
     border: none;
-    
     cursor: pointer;
 
     input {
-      width:80%;
+      width: 80%;
       font-size: 15px;
     }
 
@@ -110,8 +105,6 @@
     cursor: pointer;
 
     img {
-      // padding-top: 5px;
-      // padding-bottom: 5px;
       width: 30px;
       height: 30px;
     }

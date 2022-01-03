@@ -39,6 +39,7 @@
       label="size"
       value={disk.size}
       type="number"
+      unit="GB"
       on:input={codeStore.updateDisk(resourceIdx, vmIdx, idx, "size")}
       deployed={disk.isDeployed}
     />

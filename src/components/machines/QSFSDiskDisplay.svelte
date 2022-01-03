@@ -71,6 +71,7 @@
       label="Cache"
       value={qsfsDisk.cache}
       type="number"
+      unit="GB"
       on:input={codeStore.updateQsfsDisk(resourceIdx, elementIdx, idx, "cache")}
       deployed={qsfsDisk.isDeployed}
     />
@@ -78,6 +79,7 @@
       label="Minimal Shards"
       value={qsfsDisk.minimalShards}
       type="number"
+      unit="Zdb"
       on:input={codeStore.updateQsfsDisk(
         resourceIdx,
         elementIdx,
@@ -90,6 +92,7 @@
       label="Expected Shards"
       value={qsfsDisk.expectedShards}
       type="number"
+      unit="Zdb"
       min={qsfsDisk.minimalShards + 1}
       on:input={codeStore.updateQsfsDisk(
         resourceIdx,

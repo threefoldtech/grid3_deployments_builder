@@ -4,8 +4,8 @@ import { QsfsDisk } from "..";
 export class Master {
   constructor(
     public id = v4(),
-    public diskSize: number = 23,
-    public node: number = 2,
+    public diskSize: number = 25,
+    public node: number = 0,
     public name = "",
     public cpu: number = 2,
     public publicIp: boolean = true,

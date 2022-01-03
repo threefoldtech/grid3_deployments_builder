@@ -253,7 +253,7 @@ async function deployKubernetes(
 ) {
   let masters = [];
   let workers = [];
-  for (let i = 0; i < resource.kubeNodes.length; i++){
+  for (let i = 0; i < resource.kubeNodes.length; i++) {
     let kNode = resource.kubeNodes[i];
     let kMap = {
       name: kNode.name,
@@ -277,9 +277,9 @@ async function deployKubernetes(
         };
       }),
     };
-    if (i === 0){
+    if (i === 0) {
       masters.push(kMap);
-    }else{
+    } else {
       workers.push(kMap);
     }
   }

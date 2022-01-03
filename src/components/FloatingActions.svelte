@@ -34,7 +34,7 @@
   const closeResult = () => (showResult = false);
 
   $: mnemStore = $mnemonicsStore;
-  $: disabled = mnemStore.mnemonics.length === 0; // prettier-ignore
+  $: disabled = mnemStore.mnemonics.length === 0; 
 
   async function onDeployHandler() {
     close();

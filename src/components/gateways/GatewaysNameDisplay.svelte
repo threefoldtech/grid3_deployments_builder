@@ -3,13 +3,15 @@
   import mnemonicsStore from "src/store/mnemonics.store";
   import { addSuccessNotification } from "src/store/notification.store";
 
-  import type { GatewayName } from "../../models";
+  import type { GatewayName, Project } from "../../models";
   import codeStore from "../../store/code.store";
   import Collapse from "../base/Collapse.svelte";
   import ConfirmMsg from "../base/ConfirmMsg.svelte";
   import Editable from "../base/Editable.svelte";
   import CheckBox from "../base/CheckBox.svelte";
+  import Node from "../base/Node.svelte";
 
+  export let project: Project;
   export let idx: number;
   export let gateway: GatewayName;
   $: store = $codeStore;
@@ -75,26 +77,37 @@
       deployed={gateway.isDeployed}
     />
     <Editable
-      label="Node"
-      value={gateway.node}
-      type="number"
-      on:input={codeStore.updateGatewayName("node", idx)}
-      deployed={gateway.isDeployed}
-    />
-    <Editable
       label="backends"
       value={gateway.backends.join(", ")}
       placeholder="Backends for the domain"
       on:input={codeStore.updateGatewayName("backends", idx)}
       deployed={gateway.isDeployed}
     />
-    <CheckBox 
-      label="TlsPassThrough" 
+    <CheckBox
+      label="TlsPassThrough"
       deployed={gateway.isDeployed}
       checked={gateway.tlsPassThrough}
       color={"--name"}
       on:change={codeStore.updateGatewayName("tlsPassThrough", idx)}
+    />
+    {#if project.gridClient}
+      <Node
+        {project}
+        lastSelectedValue={gateway.node}
+        on:select={codeStore.updateGatewayName("node", idx)}
+        deployed={gateway.isDeployed}
+        resources={{
+          cru: 0,
+          mru: 0,
+          sru: 0,
+          publicIPs: false,
+          hru: 0,
+          gateway: true,
+        }}
       />
+    {:else}
+      <p style="font-size:1.8rem">loading..</p>
+    {/if}
   {/if}
 </div>
 

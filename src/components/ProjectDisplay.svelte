@@ -21,15 +21,53 @@
     deleteResource,
     deleteWorker,
     deleteZdb,
+    getClient,
   } from "src/grid3";
   import QsfsZdbsDisplay from "./zdbs/QsfsZdbsDisplay.svelte";
   import QsfsDiskDisplay from "./machines/QSFSDiskDisplay.svelte";
   import { Machine, Resource, Worker, ZDB } from "src/models";
+  import { onMount } from "svelte";
 
   $: store = $codeStore;
   $: idx = store.active;
   $: project = store.projects[idx];
   $: mnemStore = $mnemonicsStore;
+  let _kv;
+  let _mnem;
+  let _nenv;
+  let _projectName;
+
+  onMount(async () => {
+    if (project) {
+      project.gridClient = await getClient(mnemStore, project.name);
+      _projectName = project.name;
+    }
+    _kv = mnemStore.kvSecret;
+    _mnem = mnemStore.mnemonics;
+    _nenv = mnemStore.networkEnv;
+  });
+
+  // To update the client if anything changed.
+  $: {
+    if (project == null){
+      _projectName = null
+    }else if (project && !project.rename && project.name !==_projectName){
+      getClient(mnemStore, project.name).then((c) => (project.gridClient = c));
+      _projectName = project.name;
+    }else if (
+      _kv &&
+      _mnem &&
+      _nenv &&
+      (_kv !== mnemStore.kvSecret ||
+        _mnem !== mnemStore.mnemonics ||
+        _nenv !== mnemStore.networkEnv)
+    ) {
+      getClient(mnemStore, project.name).then((c) => (project.gridClient = c));
+      _kv = mnemStore.kvSecret;
+      _mnem = mnemStore.mnemonics;
+      _nenv = mnemStore.networkEnv;
+    }
+  }
 
   // For Delete
   let onDelete: boolean = false;
@@ -49,7 +87,15 @@
       deleteMsg =
         "You are about to delete deployment#" + depId + ": " + dep.name;
     } else {
-      deleteMsg ="You are about to delete element#" + elementId + ": " + element.name +" in deployment#" + depId + ": " + dep.name; //prettier-ignore
+      deleteMsg =
+        "You are about to delete element#" +
+        elementId +
+        ": " +
+        element.name +
+        " in deployment#" +
+        depId +
+        ": " +
+        dep.name;
     }
     onDelete = true;
   };
@@ -124,7 +170,7 @@
                     onShowDelete("element", resource, resourceIdx, vm, idx);
                   }}
                 >
-                  <MachineDisplay {resourceIdx} {vm} {idx} />
+                  <MachineDisplay {project} {resourceIdx} {vm} {idx} />
 
                   {#each vm.disks as disk, diskIdx (disk.id)}
                     <Block
@@ -190,10 +236,15 @@
               <Droppable {resourceIdx} idx={i}>
                 {#if i == 0}
                   <Block color="--master" removeable={false}>
-                    <MasterDisplay {resourceIdx} idx={i} master={node} />
+                    <MasterDisplay
+                      {project}
+                      {resourceIdx}
+                      idx={i}
+                      master={node}
+                    />
                     {#each node.qsfsDisks as qsfsDisk, qsfsDiskIdx (qsfsDisk.id)}
                       <Block
-                        color="--disk"
+                        color="--qsfsDisk"
                         on:click={codeStore.removeFromKubeNode(
                           resourceIdx,
                           i,
@@ -219,7 +270,12 @@
                       onShowDelete("element", resource, resourceIdx, node, i);
                     }}
                   >
-                    <WorkerDisplay {resourceIdx} idx={i} worker={node} />
+                    <WorkerDisplay
+                      {project}
+                      {resourceIdx}
+                      idx={i}
+                      worker={node}
+                    />
                     {#each node.qsfsDisks as qsfsDisk, qsfsDiskIdx (qsfsDisk.id)}
                       <Block
                         color="--qsfsDisk"
@@ -255,21 +311,29 @@
                   onShowDelete("element", resource, resourceIdx, zdb, i);
                 }}
               >
-                <ZdbDisplay {resourceIdx} {zdb} idx={i} />
+                <ZdbDisplay {project} {resourceIdx} {zdb} idx={i} />
               </Block>
             {/each}
 
             <!-- ---------------- Qsfs ZDBs ---------------- -->
           {:else if "qsfsZdbsType" in resource}
-            <QsfsZdbsDisplay qsfsZdbs={resource} idx={resourceIdx} />
+            <QsfsZdbsDisplay {project} qsfsZdbs={resource} idx={resourceIdx} />
 
             <!-- ---------------- FQDN Gateway ---------------- -->
           {:else if "domain" in resource}
-            <GatewaysFqdDisplay gatewayfq={resource} idx={resourceIdx} />
+            <GatewaysFqdDisplay
+              {project}
+              gatewayfq={resource}
+              idx={resourceIdx}
+            />
 
             <!-- ---------------- Name Gateway ---------------- -->
           {:else if "prefix" in resource}
-            <GatewaysNameDisplay gateway={resource} idx={resourceIdx} />
+            <GatewaysNameDisplay
+              {project}
+              gateway={resource}
+              idx={resourceIdx}
+            />
           {/if}
         </Block>
       </Droppable>

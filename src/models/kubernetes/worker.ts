@@ -5,7 +5,7 @@ export class Worker {
   constructor(
     public id = v4(),
     public diskSize: number = 15,
-    public node: number = 2,
+    public node: number = 0,
     public name = "",
     public cpu: number = 2,
     public memory: number = 2048,

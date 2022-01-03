@@ -4,12 +4,14 @@
   import mnemonicsStore from "src/store/mnemonics.store";
   import { addSuccessNotification } from "src/store/notification.store";
 
-  import type { QsfsZDBs } from "../../models";
+  import type { Project, QsfsZDBs } from "../../models";
   import codeStore from "../../store/code.store";
   import Collapse from "../base/Collapse.svelte";
   import ConfirmMsg from "../base/ConfirmMsg.svelte";
   import Editable from "../base/Editable.svelte";
+  import Node from "../base/Node.svelte";
 
+  export let project: Project;
   export let qsfsZdbs: QsfsZDBs;
   export let idx: number;
 
@@ -57,9 +59,7 @@
       <img src="/assets/unpublished.png" alt="not deployed icon" width="20" />
     {/if}
   </div>
-  {#if collapse}
-    <br />
-  {:else}
+  {#if !collapse}
     <Editable
       label="Name"
       value={qsfsZdbs.name}
@@ -70,20 +70,15 @@
     <Editable
       label="Count"
       type="number"
+      unit="Zdb"
       value={qsfsZdbs.count}
       min={3}
       on:input={codeStore.updateQsfsZdbs("count", idx)}
     />
     <Editable
-      label="Node Ids"
-      value={qsfsZdbs.nodeIds.join(", ")}
-      placeholder="Choose nodes you want to deploy QSFS Zdbs on"
-      on:input={codeStore.updateQsfsZdbs("nodeIds", idx)}
-      deployed={qsfsZdbs.isDeployed}
-    />
-    <Editable
       label="Disk Size"
       type="number"
+      unit="GB"
       value={qsfsZdbs.diskSize}
       on:input={codeStore.updateQsfsZdbs("diskSize", idx)}
     />
@@ -111,6 +106,25 @@
       on:input={codeStore.updateQsfsZdbs("metadata", idx)}
       deployed={qsfsZdbs.isDeployed}
     />
+    {#if project.gridClient}
+      <Node
+        {project}
+        on:select={codeStore.updateQsfsZdbs("nodeIds", idx)}
+        deployed={qsfsZdbs.isDeployed}
+        isMulti={true}
+        resources={{
+          cru: 0,
+          mru: 0,
+          sru: 0,
+          publicIPs: false,
+          hru: qsfsZdbs.diskSize * qsfsZdbs.count,
+          gateway: false,
+        }}
+        lastSelectedValue={qsfsZdbs.nodeIds}
+      />
+    {:else}
+      <p style="font-size:1.8rem">loading..</p>
+    {/if}
   {/if}
 </div>
 

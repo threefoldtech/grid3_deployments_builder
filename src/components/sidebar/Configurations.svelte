@@ -1,9 +1,12 @@
 <script lang="ts">
   import mnemonicsStore from "src/store/mnemonics.store";
-  import Selectable from "../base/Selectable.svelte";
   import { NetworkEnv } from "grid3_client";
+import Select from "svelte-select";
   $: mnemStore = $mnemonicsStore;
-
+  let selectedNetEnv;
+  $: {
+    selectedNetEnv = mnemStore.networkEnv;
+  }
   export const networkEnvOptions = Object.values(NetworkEnv)
     .filter((value) => typeof value === "string")
     .map((value) => value as string);
@@ -15,11 +18,10 @@
       <img src="/assets/envNet.png" alt="Network Enviroment" />
       <p>Network Environment</p>
     </div>
-    <Selectable
-      options={networkEnvOptions}
-      lastSelected={mnemStore.networkEnv}
-      on:change={mnemonicsStore.updateNetworkEnv}
-      style=""
+    <Select
+      items={networkEnvOptions}
+      bind:value={mnemStore.networkEnv}
+      on:select={mnemonicsStore.updateNetworkEnv}
     />
   </div>
   <div>
